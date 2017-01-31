@@ -1,0 +1,10 @@
+How to adpcm:
+http://www.atmel.com/images/doc2572.pdf
+
+Onliners:
+http://canonical.org/~kragen/sw/inexorable-misc/onelinermusic.html
+
+AVR Instruction set:
+http://www.atmel.com/images/Atmel-0856-AVR-Instruction-Set-Manual.pdf
+
+
