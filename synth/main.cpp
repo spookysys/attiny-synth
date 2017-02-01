@@ -10,20 +10,23 @@
 #include <util/delay.h>
 #include "tables.hpp"
 
+static const uint32_t sample_rate = 2 * 440;
 
-
-void timer0_init()
+void init_timers()
 {
 	// Samplestream
-	TCCR0A = 0x00;
-	TCCR0B = (3<<CS00);
+	TCCR0A = (1<<WGM01);
+	TCCR0B = (4<<CS00); // rate is F_CPU / 256
+	OCR0A = F_CPU / (sample_rate * 256ULL);
 	TCNT0 = 0;
-	TIMSK0 = 0x01; // enable overflow interrupt
 
 	// PWM
 	TCCR2B = (1<<CS00);
 	TCCR2A = 0x00;
 	TCNT2 = 0;
+
+	// Enable interrupts
+	TIMSK0 |= (1<<OCIE0A); // timer compare A interrupt
 	
 	
 	/*
@@ -42,7 +45,7 @@ void timer0_init()
 }
 
 static bool val = false;
-ISR(TIMER0_OVF_vect)
+ISR(TIMER0_COMPA_vect)
 {
 	val = !val;
 }
@@ -51,16 +54,16 @@ ISR(TIMER0_OVF_vect)
 
 int main(void)
 {
-	timer0_init();
+	init_timers();
 	
 	// Set B-ports to output
 	DDRB = 0xFF;
 		
 	// initialize timer
-	timer0_init();
+	init_timers();
 	
-	// Enable samplestream interrupt
-	SREG |= (1<<7);
+    // enable global interrupts
+    sei();
 	
 	// loop forever
 	while(1)
