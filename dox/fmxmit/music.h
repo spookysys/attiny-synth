@@ -1,0 +1,1 @@
+void music_init();

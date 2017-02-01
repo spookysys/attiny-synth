@@ -8,3 +8,30 @@ AVR Instruction set:
 http://www.atmel.com/images/Atmel-0856-AVR-Instruction-Set-Manual.pdf
 
 
+3V Button Battery
+* 20mm CR2032
+  - Nominal Discharge Current (mA) 0.2
+
+* 12mm CR1225 
+  - Standard Discharge Current 0,1 mA
+  - Max. Cont. Discharge Current 1,0 mA
+
+
+NOTE:
+
+How to produce FM frequency is at page 85 of ATTiny datasheet.
+
+In summary:
+* We will use clk_pck = PCK for our signal.
+* This saturates at 85MHz worst case - thus, we should aim slightly below this.
+* RC Oscillator runs at 8MHz by default, but can be boosted to 16-24MHz by adjusting OSCCAL
+* Based on LSM bit, clk_pck runs at either 4x or 8x of RC Oscillator
+* CPU runs at either RC Oscillator or 2x RC Oscillator 
+
+European FM radio starts at 87,5MHz, so we will have to stretch the 85MHz a bit to reach it
+
+Algorithm:
+OSCCAL *= 2.75 (Set RC Oscillator to 22MHz)
+LSM = 1 (Set 8xPLL input to half of RC oscillator; result is x4 and 88MHz)
+PLLE = 1 (enable PLL)
+assert(PLOCK==1);
