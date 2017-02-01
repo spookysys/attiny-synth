@@ -8,15 +8,22 @@
 #include <avr/pgmspace.h>
 #include <avr/sleep.h>
 #include <util/delay.h>
+#include "tables.hpp"
+
+
 
 void timer0_init()
 {
-	// set up timer with no prescaling
-	TCCR0B = (3<<CS00); // divide by 64
+	// Samplestream
 	TCCR0A = 0x00;
-	
-	// initialize counter
+	TCCR0B = (3<<CS00);
 	TCNT0 = 0;
+	TIMSK0 = 0x01; // enable overflow interrupt
+
+	// PWM
+	TCCR2B = (1<<CS00);
+	TCCR2A = 0x00;
+	TCNT2 = 0;
 	
 	
 	/*
@@ -34,6 +41,14 @@ void timer0_init()
 		
 }
 
+static bool val = false;
+ISR(TIMER0_OVF_vect)
+{
+	val = !val;
+}
+
+
+
 int main(void)
 {
 	timer0_init();
@@ -44,13 +59,17 @@ int main(void)
 	// initialize timer
 	timer0_init();
 	
+	// Enable samplestream interrupt
+	SREG |= (1<<7);
+	
 	// loop forever
 	while(1)
 	{
-		if (TCNT0 > 128)
+		if (val) {
 			PORTB |= (1 << 0);
-		else 
+		} else {
 			PORTB &= ~(1 << 0);
+		}
 	}
 }
 
