@@ -15,14 +15,15 @@ void init_timers()
 {
 	// Samplestream
 	TCCR0A = (1<<WGM01);
-	TCCR0B = (4<<CS00); // Set prescaler to F_CPU / 256
+	TCCR0B = (1<<CS02); // Set prescaler to F_CPU / 256
 	OCR0A = F_CPU / (sample_rate * 256ULL);
 	TCNT0 = 0;
 	
 
 	// PWM
-	TCCR2B = (1<<CS00);
-	TCCR2A = 0x00;
+	TCCR2A = (1<<COM2A1) | (1<<WGM21) | (1<<WGM20); // Fast PWM, non-inverting mode
+	TCCR2B = (1<<CS20);
+	OCR2A = 128;
 	TCNT2 = 0;
 
 	// Enable interrupts
@@ -52,6 +53,7 @@ static const uint16_t thresh = sample_rate / tone_freq;
 ISR(TIMER0_COMPA_vect)
 {
 	val = t > (thresh>>1);
+	OCR2A = val ? 255 : 0;
 	if (t>thresh) t-=thresh;
 	t++;
 }
@@ -72,14 +74,7 @@ int main(void)
     sei();
 	
 	// loop forever
-	while(1)
-	{
-		if (val) {
-			PORTB |= (1 << 0);
-		} else {
-			PORTB &= ~(1 << 0);
-		}
-	}
+	while(1);
 }
 
 
