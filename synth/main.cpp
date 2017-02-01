@@ -1,6 +1,6 @@
 
 //set your clock speed
-#define F_CPU 8000000UL
+#define F_CPU 16000000UL
 
 
 #include <avr/io.h>
@@ -12,7 +12,8 @@
 void timer0_init()
 {
 	// set up timer with no prescaling
-	TCCR0B = (1<<CS00);
+	TCCR0B = (3<<CS00); // divide by 64
+	TCCR0A = 0x00;
 	
 	// initialize counter
 	TCNT0 = 0;
@@ -46,25 +47,10 @@ int main(void)
 	// loop forever
 	while(1)
 	{
-		// check if the timer count reaches 191
-	//	if (TCNT0 >= 191)
-//		{
-	//		PORTB ^= (1 << 0);    // toggles the led
-		//	//TCNT0 = 0;            // reset counter
-		//}
-		
-		static const int b_pin = 0;
-		static const int ms_delay = 3;
-				
-		//this turns pin C0 on and off
-		//turns C0 HIGH
-		PORTB |= (1 << b_pin);
-		//PAUSE 250 miliseconds
-		_delay_ms(ms_delay);
-		//turns C0 LOW
-		PORTB &= ~(1 << b_pin);
-		//PAUSE 250 miliseconds
-		_delay_ms(ms_delay);
+		if (TCNT0 > 128)
+			PORTB |= (1 << 0);
+		else 
+			PORTB &= ~(1 << 0);
 	}
 }
 
