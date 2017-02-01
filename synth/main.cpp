@@ -10,15 +10,15 @@
 #include <util/delay.h>
 #include "tables.hpp"
 
-static const uint32_t sample_rate = 2 * 440;
-
+static const uint32_t sample_rate = 16000;
 void init_timers()
 {
 	// Samplestream
 	TCCR0A = (1<<WGM01);
-	TCCR0B = (4<<CS00); // rate is F_CPU / 256
+	TCCR0B = (4<<CS00); // Set prescaler to F_CPU / 256
 	OCR0A = F_CPU / (sample_rate * 256ULL);
 	TCNT0 = 0;
+	
 
 	// PWM
 	TCCR2B = (1<<CS00);
@@ -44,10 +44,16 @@ void init_timers()
 		
 }
 
+static uint32_t tone_freq = 440;
+
 static bool val = false;
+static uint16_t t = 0;
+static const uint16_t thresh = sample_rate / tone_freq;
 ISR(TIMER0_COMPA_vect)
 {
-	val = !val;
+	val = t > (thresh>>1);
+	if (t>thresh) t-=thresh;
+	t++;
 }
 
 
