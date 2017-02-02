@@ -24,3 +24,26 @@ static inline int8_t scale(int8_t val, int8_t scale)
 	return 0;
 }
 
+// call repeatedly with same value
+// compiler can then put the if statements on the outside
+static inline int8_t bulk_scale(int8_t val, uint8_t scaler)
+{
+#if 0
+	return (int16_t(val)*scaler)>>8;
+#else
+	int16_t res = 0;
+	if ((scaler&0x0F) && (val&0xF0)) {
+		if (scaler & 0x01) res += val;
+		if (scaler & 0x02) res += val << 1;
+		if (scaler & 0x04) res += val << 2;
+		if (scaler & 0x08) res += val << 3;
+	}
+	if (scaler&0xF0) {
+		if (scaler & 0x10) res += val << 4;
+		if (scaler & 0x20) res += val << 5;
+		if (scaler & 0x40) res += val << 6;
+		if (scaler & 0x80) res += val << 7;
+	}
+	return res>>8;
+#endif
+}

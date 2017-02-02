@@ -65,11 +65,12 @@ int main(void)
     // Start playback
     sei();
 	// Play the song
+	uint32_t pos=0;
 	while(1) {
 		while(stream_pos < mixbuff_len) {};
-		song.render<0>();
+		song.render<0>(pos++);
 		while(stream_pos >= mixbuff_len) {};
-		song.render<1>();
+		song.render<1>(pos++);
 	}
 }
 

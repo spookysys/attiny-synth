@@ -30,10 +30,6 @@ namespace instr
 		{
 			static_assert(mixbuff_len == 8, "Unexpected mix-buffer length");
 			volatile int16_t* dest = mixbuff[buff];
-
-			if (vol==0) return;
-			
-			int16_t step = (pitch>>pitch_speed)+1;
 			
 			if (pitch >= int16_t(lo_pitch)) {
 				dest[0] += iter();
@@ -44,18 +40,18 @@ namespace instr
 				dest[5] += iter();
 				dest[6] += iter();
 				dest[7] += iter();
-				pitch -= step;
+				pitch -= (pitch>>pitch_speed)+1;
 			} else if (vol > 0) {
 				uint8_t scaler = (vol>>4);
-				dest[0] += (int16_t(iter())*scaler)>>8;
-				dest[1] += (int16_t(iter())*scaler)>>8;
-				dest[2] += (int16_t(iter())*scaler)>>8;
-				dest[3] += (int16_t(iter())*scaler)>>8;
-				dest[4] += (int16_t(iter())*scaler)>>8;
-				dest[5] += (int16_t(iter())*scaler)>>8;
-				dest[6] += (int16_t(iter())*scaler)>>8;
-				dest[7] += (int16_t(iter())*scaler)>>8;
-				vol -= vol_speed;
+				dest[0] += bulk_scale(iter(), scaler);
+				dest[1] += bulk_scale(iter(), scaler);
+				dest[2] += bulk_scale(iter(), scaler);
+				dest[3] += bulk_scale(iter(), scaler);
+				dest[4] += bulk_scale(iter(), scaler);
+				dest[5] += bulk_scale(iter(), scaler);
+				dest[6] += bulk_scale(iter(), scaler);
+				dest[7] += bulk_scale(iter(), scaler);
+				vol -= (vol>>vol_speed)+1;
 			}
 		}
 	};
