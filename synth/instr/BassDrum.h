@@ -4,54 +4,85 @@
 
 namespace instr
 {
-	template<uint16_t hi_pitch, uint16_t lo_pitch, uint16_t pitch_speed, uint16_t vol_speed>
+	template<uint8_t noise_time, uint16_t start_pitch, uint16_t pitch_speed, uint16_t end_pitch, uint16_t fade_speed>
 	struct BassDrum
 	{
-		int16_t pitch;
-		int16_t vol;
-		uint16_t pos;
+		enum State {
+			OFF = 0,
+			SLIDE,
+			FADE
+		};
 		
-		inline int8_t iter() {
-			static_assert(sizeof(tables::bd)==256, "Unexpected table size");
+		State state = OFF;
+		uint16_t pos = 0;
+		
+		union {
+			uint16_t pitch;
+			uint16_t vol;
+		};
+
+
+		inline int8_t slideIter(uint16_t pitch) {
 			pos += pitch;
 			return tables::bd[pos>>8];
+		}
+			
+		inline int8_t fadeIter(uint16_t pitch, uint8_t scaler) {
+			pos += pitch;
+			return scale8(tables::bd[pos>>8], scaler);
 		}
 
 	public:
 
-		void trigger(uint16_t pitch)
+		void trigger()
 		{
-			this->pitch = int16_t(pitch);
-			this->vol = 0xFFF;
+			pitch = start_pitch;
+			state = SLIDE;
 		}
 
-		template<uint8_t buff>
-		void render()
+		void render(uint8_t buff)
 		{
-			static_assert(mixbuff_len == 8, "Unexpected mix-buffer length");
-			volatile int16_t* dest = mixbuff[buff];
+			static_assert(sizeof(tables::bd)==256, "Unexpected table size");
+			static_assert(globals::mixbuff_len == 8, "Unexpected mix-buffer length");
+			volatile int16_t* dest = globals::mixbuff[buff];
 			
-			if (pitch >= int16_t(lo_pitch)) {
-				dest[0] += iter();
-				dest[1] += iter();
-				dest[2] += iter();
-				dest[3] += iter();
-				dest[4] += iter();
-				dest[5] += iter();
-				dest[6] += iter();
-				dest[7] += iter();
-				pitch -= (pitch>>pitch_speed)+1;
-			} else if (vol > 0) {
-				uint8_t scaler = (vol>>4);
-				dest[0] += bulk_scale(iter(), scaler);
-				dest[1] += bulk_scale(iter(), scaler);
-				dest[2] += bulk_scale(iter(), scaler);
-				dest[3] += bulk_scale(iter(), scaler);
-				dest[4] += bulk_scale(iter(), scaler);
-				dest[5] += bulk_scale(iter(), scaler);
-				dest[6] += bulk_scale(iter(), scaler);
-				dest[7] += bulk_scale(iter(), scaler);
-				vol -= (vol>>vol_speed)+1;
+			switch(state) {
+				case OFF: return;
+				case SLIDE: {
+					dest[0] += slideIter(pitch);
+					dest[1] += slideIter(pitch);
+					dest[2] += slideIter(pitch);
+					dest[3] += slideIter(pitch);
+					dest[4] += slideIter(pitch);
+					dest[5] += slideIter(pitch);
+					dest[6] += slideIter(pitch);
+					dest[7] += slideIter(pitch);
+					uint16_t old_pitch = pitch;
+					pitch -= pitch >> pitch_speed;
+					pitch--;
+					if (pitch > old_pitch || pitch <= end_pitch) {
+						vol = 0xFFF;
+						state = FADE;
+					}
+				}
+				break;
+				case FADE:
+					uint8_t scaler = (vol>>4);
+					dest[0] += fadeIter(end_pitch, scaler);
+					dest[1] += fadeIter(end_pitch, scaler);
+					dest[2] += fadeIter(end_pitch, scaler);
+					dest[3] += fadeIter(end_pitch, scaler);
+					dest[4] += fadeIter(end_pitch, scaler);
+					dest[5] += fadeIter(end_pitch, scaler);
+					dest[6] += fadeIter(end_pitch, scaler);
+					dest[7] += fadeIter(end_pitch, scaler);
+					uint16_t old_vol = vol;
+					vol -= vol>>fade_speed;
+					vol--;
+					if (vol > old_vol) {
+						state = OFF;
+					}
+				break;
 			}
 		}
 	};

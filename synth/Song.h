@@ -2,15 +2,14 @@
 #include "instr/include.h"
 
 class Song {
-	instr::BassDrum<31000, 150, 7, 7> bd;
+	instr::BassDrum<32, 1000, 7, 150, 8> bd;
 public:
-	template<uint8_t buff>
-	void render(uint32_t pos)
+	inline void render(uint8_t buff, uint32_t pos)
 	{
 		if ((pos & 0x7FF) == 0) {
-			bd.trigger(1000);
+			bd.trigger();
 		}
-		bd.render<buff>();
+		bd.render(buff);
 	}
 };
 
