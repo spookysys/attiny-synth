@@ -1,6 +1,6 @@
 
 //set your clock speed
-#define F_CPU 16000000UL
+#define F_CPU 8000000UL
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -11,27 +11,26 @@
 
 
 
-
 // initialize
 void init()
 {
 	// Set B-ports to output
 	DDRB = 0xFF;
-	
-	// Sample streaming interrupt
-	TCCR0A = (1<<WGM01);
-	TCCR0B = (1<<CS02); // Set prescaler to F_CPU / 256
-	OCR0A = F_CPU / (globals::sample_rate * 256ULL);
-	TCNT0 = 0;
-	
-	// PWM
-	TCCR2A = (1<<COM2A1) | (1<<WGM21) | (1<<WGM20); // Fast PWM, non-inverting mode
-	TCCR2B = (1<<CS20);
-	OCR2A = 128;
-	TCNT2 = 0;
 
-	// Enable interrupt
-	TIMSK0 |= (1<<OCIE0A); // timer compare A interrupt
+	// PWM
+	TCCR0A = (1<<COM0A1) | (1<<WGM01) | (1<<WGM00); // Fast PWM, non-inverting mode
+	TCCR0B = (1<<CS00);
+	OCR0A = 128;
+	TCNT0 = 0;
+
+	// Sample streaming interrupt
+	TCCR1 = (1<<CTC1) | (1<<CS11) | (1<<CS10); // Set prescaler to F_CPU / 4
+	uint8_t timer1_oc = F_CPU / (globals::sample_rate * 4ULL);
+	OCR1A = timer1_oc; // isr value
+	OCR1C = timer1_oc; // reset value
+	TCNT1 = 0;
+	TIMSK |= (1<<OCIE1A); // timer compare A interrupt
+	
 }
 
 
@@ -39,12 +38,12 @@ void init()
 static volatile uint8_t stream_pos = 0;
 
 // streaming interrupt
-ISR(TIMER0_COMPA_vect)
+ISR(TIMER1_COMPA_vect)
 {
 	int16_t val = globals::mixbuff[0][stream_pos] + 0x80;
 	int8_t hi = val>>8;
-	if (unlikely(hi)) OCR2A = ~(hi>>7);
-	else OCR2A = uint8_t(val);
+	if (unlikely(hi)) OCR0A = ~(hi>>7);
+	else OCR0A = uint8_t(val);
 	globals::mixbuff[0][stream_pos] = 0;
 	stream_pos = (stream_pos+1) & ((globals::mixbuff_len<<1)-1);
 }
@@ -62,7 +61,7 @@ int main(void)
 	
 	// Start playback
 	sei();
-	
+
 	// Play the song
 	uint32_t pos=0;
 	while(1) {

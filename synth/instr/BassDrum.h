@@ -4,7 +4,7 @@
 
 namespace instr
 {
-	template<uint8_t noise_time, uint16_t start_pitch, uint16_t pitch_speed, uint16_t end_pitch, uint16_t fade_speed>
+	template<uint16_t start_pitch, uint16_t pitch_speed, uint16_t end_pitch, uint16_t fade_speed>
 	struct BassDrum
 	{
 		enum State {
