@@ -2,12 +2,13 @@
 import math
 
 print("#pragma once");
-print("namespace tables {");
+print("namespace tables {")
 
+# NOTE: This script is currently broken. Fix it!
 
 # Outputs C++ defining a table of integers
 def output(type, name, list):
-	print("static const " + type + " " + name + "["+ str(list.length) + "] = {")
+	print("static const " + type + " " + name + "["+ str(len(list)) + "] = {")
 	print(','.join([str(x) for x in list]))
 	print("};")
 
@@ -26,15 +27,13 @@ def normalize_int8(x):
 output("int8_t", "bd", listify( 
 	lambda x: normalize_int8(
 		math.sin(x * 2*math.pi)
-	)
+	),
+	256
 ))
 
 # Pitch table
-output("uint8_t", 
-table_uint8(12, "pitch", lambda x:
-	return (x/12)**2
-)
-	
+# output("uint8_t", 
+# 	table_uint8(12, "pitch", lambda x: (x/12)**2 )
+# )
 
-
-print("} // namespace");
+print("} // namespace tables")

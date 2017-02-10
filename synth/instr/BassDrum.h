@@ -1,19 +1,16 @@
 #pragma once
 #include "common.h"
-#include "tables.h"
 
 namespace instr
 {
 	template<uint16_t start_pitch, uint16_t pitch_speed, uint16_t fade_speed>
-	struct BassDrum
+	class BassDrum
 	{
 		enum State {
 			OFF = 0,
 			SLIDE,
 			FADE
-		};
-		
-		State state = OFF;
+		} state;
 		
 		union {		
 			uint16_t pos;
@@ -28,7 +25,6 @@ namespace instr
 			uint16_t vol;
 		};
 
-
 		inline int8_t slideIter(uint16_t pitch) {
 			pos += pitch;
 			return tables::bd[pos_hi];
@@ -40,6 +36,10 @@ namespace instr
 		}
 
 	public:
+		void reset()
+		{
+			this->state = OFF;
+		}
 
 		void trigger()
 		{
@@ -73,8 +73,7 @@ namespace instr
 						this->last_v = last_v;
 						this->state = FADE;
 					}
-				}
-				break;
+				} break;
 				case FADE: {
 					uint8_t scaler = (vol>>8);
 					int16_t v0 = fadeIter(scaler);
@@ -94,8 +93,7 @@ namespace instr
 					vol -= vol>>fade_speed;
 					vol--;
 					if (vol > old_vol) this->state = OFF;
-				} 
-				break;
+				} break;
 			}
 		}
 	};

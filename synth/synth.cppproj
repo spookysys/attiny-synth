@@ -193,10 +193,22 @@
     <Compile Include="instr\common.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="instr\include.h">
+    <Compile Include="instr\lib\AdpcmSimple.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="instr\tables.h">
+    <Compile Include="instr\lib\common.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="instr\lib\Envelope.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="instr\lib\OneSynth.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="instr\Bass.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="instr\lib\oneliners.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.cpp">
@@ -205,12 +217,16 @@
     <Compile Include="Song.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="tables.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="instr" />
+    <Folder Include="instr\lib" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="instr\tables.py">
+    <None Include="tables.py">
       <SubType>compile</SubType>
     </None>
   </ItemGroup>
