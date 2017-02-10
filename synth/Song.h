@@ -2,7 +2,7 @@
 #include "instr/include.h"
 
 class Song {
-	instr::BassDrum<1000, 7, 150, 8> bd;
+	instr::BassDrum<1000, 7, 8> bd;
 public:
 	inline void render(uint8_t buff, uint32_t pos)
 	{

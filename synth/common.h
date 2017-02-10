@@ -10,8 +10,9 @@ namespace globals {
 	static const uint32_t sample_rate = 22000;
 }
 
-// hint: call scale functions repeatedly with same value
-// - compiler can then put the if statements on the outside
+
+// hint: Try to call the scale functions repeatedly with the same variable for scale.
+// Compiler can then move the if/switch statements to the outermost scope and give a big speedup
 
 
 // range of scale: 0-8 (maps to 0.-1.)

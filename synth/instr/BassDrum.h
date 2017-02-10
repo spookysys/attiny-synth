@@ -4,7 +4,7 @@
 
 namespace instr
 {
-	template<uint16_t start_pitch, uint16_t pitch_speed, uint16_t end_pitch, uint16_t fade_speed>
+	template<uint16_t start_pitch, uint16_t pitch_speed, uint16_t fade_speed>
 	struct BassDrum
 	{
 		enum State {
@@ -14,7 +14,14 @@ namespace instr
 		};
 		
 		State state = OFF;
-		uint16_t pos = 0;
+		
+		union {		
+			uint16_t pos;
+			struct {
+				int8_t last_v;
+				uint8_t pos_hi;
+			};
+		};
 		
 		union {
 			uint16_t pitch;
@@ -24,12 +31,12 @@ namespace instr
 
 		inline int8_t slideIter(uint16_t pitch) {
 			pos += pitch;
-			return tables::bd[pos>>8];
+			return tables::bd[pos_hi];
 		}
 			
-		inline int8_t fadeIter(uint16_t pitch, uint8_t scaler) {
-			pos += pitch;
-			return scale8(tables::bd[pos>>8], scaler);
+		inline int8_t fadeIter(uint8_t scaler) {
+			pos_hi++;
+			return scale8(tables::bd[pos_hi], scaler);
 		}
 
 	public:
@@ -56,32 +63,38 @@ namespace instr
 					dest[4] += slideIter(pitch);
 					dest[5] += slideIter(pitch);
 					dest[6] += slideIter(pitch);
-					dest[7] += slideIter(pitch);
-					uint16_t old_pitch = pitch;
+					int8_t last_v = slideIter(pitch);
+					dest[7] += last_v;
 					pitch -= pitch >> pitch_speed;
 					pitch--;
-					if (pitch > old_pitch || pitch <= end_pitch) {
-						vol = 0xFFF;
-						state = FADE;
+					static const uint16_t end_pitch = 0x80;
+					if (pitch <= end_pitch) {
+						this->vol = 0xFFFF;
+						this->last_v = last_v;
+						this->state = FADE;
 					}
 				}
 				break;
-				case FADE:
-					uint8_t scaler = (vol>>4);
-					dest[0] += fadeIter(end_pitch, scaler);
-					dest[1] += fadeIter(end_pitch, scaler);
-					dest[2] += fadeIter(end_pitch, scaler);
-					dest[3] += fadeIter(end_pitch, scaler);
-					dest[4] += fadeIter(end_pitch, scaler);
-					dest[5] += fadeIter(end_pitch, scaler);
-					dest[6] += fadeIter(end_pitch, scaler);
-					dest[7] += fadeIter(end_pitch, scaler);
+				case FADE: {
+					uint8_t scaler = (vol>>8);
+					int16_t v0 = fadeIter(scaler);
+					int16_t v1 = fadeIter(scaler);
+					int16_t v2 = fadeIter(scaler);
+					int16_t v3 = fadeIter(scaler);
+					dest[0] += (this->last_v+v0)>>1;
+					dest[1] += v0;
+					dest[2] += (v0+v1)>>1;
+					dest[3] += v1;
+					dest[4] += (v1+v2)>>1;
+					dest[5] += v2;
+					dest[6] += (v2+v3)>>1;
+					dest[7] += v3;
+					this->last_v = v3;
 					uint16_t old_vol = vol;
 					vol -= vol>>fade_speed;
 					vol--;
-					if (vol > old_vol) {
-						state = OFF;
-					}
+					if (vol > old_vol) this->state = OFF;
+				} 
 				break;
 			}
 		}
