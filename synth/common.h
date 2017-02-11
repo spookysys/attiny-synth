@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <avr/pgmspace.h>
 #include "tables.h"
 
 #define likely(x)      __builtin_expect(!!(x), 1)
@@ -17,6 +18,7 @@ namespace globals {
 }
 
 
+extern void fail();
 
 // range of 3-bit scale: [0:7] maps to [1/8 : 1]
 template<typename T>

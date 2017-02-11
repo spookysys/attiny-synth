@@ -7,8 +7,8 @@
 #include <avr/pgmspace.h>
 #include <avr/sleep.h>
 #include <util/delay.h>
+#include "common.h"
 #include "Song.h"
-
 
 
 // initialize
@@ -53,11 +53,6 @@ ISR(TIMER1_COMPA_vect)
 // the song
 static Song song;
 
-static void fail()
-{
-	// just die
-	while(1){}
-}
 
 // do it now
 int main(void)

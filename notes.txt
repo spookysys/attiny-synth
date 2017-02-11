@@ -35,3 +35,4 @@ OSCCAL *= 2.75 (Set RC Oscillator to 22MHz)
 LSM = 1 (Set 8xPLL input to half of RC oscillator; result is x4 and 88MHz)
 PLLE = 1 (enable PLL)
 assert(PLOCK==1);
+

@@ -105,7 +105,7 @@
       <Value>%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\include</Value>
     </ListValues>
   </avrgcccpp.compiler.directories.IncludePaths>
-  <avrgcccpp.compiler.optimization.level>Optimize most (-O3)</avrgcccpp.compiler.optimization.level>
+  <avrgcccpp.compiler.optimization.level>Optimize for size (-Os)</avrgcccpp.compiler.optimization.level>
   <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
   <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
   <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
@@ -188,7 +188,13 @@
     <Compile Include="common.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="instr\AdpcmDrum.h">
+    <Compile Include="instr\AdpcmDecoder.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="instr\AdpcmDecoder.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="instr\DrumKit.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="instr\BassDrum.h">
@@ -203,10 +209,19 @@
     <Compile Include="instr\OneSynth.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="instr\update_yl.s">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="samples\Example_2bit.c">
+    <Compile Include="samples\common.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="samples\samples.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="samples\samples.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Song.h">
@@ -225,10 +240,38 @@
   <ItemGroup>
     <Folder Include="instr" />
     <Folder Include="samples" />
+    <Folder Include="samples\inc" />
     <Folder Include="waveforms" />
   </ItemGroup>
   <ItemGroup>
     <None Include="instr\info.md">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="samples\inc\hihat-808.inc">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="samples\inc\hihat-analog.inc">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="samples\inc\hihat-electro.inc">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="samples\inc\perc-808.inc">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="samples\inc\perc-metal.inc">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="samples\inc\snare-808.inc">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="samples\inc\snare-electro.inc">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="samples\inc\snare-tape.inc">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="samples\samples.py">
       <SubType>compile</SubType>
     </None>
     <None Include="tables.py">

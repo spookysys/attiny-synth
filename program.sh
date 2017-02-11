@@ -10,3 +10,4 @@ avrdude -c usbtiny -p attiny85 -U lfuse:w:0xe1:m -U hfuse:w:0xdf:m -U efuse:w:0x
 # Upload release build
 avrdude -c usbtiny -p attiny85 -U flash:w:synth/Release/synth.hex
 
+

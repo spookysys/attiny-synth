@@ -5,5 +5,5 @@ Release
 /dox/*/AVR*/*
 /dox/*/AT*/*
 /samples/99drums/*
-/samples/step1
-/samples/step2
+/samples/tmp*
+/samples/done*
