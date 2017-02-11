@@ -6,7 +6,7 @@
 
 class Song 
 {
-	instr::OneSynth squeek;
+	instr::OneSynth<8, 31> squeek;
 	instr::BassDrum<> bd;
 	instr::Fabrikklyd<> fabrikklyd;
 	
@@ -46,7 +46,7 @@ public:
 		}		
 
 		
-		squeek.render<8, 31>(buff, squeek_wf);
+		squeek.render<>(buff, squeek_wf);
 		bd.render(buff);
 		
 		// fabrikklyd med sidechain-kompressor

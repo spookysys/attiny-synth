@@ -6,9 +6,10 @@ namespace instr
 {
 	
 	// Play a waveform at different pitches with a simple volume envelope
+	template<uint8_t shr, uint8_t decay_speed, typename PosType=uint16_t>
 	class OneSynth
 	{
-		uint32_t pos;
+		PosType pos;
 		uint16_t vol;
 		uint16_t pitch;
 
@@ -20,7 +21,7 @@ namespace instr
 			DECAY
 		} state;
 		
-		template<uint8_t shr, typename WaveformFunc>
+		template<typename WaveformFunc>
 		int8_t iter(WaveformFunc waveform_func)
 		{
 			return waveform_func((pos += pitch) >> shr);
@@ -34,7 +35,7 @@ namespace instr
 		}
 			
 
-		template<uint8_t shr, uint8_t decay_speed, typename WaveformFunc>
+		template<typename WaveformFunc>
 		void render(uint8_t buff, WaveformFunc waveform_func)
 		{
 			int16_t* dest = globals::mixbuff[buff];
@@ -42,34 +43,34 @@ namespace instr
 				case OFF: return;
 				case RAMP:
 					// dest[0] += 0;
-					dest[1] += scale3(iter<shr>(waveform_func), 0);
-					dest[2] += scale3(iter<shr>(waveform_func), 1);
-					dest[3] += scale3(iter<shr>(waveform_func), 2);
-					dest[4] += scale3(iter<shr>(waveform_func), 3);
-					dest[5] += scale3(iter<shr>(waveform_func), 4);
-					dest[6] += scale3(iter<shr>(waveform_func), 5);
-					dest[7] += scale3(iter<shr>(waveform_func), 6);
+					dest[1] += scale3(iter(waveform_func), 0);
+					dest[2] += scale3(iter(waveform_func), 1);
+					dest[3] += scale3(iter(waveform_func), 2);
+					dest[4] += scale3(iter(waveform_func), 3);
+					dest[5] += scale3(iter(waveform_func), 4);
+					dest[6] += scale3(iter(waveform_func), 5);
+					dest[7] += scale3(iter(waveform_func), 6);
 					state = SUSTAIN;
 					break;
 				case SUSTAIN:
-					dest[0] += iter<shr>(waveform_func);
-					dest[1] += iter<shr>(waveform_func);
-					dest[2] += iter<shr>(waveform_func);
-					dest[3] += iter<shr>(waveform_func);
-					dest[4] += iter<shr>(waveform_func);
-					dest[5] += iter<shr>(waveform_func);
-					dest[6] += iter<shr>(waveform_func);
-					dest[7] += iter<shr>(waveform_func);
+					dest[0] += iter(waveform_func);
+					dest[1] += iter(waveform_func);
+					dest[2] += iter(waveform_func);
+					dest[3] += iter(waveform_func);
+					dest[4] += iter(waveform_func);
+					dest[5] += iter(waveform_func);
+					dest[6] += iter(waveform_func);
+					dest[7] += iter(waveform_func);
 					break;
 				case DECAY: {
-					dest[0] += scale8(iter<shr>(waveform_func), vol>>8);
-					dest[1] += scale8(iter<shr>(waveform_func), vol>>8);
-					dest[2] += scale8(iter<shr>(waveform_func), vol>>8);
-					dest[3] += scale8(iter<shr>(waveform_func), vol>>8);
-					dest[4] += scale8(iter<shr>(waveform_func), vol>>8);
-					dest[5] += scale8(iter<shr>(waveform_func), vol>>8);
-					dest[6] += scale8(iter<shr>(waveform_func), vol>>8);
-					dest[7] += scale8(iter<shr>(waveform_func), vol>>8);
+					dest[0] += scale8(iter(waveform_func), vol>>8);
+					dest[1] += scale8(iter(waveform_func), vol>>8);
+					dest[2] += scale8(iter(waveform_func), vol>>8);
+					dest[3] += scale8(iter(waveform_func), vol>>8);
+					dest[4] += scale8(iter(waveform_func), vol>>8);
+					dest[5] += scale8(iter(waveform_func), vol>>8);
+					dest[6] += scale8(iter(waveform_func), vol>>8);
+					dest[7] += scale8(iter(waveform_func), vol>>8);
 					vol -= scale8(vol>>8, decay_speed)<<4;
 					if ((vol>>8) == 0) this->state = OFF;
 				} break;
