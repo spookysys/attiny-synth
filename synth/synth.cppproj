@@ -188,12 +188,6 @@
     <Compile Include="common.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="instr\AdpcmDecoder.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="instr\AdpcmDecoder.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="instr\DrumKit.h">
       <SubType>compile</SubType>
     </Compile>
@@ -209,10 +203,13 @@
     <Compile Include="instr\OneSynth.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="instr\update_yl.s">
+    <Compile Include="main.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="main.cpp">
+    <Compile Include="samples\adpcm.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="samples\adpcm.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="samples\common.h">

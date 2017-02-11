@@ -36,10 +36,10 @@ public:
 	
 	inline void render(globals::Mixbuff buff_i, uint32_t pos)
 	{
-		/*
+		
 		if ((pos & 0x7FF) == 0) {
 			bd.trigger();
-		}*/
+		}
 		
 		if ((pos & 0x7FF) == 0x400) {
 			/*
@@ -47,7 +47,7 @@ public:
 			squeek.setPitch(1<<((rand8()&3) + 7));
 			squeek.trigger();
 			*/
-			drumkit.trigger(2);
+			drumkit.trigger(0);
 		}
 		
 		/*
@@ -58,7 +58,7 @@ public:
 
 		
 		//squeek.render<>(buff_i, squeek_wf);
-		//bd.render(buff_i);
+		bd.render(buff_i);
 		drumkit.render<6>(buff_i);
 		//fabrikklyd.render<3>(buff_i, pos+0x400, waveforms::oneliner<4, uint32_t>);		
 	}

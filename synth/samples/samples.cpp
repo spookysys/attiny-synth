@@ -8,7 +8,7 @@ namespace samples
 		#include "inc/hihat-808.inc"
 	};
 	
-	
+	/*
 	const uint8_t hihat_analog[] PROGMEM = {
 		#include "inc/hihat-analog.inc"
 	};
@@ -16,6 +16,7 @@ namespace samples
 	const uint8_t hihat_electro[] PROGMEM = {
 		#include "inc/hihat-electro.inc"
 	};
+	*/
 	
 	
 	const uint8_t perc_808[] PROGMEM = {
@@ -23,10 +24,11 @@ namespace samples
 	};
 	
 		
-	
+	/*
 	const uint8_t perc_metal[] PROGMEM = {
 		#include "inc/perc-metal.inc"
 	};
+	*/
 
 			/*	
 	const uint8_t snare_electro[] PROGMEM = {
@@ -34,11 +36,11 @@ namespace samples
 	};*/
 	
 		
-	
+	/*
 	const uint8_t snare_808[] PROGMEM = {
 		#include "inc/snare-808.inc"
 	};
-	
+	*/
 	
 	/*
 	const uint8_t snare_tape[] PROGMEM = {
@@ -49,12 +51,12 @@ namespace samples
 	
 	const Sample samples[num_samples] = {
 		{ sizeof(hihat_808), hihat_808 },
-		{ sizeof(hihat_analog), hihat_analog },
-		{ sizeof(hihat_electro), hihat_electro },
+		//{ sizeof(hihat_analog), hihat_analog },
+		//{ sizeof(hihat_electro), hihat_electro },
 		{ sizeof(perc_808), perc_808 },
-		{ sizeof(perc_metal), perc_metal },
+		//{ sizeof(perc_metal), perc_metal },
 		//{ sizeof(snare_electro), snare_electro },
-		{ sizeof(snare_808), snare_808 },
+		//{ sizeof(snare_808), snare_808 },
 		//{ sizeof(snare_tape), snare_tape }
 	};
 	

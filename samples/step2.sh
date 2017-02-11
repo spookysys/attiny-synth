@@ -4,7 +4,7 @@
 mkdir -p done_inc done_raw
 for f in `ls tmp2`
 do
-	./encode.exe -l -2 -i tmp2/$f -c done_inc/${f%.*}.inc
-	./encode.exe -l -2 -i tmp2/$f -o done_raw/${f%.*}.raw
+	./encode.exe -l -4 -i tmp2/$f -c done_inc/${f%.*}.inc
+	./encode.exe -l -4 -i tmp2/$f -o done_raw/${f%.*}.raw
 done
 

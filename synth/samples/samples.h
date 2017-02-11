@@ -9,7 +9,7 @@ namespace samples
 		const uint8_t* data;
 	};
 	
-	static const uint8_t num_samples = 6;
+	static const uint8_t num_samples = 2;
 	extern const Sample samples[num_samples];
 	
 }
