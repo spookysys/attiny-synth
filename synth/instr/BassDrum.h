@@ -15,7 +15,7 @@ namespace instr
 		union {		
 			uint16_t pos;
 			struct {
-				int8_t last_v;
+				int8_t v;
 				uint8_t pos_hi;
 			};
 		};
@@ -32,7 +32,7 @@ namespace instr
 			
 		inline int8_t fadeIter() {
 			pos_hi++;
-			vol = vol - scale4(vol>>8, decay_speed) - 1;
+			vol = vol - scale3(vol>>8, decay_speed) - 1;
 			return scale8(tables::bd[pos_hi], vol>>8);
 		}
 
@@ -64,14 +64,14 @@ namespace instr
 					dest[4] += slideIter();
 					dest[5] += slideIter();
 					dest[6] += slideIter();
-					int8_t last_v = slideIter();
-					dest[7] += last_v;
+					int8_t v = slideIter();
+					dest[7] += v;
 					pitch -= pitch >> slide_speed;
 					pitch--;
 					static const uint16_t end_pitch = 0x80;
 					if (pitch <= end_pitch) {
 						this->vol = 0xFFFF;
-						this->last_v = last_v;
+						this->v = v;
 						this->state = DECAY;
 					}
 				} break;
@@ -81,7 +81,7 @@ namespace instr
 					int16_t v2 = fadeIter();
 					int16_t v3 = fadeIter();
 					if (!(vol>>8)) this->state = OFF;
-					dest[0] += (this->last_v+v0)>>1;
+					dest[0] += (this->v+v0)>>1;
 					dest[1] += v0;
 					dest[2] += (v0+v1)>>1;
 					dest[3] += v1;
@@ -89,7 +89,7 @@ namespace instr
 					dest[5] += v2;
 					dest[6] += (v2+v3)>>1;
 					dest[7] += v3;
-					this->last_v = v3;
+					this->v = v3;
 				} break;
 			}
 		}

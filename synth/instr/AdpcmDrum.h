@@ -5,9 +5,9 @@ namespace instr
 	namespace lib
 	{
 		
-		class AdpcmSimple
+		class AdpcmDrum
 		{
-		
+			
 		
 		};
 	}

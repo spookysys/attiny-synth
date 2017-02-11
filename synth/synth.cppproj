@@ -196,10 +196,13 @@
     <Compile Include="instr\common.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="instr\OneGroove.h">
+    <Compile Include="instr\Fabrikklyd.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="instr\OneSynth.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="instr\waveforms.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.cpp">
