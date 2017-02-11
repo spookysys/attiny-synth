@@ -1,6 +1,9 @@
 Debug
 Release
-.vs
 *.xml
-dox/*/AVR*/*
-dox/*/AT*/*
+/.vs
+/dox/*/AVR*/*
+/dox/*/AT*/*
+/samples/99drums/*
+/samples/step1
+/samples/step2

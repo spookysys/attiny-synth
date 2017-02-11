@@ -206,6 +206,9 @@
     <Compile Include="main.cpp">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="samples\Example_2bit.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Song.h">
       <SubType>compile</SubType>
     </Compile>
@@ -221,6 +224,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="instr" />
+    <Folder Include="samples" />
     <Folder Include="waveforms" />
   </ItemGroup>
   <ItemGroup>

@@ -11,7 +11,7 @@ namespace globals {
 		SWAP0 = 0,
 		SWAP1 = 1
 	};
-	static const uint32_t sample_rate = 22000;
+	static const uint32_t sample_rate = 22050;
 	static const uint8_t mixbuff_len = 8;
 	extern int16_t mixbuff[2][mixbuff_len];
 }
