@@ -52,7 +52,7 @@ namespace instr
 		{
 			static_assert(sizeof(tables::bd)==256, "Unexpected table size");
 			static_assert(globals::mixbuff_len == 8, "Unexpected mix-buffer length");
-			volatile int16_t* dest = globals::mixbuff[buff];
+			int16_t* dest = globals::mixbuff[buff];
 			
 			switch(state) {
 				case OFF: return;

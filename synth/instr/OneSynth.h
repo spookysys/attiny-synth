@@ -37,7 +37,7 @@ namespace instr
 		template<uint8_t shr, uint8_t decay_speed, typename WaveformFunc>
 		void render(uint8_t buff, WaveformFunc waveform_func)
 		{
-			volatile int16_t* dest = globals::mixbuff[buff];
+			int16_t* dest = globals::mixbuff[buff];
 			switch (state) {
 				case OFF: return;
 				case RAMP:

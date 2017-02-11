@@ -7,8 +7,8 @@
 class Song 
 {
 	instr::OneSynth squeek;
-	instr::BassDrum<1000, 6, 1> bd;
-	instr::Fabrikklyd fabrikklyd;
+	instr::BassDrum<> bd;
+	instr::Fabrikklyd<> fabrikklyd;
 	
 	static int8_t squeek_wf(uint32_t t)
 	{
@@ -27,6 +27,7 @@ public:
 	{
 		bd.reset();
 		squeek.reset();
+		fabrikklyd.reset();
 	}
 	inline void render(uint8_t buff, uint32_t pos)
 	{
@@ -40,14 +41,16 @@ public:
 			squeek.trigger();
 		}
 		
-		if ((pos & 0x7FF) == 0x700) {
+		if ((pos & 0x7FF) == 0x500) {
 			squeek.release();
 		}		
 
 		
 		squeek.render<8, 31>(buff, squeek_wf);
 		bd.render(buff);
-		//og.render_midres(buff, 5, pos+0x200);
+		
+		// fabrikklyd med sidechain-kompressor
+		fabrikklyd.render<3>(buff, pos+0x400, instr::wfs::oneliner<4>);
 	}
 };
 

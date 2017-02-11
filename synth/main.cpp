@@ -40,11 +40,12 @@ static volatile uint8_t stream_pos = 0;
 // streaming interrupt
 ISR(TIMER1_COMPA_vect)
 {
-	int16_t val = uint16_t(globals::mixbuff[0][stream_pos]) + 0x80;
+	int16_t* mixbuff = globals::mixbuff[0]; // flatten the two buffers into one
+	int16_t val = uint16_t(mixbuff[stream_pos]) + 0x80;
 	if (unlikely(val<0)) val = 0;
 	else if (unlikely(val>=0xFF)) val = 0xFF;
 	OCR0A = uint8_t(val);
-	globals::mixbuff[0][stream_pos] = 0;
+	mixbuff[stream_pos] = 0;
 	stream_pos = (stream_pos+1) & ((globals::mixbuff_len<<1)-1);
 }
 

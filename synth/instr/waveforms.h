@@ -11,8 +11,8 @@ namespace instr
 	{
 		
 		// these were all the oneliners that didn't have mul/div/mod
-		template<uint8_t sel, typename T>
-		int8_t oneliner(T t)
+		template<uint8_t sel>
+		inline int8_t oneliner(uint32_t t)
 		{
 			switch (sel)
 			{
