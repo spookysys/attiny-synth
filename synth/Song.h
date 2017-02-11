@@ -2,22 +2,23 @@
 #include "instr/BassDrum.h"
 #include "instr/OneSynth.h"
 #include "instr/Fabrikklyd.h"
-#include "instr/waveforms.h"
+#include "waveforms/this.h"
+
 
 class Song 
 {
-	instr::OneSynth<8, 31> squeek;
+	instr::OneSynth<8, 2> squeek;
 	instr::BassDrum<> bd;
 	instr::Fabrikklyd<> fabrikklyd;
 	
 	static int8_t squeek_wf(uint32_t t)
 	{
-		using namespace instr::wfs;
+		using namespace waveforms;
 		return xfade<9>(
 			t, 
-			tone<SAW>,
-			[](uint32_t t){ 
-				return scale3(tone<SQUARE>(t), 4); 
+			tone<SAW, uint8_t>,
+			[](uint8_t t){ 
+				return scale3(tone<SQUARE, uint8_t>(t), 4); 
 			}
 		);
 	}
@@ -29,7 +30,8 @@ public:
 		squeek.reset();
 		fabrikklyd.reset();
 	}
-	inline void render(uint8_t buff, uint32_t pos)
+	
+	inline void render(globals::Mixbuff buff_i, uint32_t pos)
 	{
 		if ((pos & 0x7FF) == 0) {
 			bd.trigger();
@@ -37,7 +39,7 @@ public:
 		
 		if ((pos & 0x7FF) == 0x400) {
 			squeek.setPos(0);
-			squeek.setPitch(200+rand8());
+			squeek.setPitch(1<<((rand8()&3) + 7));
 			squeek.trigger();
 		}
 		
@@ -46,11 +48,10 @@ public:
 		}		
 
 		
-		squeek.render<>(buff, squeek_wf);
-		bd.render(buff);
+		squeek.render<>(buff_i, squeek_wf);
+		bd.render(buff_i);
+		fabrikklyd.render<3>(buff_i, pos+0x400, waveforms::oneliner<4, uint32_t>);
 		
-		// fabrikklyd med sidechain-kompressor
-		fabrikklyd.render<3>(buff, pos+0x400, instr::wfs::oneliner<4>);
 	}
 };
 

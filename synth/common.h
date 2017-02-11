@@ -5,15 +5,17 @@
 #define likely(x)      __builtin_expect(!!(x), 1)
 #define unlikely(x)    __builtin_expect(!!(x), 0)
 
+
 namespace globals {	
+	enum Mixbuff {
+		SWAP0 = 0,
+		SWAP1 = 1
+	};
+	static const uint32_t sample_rate = 22000;
 	static const uint8_t mixbuff_len = 8;
 	extern int16_t mixbuff[2][mixbuff_len];
-	static const uint32_t sample_rate = 22000;
 }
 
-
-// hint: Try to call the scale functions repeatedly with the same variable for scale.
-// Compiler can then move the if/switch statements to the outermost scope and give a big speedup
 
 
 // range of 3-bit scale: [0:7] maps to [1/8 : 1]
@@ -35,31 +37,16 @@ static inline T scale3(T val, int8_t scale)
 }
 
 
-// range of scale: [0:255] maps to [1/256 : 1]
-template<typename T>
-static inline T scale8(T val, uint8_t scaler)
+// range of scale: [0:255] maps to [0 : 1]
+
+static inline uint8_t scale8_u8(uint8_t val, uint8_t scaler)
 {
-#if 0
-	uint16_t scaler2 = uint16_t(scaler)+1;
-	return (int32_t(val)*scaler2)>>8;
-#else
-	if (scaler==0xFF) return val;
-	scaler++; // 0 is not interesting
-	int32_t res = 0;
-	if (val & 0xF0) {
-		if (scaler & 0x01) res += val;
-		if (scaler & 0x02) res += val << 1;
-		if (scaler & 0x04) res += val << 2;
-		if (scaler & 0x08) res += val << 3;
-	}
-	if (scaler & 0xF0) {
-		if (scaler & 0x10) res += val << 4;
-		if (scaler & 0x20) res += val << 5;
-		if (scaler & 0x40) res += val << 6;
-		if (scaler & 0x80) res += val << 7;
-	}
-	return res>>8; // TODO: Rewrite this routine to kill this shift
-#endif
+	return (uint16_t(val)*(uint16_t(scaler)+1)) >> 8;
+}
+
+static inline int8_t scale8_s8(int8_t val, uint8_t scaler)
+{
+	return (int16_t(val)*(uint16_t(scaler)+1)) >> 8;
 }
 
 

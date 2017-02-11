@@ -53,6 +53,11 @@ ISR(TIMER1_COMPA_vect)
 // the song
 static Song song;
 
+static void fail()
+{
+	// just die
+	while(1){}
+}
 
 // do it now
 int main(void)
@@ -67,10 +72,15 @@ int main(void)
 	// Play the song
 	uint32_t pos=0;
 	while(1) {
+		// Buffer SWAP0
 		while(stream_pos < globals::mixbuff_len) {};
-		song.render(0, pos++);
+		song.render(globals::SWAP0, pos++);
+		if (stream_pos < globals::mixbuff_len) fail();
+		
+		// Buffer SWAP1
 		while(stream_pos >= globals::mixbuff_len) {};
-		song.render(1, pos++);
+		song.render(globals::SWAP1, pos++);
+		if (stream_pos >= globals::mixbuff_len) fail();
 	}
 }
 

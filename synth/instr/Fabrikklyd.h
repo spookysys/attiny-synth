@@ -4,10 +4,9 @@
 namespace instr
 {
 	// Fabrikklyd med sidechain-kompressor
-	// note: må legges til helt til slutt for at kompressoren skal gi mening
 	// analyserer lyden som allerede ligger i mixbufferet og bruker dette
 	// til å styre en innebygget kompressor som justerer fabrikkstøyvolumet
-
+	
 	template<uint8_t loudness_response=3, uint8_t quietness_response=6>
 	class Fabrikklyd
 	{
@@ -62,14 +61,14 @@ namespace instr
 			pos <<= (3-reduce);
 			uint8_t mask = (1<<reduce)-1;
 			int8_t v;
-			if (!(0 & mask)) v = scale8(waveform_func(pos++), vol); dest[0] += v;
-			if (!(1 & mask)) v = scale8(waveform_func(pos++), vol); dest[1] += v;
-			if (!(2 & mask)) v = scale8(waveform_func(pos++), vol); dest[2] += v;
-			if (!(3 & mask)) v = scale8(waveform_func(pos++), vol); dest[3] += v;
-			if (!(4 & mask)) v = scale8(waveform_func(pos++), vol); dest[4] += v;
-			if (!(5 & mask)) v = scale8(waveform_func(pos++), vol); dest[5] += v;
-			if (!(6 & mask)) v = scale8(waveform_func(pos++), vol); dest[6] += v;
-			if (!(7 & mask)) v = scale8(waveform_func(pos++), vol); dest[7] += v;
+			if (!(0 & mask)) v = scale8_s8(waveform_func(pos++), vol); dest[0] += v;
+			if (!(1 & mask)) v = scale8_s8(waveform_func(pos++), vol); dest[1] += v;
+			if (!(2 & mask)) v = scale8_s8(waveform_func(pos++), vol); dest[2] += v;
+			if (!(3 & mask)) v = scale8_s8(waveform_func(pos++), vol); dest[3] += v;
+			if (!(4 & mask)) v = scale8_s8(waveform_func(pos++), vol); dest[4] += v;
+			if (!(5 & mask)) v = scale8_s8(waveform_func(pos++), vol); dest[5] += v;
+			if (!(6 & mask)) v = scale8_s8(waveform_func(pos++), vol); dest[6] += v;
+			if (!(7 & mask)) v = scale8_s8(waveform_func(pos++), vol); dest[7] += v;
 		}
 		
 	};

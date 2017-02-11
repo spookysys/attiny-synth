@@ -25,15 +25,11 @@ namespace instr
 			uint16_t vol;
 		};
 
-		inline int8_t slideIter() {
-			pos += pitch;
-			return tables::bd[pos_hi];
-		}
-			
-		inline int8_t fadeIter() {
-			pos_hi++;
-			vol = vol - scale3(vol>>8, decay_speed) - 1;
-			return scale8(tables::bd[pos_hi], vol>>8);
+
+		int8_t fadeIter() {
+			vol -= scale3(vol>>8, decay_speed);
+			int8_t v = pgm_read_byte(&tables::bd[++pos_hi]);
+			return scale8_s8(v, vol>>8);
 		}
 
 	public:
@@ -48,28 +44,26 @@ namespace instr
 			state = SLIDE;
 		}
 
-		void render(uint8_t buff)
+		void render(globals::Mixbuff buff_i)
 		{
 			static_assert(sizeof(tables::bd)==256, "Unexpected table size");
 			static_assert(globals::mixbuff_len == 8, "Unexpected mix-buffer length");
-			int16_t* dest = globals::mixbuff[buff];
+			int16_t* dest = globals::mixbuff[buff_i];
 			
 			switch(state) {
 				case OFF: return;
 				case SLIDE: {
-					dest[0] += slideIter();
-					dest[1] += slideIter();
-					dest[2] += slideIter();
-					dest[3] += slideIter();
-					dest[4] += slideIter();
-					dest[5] += slideIter();
-					dest[6] += slideIter();
-					int8_t v = slideIter();
+					dest[0] += (int8_t)pgm_read_byte(&tables::bd[pos>>8]); pos += pitch;
+					dest[1] += (int8_t)pgm_read_byte(&tables::bd[pos>>8]); pos += pitch;
+					dest[2] += (int8_t)pgm_read_byte(&tables::bd[pos>>8]); pos += pitch;
+					dest[3] += (int8_t)pgm_read_byte(&tables::bd[pos>>8]); pos += pitch;
+					dest[4] += (int8_t)pgm_read_byte(&tables::bd[pos>>8]); pos += pitch;
+					dest[5] += (int8_t)pgm_read_byte(&tables::bd[pos>>8]); pos += pitch;
+					dest[6] += (int8_t)pgm_read_byte(&tables::bd[pos>>8]); pos += pitch;
+					int8_t v = (int8_t)pgm_read_byte(&tables::bd[pos>>8]); pos += pitch;
 					dest[7] += v;
-					pitch -= pitch >> slide_speed;
-					pitch--;
-					static const uint16_t end_pitch = 0x80;
-					if (pitch <= end_pitch) {
+					pitch -= scale3(pitch>>6, slide_speed);
+					if (pitch < 0x80) {
 						this->vol = 0xFFFF;
 						this->v = v;
 						this->state = DECAY;
@@ -80,7 +74,6 @@ namespace instr
 					int16_t v1 = fadeIter();
 					int16_t v2 = fadeIter();
 					int16_t v3 = fadeIter();
-					if (!(vol>>8)) this->state = OFF;
 					dest[0] += (this->v+v0)>>1;
 					dest[1] += v0;
 					dest[2] += (v0+v1)>>1;
@@ -90,6 +83,7 @@ namespace instr
 					dest[6] += (v2+v3)>>1;
 					dest[7] += v3;
 					this->v = v3;
+					if (!(vol>>8)) this->state = OFF;
 				} break;
 			}
 		}
