@@ -3,13 +3,13 @@
 
 namespace instr
 {
-	template<uint16_t start_pitch, uint16_t pitch_speed, uint16_t fade_speed>
+	template<uint16_t start_pitch=1000, uint16_t slide_speed=6, uint16_t decay_speed=1>
 	class BassDrum
 	{
 		enum State {
 			OFF = 0,
 			SLIDE,
-			FADE
+			DECAY
 		} state;
 		
 		union {		
@@ -25,14 +25,15 @@ namespace instr
 			uint16_t vol;
 		};
 
-		inline int8_t slideIter(uint16_t pitch) {
+		inline int8_t slideIter() {
 			pos += pitch;
 			return tables::bd[pos_hi];
 		}
 			
-		inline int8_t fadeIter(uint8_t scaler) {
+		inline int8_t fadeIter() {
 			pos_hi++;
-			return scale8(tables::bd[pos_hi], scaler);
+			vol = vol - scale4(vol>>8, decay_speed) - 1;
+			return scale8(tables::bd[pos_hi], vol>>8);
 		}
 
 	public:
@@ -56,30 +57,30 @@ namespace instr
 			switch(state) {
 				case OFF: return;
 				case SLIDE: {
-					dest[0] += slideIter(pitch);
-					dest[1] += slideIter(pitch);
-					dest[2] += slideIter(pitch);
-					dest[3] += slideIter(pitch);
-					dest[4] += slideIter(pitch);
-					dest[5] += slideIter(pitch);
-					dest[6] += slideIter(pitch);
-					int8_t last_v = slideIter(pitch);
+					dest[0] += slideIter();
+					dest[1] += slideIter();
+					dest[2] += slideIter();
+					dest[3] += slideIter();
+					dest[4] += slideIter();
+					dest[5] += slideIter();
+					dest[6] += slideIter();
+					int8_t last_v = slideIter();
 					dest[7] += last_v;
-					pitch -= pitch >> pitch_speed;
+					pitch -= pitch >> slide_speed;
 					pitch--;
 					static const uint16_t end_pitch = 0x80;
 					if (pitch <= end_pitch) {
 						this->vol = 0xFFFF;
 						this->last_v = last_v;
-						this->state = FADE;
+						this->state = DECAY;
 					}
 				} break;
-				case FADE: {
-					uint8_t scaler = (vol>>8);
-					int16_t v0 = fadeIter(scaler);
-					int16_t v1 = fadeIter(scaler);
-					int16_t v2 = fadeIter(scaler);
-					int16_t v3 = fadeIter(scaler);
+				case DECAY: {
+					int16_t v0 = fadeIter();
+					int16_t v1 = fadeIter();
+					int16_t v2 = fadeIter();
+					int16_t v3 = fadeIter();
+					if (!(vol>>8)) this->state = OFF;
 					dest[0] += (this->last_v+v0)>>1;
 					dest[1] += v0;
 					dest[2] += (v0+v1)>>1;
@@ -89,10 +90,6 @@ namespace instr
 					dest[6] += (v2+v3)>>1;
 					dest[7] += v3;
 					this->last_v = v3;
-					uint16_t old_vol = vol;
-					vol -= vol>>fade_speed;
-					vol--;
-					if (vol > old_vol) this->state = OFF;
 				} break;
 			}
 		}

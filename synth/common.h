@@ -17,9 +17,9 @@ namespace globals {
 
 
 // range of scale: [0:7] maps to [1/8 : 1]
-static inline int8_t scale4(int8_t val, int8_t scale)
+template<typename T>
+static inline T scale4(T val, int8_t scale)
 {
-	scale &= 0xF;
 	switch (scale) {
 		case 0: return val>>3;
 		case 1: return val>>2;
@@ -29,18 +29,23 @@ static inline int8_t scale4(int8_t val, int8_t scale)
 		case 5: return val - (val>>2);
 		case 6: return val - (val>>3);
 		case 7: return val;
+		default:return 0;
 	}
+	
 }
 
+
 // range of scale: [0:255] maps to [1/256 : 1]
-static inline int8_t scale8(int8_t val, uint8_t scaler)
+template<typename T>
+static inline T scale8(T val, uint8_t scaler)
 {
 #if 0
-	return (int16_t(val)*scaler)>>8;
+	uint16_t scaler2 = uint16_t(scaler)+1;
+	return (int32_t(val)*scaler2)>>8;
 #else
 	if (scaler==0xFF) return val;
 	scaler++; // 0 is not interesting
-	int16_t res = 0;
+	int32_t res = 0;
 	if (val & 0xF0) {
 		if (scaler & 0x01) res += val;
 		if (scaler & 0x02) res += val << 1;
@@ -56,6 +61,7 @@ static inline int8_t scale8(int8_t val, uint8_t scaler)
 	return res>>8;
 #endif
 }
+
 
 // from http://codebase64.org/doku.php?id=base:small_fast_8-bit_prng
 static inline uint8_t rand8()

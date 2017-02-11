@@ -187,28 +187,19 @@
     <Compile Include="common.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="instr\AdpcmDrum.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="instr\BassDrum.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="instr\common.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="instr\lib\AdpcmSimple.h">
+    <Compile Include="instr\OneGroove.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="instr\lib\common.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="instr\lib\Envelope.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="instr\lib\OneSynth.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="instr\Bass.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="instr\lib\oneliners.h">
+    <Compile Include="instr\OneSynth.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.cpp">
@@ -223,7 +214,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="instr" />
-    <Folder Include="instr\lib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="tables.py">
