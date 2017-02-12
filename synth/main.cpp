@@ -61,8 +61,8 @@ int main(void)
 	init();
 	
 	// Start playback
-	sei();
 	song.reset();
+	sei();
 
 	// Play the song
 	uint32_t pos=0;

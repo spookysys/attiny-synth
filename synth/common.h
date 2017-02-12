@@ -75,9 +75,9 @@ static inline int8_t lerp3(int8_t v0, int8_t v1, uint8_t t)
 // from http://codebase64.org/doku.php?id=base:small_fast_8-bit_prng
 static inline uint8_t rand8()
 {
-	static uint8_t seed = 0;
-	uint8_t carry = seed>>7;
-	seed <<= 1;
-	if ((seed && carry) || unlikely(!seed && !carry)) seed ^= 0x1d;
-	return seed;
+	static uint8_t state = 0;
+	uint8_t carry = state>>7;
+	state <<= 1;
+	if ((state && carry) || unlikely(!state && !carry)) state ^= 0x1d;
+	return state;
 }

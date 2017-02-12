@@ -4,9 +4,11 @@
 namespace samples
 {
 
+	/*
 	const uint8_t hihat_808[] PROGMEM = {
 		#include "inc/hihat-808.inc"
 	};
+	*/
 	
 	/*
 	const uint8_t hihat_analog[] PROGMEM = {
@@ -22,6 +24,7 @@ namespace samples
 	const uint8_t perc_808[] PROGMEM = {
 		#include "inc/perc-808.inc"
 	};
+	
 	
 		
 	/*
@@ -50,7 +53,7 @@ namespace samples
 		
 	
 	const Sample samples[num_samples] = {
-		{ sizeof(hihat_808), hihat_808 },
+		//{ sizeof(hihat_808), hihat_808 },
 		//{ sizeof(hihat_analog), hihat_analog },
 		//{ sizeof(hihat_electro), hihat_electro },
 		{ sizeof(perc_808), perc_808 },
