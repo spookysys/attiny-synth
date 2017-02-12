@@ -1,5 +1,6 @@
 {
 	"files.associations": {
 		"*.map": "json"
-	}
+	},
+	"python.pythonPath": "C:/Users/raumschiff/Miniconda2/envs/py3/python"
 }
