@@ -2,27 +2,18 @@ import numpy as np
 import scipy as sp
 from scipy.io import wavfile
 from pprint import pprint
+from scipy.signal import butter, lfilter, freqz
 import random
-
+import resampy
+import glob
+from os import path
 
 BLOCK_SIZE = 8
-AVERAGE_BITS = 8
-NOISE_BITS = 8
+SR_ORIG = 22050
 
-# This repeats too quickly
-class Rand8:
-	def __init__(self, seed):
-		self.state = seed
 
-	def get_int(self):
-		carry = (self.state >> 7) & 1
-		self.state = (self.state << 1) & 0xFF
-		if ((self.state != 0) and (carry != 0)) or ((self.state == 0) and (carry == 0)):
-			self.state = self.state ^ 0x1d
-		return self.state
-
-	def get_s8(self):
-		return np.int8(self.get_int())
+# AVERAGE_BITS = 8
+# NOISE_BITS = 8
 
 
 class Rand:
@@ -33,58 +24,76 @@ class Rand:
 		return np.int8(self.state.randint(-128, 127))
 
 
+def butter_lowpass(cutoff, fs, order=5):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = butter(order, normal_cutoff, btype='high', analog=False)
+    return b, a
+
+def butter_lowpass_filter(data, cutoff, fs, order=5):
+    b, a = butter_lowpass(cutoff, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
+
 def encode(data_in):
+	# Pad input array to BLOCK_SIZE
 	blocks = int(np.ceil(data_in.size / BLOCK_SIZE))
 	data_in = np.append(data_in, np.zeros(blocks * BLOCK_SIZE - data_in.size, dtype=np.int16))
 
-	averages = np.empty(blocks, dtype=float)
-	noises = np.empty(blocks, dtype=float)
+	# Down-sample, then up-sample again
+	base_lo = resampy.resample(data_in.astype(np.float), SR_ORIG, SR_ORIG/BLOCK_SIZE)
+	base_upsampled = resampy.resample(base_lo, SR_ORIG/BLOCK_SIZE, SR_ORIG)
 
-	for i in range(blocks):
-		vals = data_in[i*BLOCK_SIZE:(i+1)*BLOCK_SIZE]
-		averages[i] = average = np.mean(vals, dtype=np.float)
-		noises[i] = noise = np.mean([np.abs(x - average) for x in vals], dtype=np.float)
+	# Generate array of noise amount
+	noise_level_hi = np.array([np.abs(a - b) for a, b in zip(data_in, base_upsampled)])
+	noise_level_lo = resampy.resample(noise_level_hi, SR_ORIG, SR_ORIG/BLOCK_SIZE)
 
-	# Normalize
-	# -> Sum of average and noise may not exceed [-1.0:1.0]
-	max_vol = np.max(np.abs(averages) + noises)
-	averages = np.multiply(averages, 1. / max_vol)
-	noises = np.multiply(noises, 1. / max_vol)
+	# Check some things
+	assert data_in.size == noise_level_hi.size and base_lo.size == blocks
 
 	# Quantize
-	averages_i = np.array([int(np.round(x * 2**(AVERAGE_BITS-1))) for x in averages])
-	noises_i = np.array([int(np.round(x * 2**NOISE_BITS)) for x in noises])
+	# averages_i = np.array([int(np.round(x * 2**(AVERAGE_BITS-1))) for x in averages])
+	# noises_i = np.array([int(np.round(x * 2**NOISE_BITS)) for x in noises])
 
-	return (averages_i, noises_i)
+	return (base_lo, noise_level_lo)
 
-def decode(averages, noises):
-	rand = Rand(0)
-	data_decoded = np.zeros(averages.size * BLOCK_SIZE, dtype=np.int16)
-	for block_i, (average, noise) in enumerate(zip(averages, noises)):
-		noise_samples = [np.float(rand.get_s8()) for x in range(BLOCK_SIZE)]
-		noise_samples_mean = np.mean(noise_samples)
-		noise_scaler = noise / 2.**NOISE_BITS
-		average_scaler = 128 / 2.**(AVERAGE_BITS-1)
-		samples = [
-			(noise_sample - noise_samples_mean) * noise_scaler + average * average_scaler
-			for noise_sample in noise_samples
-		]
-		for sample_i, sample in enumerate(samples):
-			#assert sample >= -128 and sample <= 127
-			if sample < -128:
-				sample = -128
-			if sample > 127:
-				sample = 127
-			sample = np.int16(np.round(sample))
-			data_decoded[block_i * BLOCK_SIZE + sample_i] = sample * 256 + sample
-	return data_decoded
 
-for stub in ["snare-tape", "hihat-808", "hihat-analog", "hihat-electro", "perc-808", "perc-metal", "snare-808", "snare-electro", "tom-808", "tom-acoustic01"]:
-	# stub = "snare-tape"
-	file_in = "gen_samples/step1/" + stub + ".wav"
-	file_raw = "gen_samples/done_raw/" + stub + ".raw"
-	file_inc = "gen_samples/done_inc/" + stub + ".inc"
-	file_decoded = "gen_samples/done_check/" + stub + ".wav"
+def decode(base_lo, noise_level_lo):
+	base = resampy.resample(base_lo, SR_ORIG/BLOCK_SIZE, SR_ORIG)
+	noise_level = resampy.resample(noise_level_lo, SR_ORIG/BLOCK_SIZE, SR_ORIG)
+	noise = np.array([noise_level * random.random() for noise_level in noise_level])
+
+	# Highpass filter noise
+	noise = butter_lowpass_filter(noise, 100, SR_ORIG/BLOCK_SIZE)
+	# noise_lo = resampy.resample(noise, SR_ORIG, SR_ORIG/BLOCK_SIZE)
+	# noise_hi = resampy.resample(noise_lo, SR_ORIG/BLOCK_SIZE, SR_ORIG)
+	# noise = [noise - (noise_hi - noise_level/2) for noise, noise_hi, noise_level in zip(noise, noise_hi, noise_level)]
+
+	ret = np.empty(base.size, dtype=np.int16)
+	for i, (base, noise) in enumerate(zip(base, noise)):
+		tmp = noise + base
+		if tmp < -0x8000:
+			tmp = -0x8000
+		if tmp > 0x7fff:
+			tmp = 0x7fff
+		ret[i] = np.round(tmp)
+
+	return ret
+
+
+filelist = [
+	path.splitext(path.basename(x))[0]
+	for x in glob.glob("samples/wav_22k/*.wav")
+]
+
+filelist = ["snare-tape", "hihat-808", "hihat-analog", "hihat-electro", "perc-808", "perc-metal", "snare-808", "snare-electro", "tom-808", "tom-acoustic01"]
+
+for stub in filelist:
+
+	file_in = "samples/wav_22k/" + stub + ".wav"
+	file_raw = "samples/done_raw/" + stub + ".raw"
+	file_inc = "samples/done_inc/" + stub + ".inc"
+	file_decoded = "samples/done_check/" + stub + ".wav"
 
 	print("Converting " + file_in)
 
@@ -95,8 +104,8 @@ for stub in ["snare-tape", "hihat-808", "hihat-analog", "hihat-electro", "perc-8
 	(averages, noises) = encode(data_in)
 
 	# Print compressed data
-	print("Averages: " + str(averages))
-	print("Noises: " + str(noises))
+	# print("Averages: " + str(averages))
+	# print("Noises: " + str(noises))
 
 	# Decode
 	data_decoded = decode(averages, noises)
@@ -107,3 +116,4 @@ for stub in ["snare-tape", "hihat-808", "hihat-analog", "hihat-electro", "perc-8
 	# data_coded[0].tofile(file_raw)
 
 
+print("Done!")
