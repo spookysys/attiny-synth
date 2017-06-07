@@ -10,32 +10,34 @@
 #include "common.h"
 #include "Song.h"
 
+static const uint8_t LED_BRIGHTNESS = 0x40;
 
 // initialize
 void init()
 {
-	// Set B-ports to output
+	// Setup ports
 	DDRB = 0xFF;
 
 	// PWM
-	TCCR0A = (1<<COM0A1) | (1<<WGM01) | (1<<WGM00); // Fast PWM, non-inverting mode
+	TCCR0A = (1<<COM0B1) | (1<<COM0A1) | (1<<WGM01) | (1<<WGM00); // Fast PWM, non-inverting mode
 	TCCR0B = (1<<CS00);
 	OCR0A = 128;
+	OCR0B = LED_BRIGHTNESS;
 	TCNT0 = 0;
 
 	// Sample streaming interrupt
 	TCCR1 = (1<<CTC1) | (1<<CS11) | (1<<CS10); // Set prescaler to F_CPU / 4
 	uint8_t timer1_oc = F_CPU / (globals::sample_rate * 4ULL);
 	OCR1A = timer1_oc; // isr value
-	OCR1C = timer1_oc; // reset value
+	OCR1C = timer1_oc;
 	TCNT1 = 0;
 	TIMSK |= (1<<OCIE1A); // timer compare A interrupt
-	
 }
 
 
 // current streaming position in mixbuff
 static volatile uint8_t stream_pos = 0;
+
 
 // streaming interrupt
 ISR(TIMER1_COMPA_vect)
