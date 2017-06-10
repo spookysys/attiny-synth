@@ -8,10 +8,10 @@
 
 class Song 
 {
-	instr::OneSynth<8, 2> squeek;
+	//instr::OneSynth<8, 2> squeek;
 	instr::BassDrum<> bd;
 	instr::Fabrikklyd<> fabrikklyd;
-	instr::DrumKit drumkit;
+	//instr::DrumKit drumkit;
 	
 	static int8_t squeek_wf(uint32_t t)
 	{
@@ -29,9 +29,9 @@ public:
 	void reset() 
 	{
 		bd.reset();
-		squeek.reset();
+		//squeek.reset();
 		fabrikklyd.reset();
-		drumkit.reset();		
+		//drumkit.reset();		
 	}
 	
 	inline void render(globals::Mixbuff buff_i, uint32_t pos)

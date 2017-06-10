@@ -2,5 +2,9 @@
 	"files.associations": {
 		"*.map": "json"
 	},
-	"python.pythonPath": "C:/Users/raumschiff/Miniconda2/envs/py3/python"
+	"python.pythonPath": "C:/Users/raumschiff/Miniconda2/envs/py3/python",
+	"python.linting.pylintEnabled": true,
+	"python.linting.pep8Enabled": false,
+	"python.linting.flake8Enabled": false,
+	"python.linting.pylamaEnabled": false
 }
