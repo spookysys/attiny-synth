@@ -20,7 +20,7 @@ namespace waveforms
 			case 3: return ((t>>6|t<<1)+(t>>5|t<<3|t>>3))|t>>2|t<<1;
 			case 4: return (t>>5)|(t<<4)|((t&1023)^1981)|((t-67)>>4);
 			case 5: return (((t+(t>>2))|(t>>5))+(t>>3))|((t>>13)|(t>>7)|(t>>11));
-			case 6: return t*(42&t>>10);
+			//case 6: return t*(42&t>>10);
 			default: return 0;
 		}
 	}
