@@ -1,14 +1,16 @@
 #pragma once
 #include <array>
-#include "buffers.hpp"
+#include "Buffer.hpp"
 
-template<NUM_SAMPLES=64, MIN_DELAY=16, SPEED=int8_t(.1*256)>
+template<NUM_BUFFERS=4, SPEED=64>
 class Phaser
 {
-    std::array<int8_t, NUM_SAMPLES> buffer = {0};
+    std::array<Buffer, NUM_BUFFERS> buffers;
     int8_t direction = 0;
+    int8_t position = 0;
+    int8_t position_countdown = 0;
 private:
-    void readIn(buffers::BufferID sourceBuffer);
-    void render(buffers::BufferID destBuffer);
+    Buffer& getActiveBuffer();
+    void render();
+    void next();
 };
-
