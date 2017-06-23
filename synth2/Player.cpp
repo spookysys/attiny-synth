@@ -13,7 +13,7 @@ void Player::render(Buffer &db)
 
 
     if ((pos & 0xFF) == 0) {
-        uint16_t vol = ((pos&0x7FF) == 0) ? 0x3FFF : 0x1FFF;
+        uint16_t vol = (((pos>>8)&0x7) == 4) ? 0x3FFF : 0x1FFF;
         hh.trigger(vol, 0x80);
     }
 	
