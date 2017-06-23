@@ -1,7 +1,7 @@
 #pragma once
 #include "common.hpp"
 
-namespace matte
+namespace mymath
 {
 
     static int8_t mul_s8s8u8_shr8(int8_t a, uint8_t b)
@@ -23,5 +23,6 @@ namespace matte
     {
         return (int16_t(a)*b)>>6;
     }
+
     
 }
