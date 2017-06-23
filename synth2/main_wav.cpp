@@ -1,5 +1,8 @@
 #include "common.hpp"
 #include <cstdio>
+#include <cstdlib>
+#include <iostream>
+using namespace std;
 
 namespace wav {
 
@@ -64,5 +67,6 @@ namespace wav {
 
 int main(int argc, char* argv[])
 {
+    cout << "Dropping wav" << endl;
     return 0;
 }

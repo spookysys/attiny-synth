@@ -8,3 +8,5 @@ Release
 /samples/tmp*
 /samples/done*
 /samples/wav*
+drop.exe
+*.o

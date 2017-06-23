@@ -1,4 +1,3 @@
-
 //set your clock speed
 #define F_CPU 16000000UL
 
