@@ -2,7 +2,14 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include "Buffer.hpp"
+#include "Player.hpp"
+
 using namespace std;
+
+static const int length_in_seconds = 60;
+static const int length_in_buffers = (length_in_seconds * globals::SAMPLE_RATE) / globals::SAMPLES_PER_BUFFER;
+
 
 namespace wav {
 
@@ -65,8 +72,19 @@ namespace wav {
     }
 }
 
+
 int main(int argc, char* argv[])
 {
-    cout << "Dropping wav" << endl;
+    
+    cout << "Rendering" << endl;
+    
+
+    std::array<Buffer, length_in_buffers> buffs;
+
+    static Player player;
+    for (auto& buff : buffs) player.render(buff);
+
+    wav::write_wav("drop.wav", buffs[0].data(), length_in_buffers*globals::SAMPLES_PER_BUFFER, true);
+
     return 0;
 }

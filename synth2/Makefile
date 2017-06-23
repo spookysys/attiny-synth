@@ -1,4 +1,4 @@
-SOURCES := main_wav.cpp 
+SOURCES := main_wav.cpp Player.cpp
 # Objs are all the sources, with .cpp replaced by .o
 OBJS := $(SOURCES:.cpp=.o)
 CXXFLAGS += -std=c++1y
