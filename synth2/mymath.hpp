@@ -24,5 +24,5 @@ namespace mymath
         return (int16_t(a)*b)>>6;
     }
 
-    
+
 }
