@@ -9,4 +9,5 @@ Release
 /samples/done*
 /samples/wav*
 drop.exe
+drop.wav
 *.o
