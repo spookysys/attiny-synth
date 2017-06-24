@@ -97,7 +97,7 @@ class OneSynth
 	{
 		state = RAMP;
 		this->pitch = pitch;
-		if (pos != -1)
+		if (pos != uint32_t(-1))
 			this->pos = pos;
 	}
 
