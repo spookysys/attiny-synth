@@ -90,212 +90,133 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <AvrGccCpp>
-        <avrgcc.common.Device>-mmcu=attiny85 -B "%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\gcc\dev\attiny85"</avrgcc.common.Device>
-        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
-        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
-        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
-        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
-        <avrgcc.compiler.symbols.DefSymbols>
-          <ListValues>
-            <Value>NDEBUG</Value>
-          </ListValues>
-        </avrgcc.compiler.symbols.DefSymbols>
-        <avrgcc.compiler.directories.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\include</Value>
-          </ListValues>
-        </avrgcc.compiler.directories.IncludePaths>
-        <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
-        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-        <avrgcccpp.compiler.general.ChangeSPWithoutDisablingInterrupts>True</avrgcccpp.compiler.general.ChangeSPWithoutDisablingInterrupts>
-        <avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>
-        <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
-        <avrgcccpp.compiler.symbols.DefSymbols>
-          <ListValues>
-            <Value>NDEBUG</Value>
-          </ListValues>
-        </avrgcccpp.compiler.symbols.DefSymbols>
-        <avrgcccpp.compiler.directories.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\include</Value>
-          </ListValues>
-        </avrgcccpp.compiler.directories.IncludePaths>
-        <avrgcccpp.compiler.optimization.level>Optimize for size (-Os)</avrgcccpp.compiler.optimization.level>
-        <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
-        <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
-        <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
-        <avrgcccpp.compiler.miscellaneous.OtherFlags>-std=c++14</avrgcccpp.compiler.miscellaneous.OtherFlags>
-        <avrgcccpp.linker.libraries.Libraries>
-          <ListValues>
-            <Value>libm</Value>
-          </ListValues>
-        </avrgcccpp.linker.libraries.Libraries>
-        <avrgcccpp.assembler.general.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\include</Value>
-          </ListValues>
-        </avrgcccpp.assembler.general.IncludePaths>
-      </AvrGccCpp>
+  <avrgcc.common.Device>-mmcu=attiny85 -B "%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\gcc\dev\attiny85"</avrgcc.common.Device>
+  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcc.compiler.directories.IncludePaths><ListValues><Value>%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\include</Value></ListValues></avrgcc.compiler.directories.IncludePaths>
+  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+  <avrgcccpp.compiler.general.ChangeSPWithoutDisablingInterrupts>True</avrgcccpp.compiler.general.ChangeSPWithoutDisablingInterrupts>
+  <avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>
+  <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcccpp.compiler.symbols.DefSymbols><ListValues>
+  <Value>AVR</Value>
+  <Value>NDEBUG</Value>
+</ListValues></avrgcccpp.compiler.symbols.DefSymbols>
+  <avrgcccpp.compiler.directories.IncludePaths><ListValues><Value>%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\include</Value></ListValues></avrgcccpp.compiler.directories.IncludePaths>
+  <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
+  <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
+  <avrgcccpp.compiler.miscellaneous.OtherFlags>-std=c++14 -Wno-unused-function</avrgcccpp.compiler.miscellaneous.OtherFlags>
+  <avrgcccpp.linker.libraries.Libraries><ListValues><Value>libm</Value></ListValues></avrgcccpp.linker.libraries.Libraries>
+  <avrgcccpp.assembler.general.IncludePaths><ListValues><Value>%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\include</Value></ListValues></avrgcccpp.assembler.general.IncludePaths>
+  <avrgcc.compiler.symbols.DefSymbols><ListValues><Value>NDEBUG</Value></ListValues></avrgcc.compiler.symbols.DefSymbols>
+  <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+  <avrgcccpp.compiler.optimization.level>Optimize for size (-Os)</avrgcccpp.compiler.optimization.level>
+</AvrGccCpp>
     </ToolchainSettings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <AvrGccCpp>
-        <avrgcc.common.Device>-mmcu=attiny85 -B "%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\gcc\dev\attiny85"</avrgcc.common.Device>
-        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
-        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
-        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
-        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
-        <avrgcc.compiler.symbols.DefSymbols>
-          <ListValues>
-            <Value>DEBUG</Value>
-          </ListValues>
-        </avrgcc.compiler.symbols.DefSymbols>
-        <avrgcc.compiler.directories.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\include</Value>
-          </ListValues>
-        </avrgcc.compiler.directories.IncludePaths>
-        <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
-        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-        <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
-        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-        <avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>
-        <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
-        <avrgcccpp.compiler.symbols.DefSymbols>
-          <ListValues>
-            <Value>DEBUG</Value>
-          </ListValues>
-        </avrgcccpp.compiler.symbols.DefSymbols>
-        <avrgcccpp.compiler.directories.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\include</Value>
-          </ListValues>
-        </avrgcccpp.compiler.directories.IncludePaths>
-        <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
-        <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
-        <avrgcccpp.compiler.optimization.DebugLevel>Default (-g2)</avrgcccpp.compiler.optimization.DebugLevel>
-        <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
-        <avrgcccpp.compiler.miscellaneous.OtherFlags>-std=c++14</avrgcccpp.compiler.miscellaneous.OtherFlags>
-        <avrgcccpp.linker.libraries.Libraries>
-          <ListValues>
-            <Value>libm</Value>
-          </ListValues>
-        </avrgcccpp.linker.libraries.Libraries>
-        <avrgcccpp.assembler.general.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\include</Value>
-          </ListValues>
-        </avrgcccpp.assembler.general.IncludePaths>
-        <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
-      </AvrGccCpp>
+  <avrgcc.common.Device>-mmcu=attiny85 -B "%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\gcc\dev\attiny85"</avrgcc.common.Device>
+  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcc.compiler.directories.IncludePaths><ListValues><Value>%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\include</Value></ListValues></avrgcc.compiler.directories.IncludePaths>
+  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+  <avrgcccpp.compiler.general.ChangeSPWithoutDisablingInterrupts>False</avrgcccpp.compiler.general.ChangeSPWithoutDisablingInterrupts>
+  <avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>
+  <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcccpp.compiler.symbols.DefSymbols><ListValues>
+  <Value>AVR</Value>
+  <Value>DEBUG</Value>
+</ListValues></avrgcccpp.compiler.symbols.DefSymbols>
+  <avrgcccpp.compiler.directories.IncludePaths><ListValues><Value>%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\include</Value></ListValues></avrgcccpp.compiler.directories.IncludePaths>
+  <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
+  <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
+  <avrgcccpp.compiler.miscellaneous.OtherFlags>-std=c++14 -Wno-unused-function</avrgcccpp.compiler.miscellaneous.OtherFlags>
+  <avrgcccpp.linker.libraries.Libraries><ListValues><Value>libm</Value></ListValues></avrgcccpp.linker.libraries.Libraries>
+  <avrgcccpp.assembler.general.IncludePaths><ListValues><Value>%24(PackRepoDir)\atmel\ATtiny_DFP\1.1.102\include</Value></ListValues></avrgcccpp.assembler.general.IncludePaths>
+  <avrgcc.compiler.symbols.DefSymbols><ListValues><Value>DEBUG</Value></ListValues></avrgcc.compiler.symbols.DefSymbols>
+  <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
+  <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
+  <avrgcccpp.compiler.optimization.DebugLevel>Default (-g2)</avrgcccpp.compiler.optimization.DebugLevel>
+  <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
+</AvrGccCpp>
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="common.cpp">
+    <Compile Include="BassDrum.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="common.h">
+    <Compile Include="BassDrum.hpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="instr\DrumKit.h">
+    <Compile Include="Buffer.hpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="instr\BassDrum.h">
+    <Compile Include="common.hpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="instr\common.h">
+    <Compile Include="Compressor.hpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="instr\Fabrikklyd.h">
+    <Compile Include="Drumpf.hpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="instr\OneSynth.h">
+    <Compile Include="Hihats.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="main.cpp">
+    <Compile Include="Hihats.hpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="samples\adpcm.cpp">
+    <Compile Include="main_avr.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="samples\adpcm.h">
+    <Compile Include="mymath.hpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="samples\common.h">
+    <Compile Include="myrand.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="samples\samples.cpp">
+    <Compile Include="myrand.hpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="samples\samples.h">
+    <Compile Include="OneLiner.hpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="Song.h">
+    <Compile Include="Phaser.hpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="tables.h">
+    <Compile Include="Player.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="waveforms\common.h">
+    <Compile Include="Player.hpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="waveforms\this.h">
+    <Compile Include="Sagakrakk.hpp">
       <SubType>compile</SubType>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="instr" />
-    <Folder Include="samples" />
-    <Folder Include="samples\inc" />
-    <Folder Include="waveforms" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="instr\info.md">
+    <Compile Include="tables.cpp">
       <SubType>compile</SubType>
-    </None>
-    <None Include="samples\inc\hihat-808.inc">
+    </Compile>
+    <Compile Include="tables.hpp">
       <SubType>compile</SubType>
-    </None>
-    <None Include="samples\inc\hihat-analog.inc">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="samples\inc\hihat-electro.inc">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="samples\inc\perc-808.inc">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="samples\inc\perc-metal.inc">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="samples\inc\snare-808.inc">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="samples\inc\snare-electro.inc">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="samples\inc\snare-tape.inc">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="samples\samples.py">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="tables.py">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="waveforms\info.md">
-      <SubType>compile</SubType>
-    </None>
+    </Compile>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

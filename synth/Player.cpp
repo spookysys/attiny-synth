@@ -1,6 +1,6 @@
 #include "Player.hpp"
-#include <cstdlib>
 #include "myrand.hpp"
+#include <stdlib.h>
 using namespace myrand;
 
 Player::Player()
@@ -22,7 +22,8 @@ void Player::render(Buffer &db)
         hh.trigger(vol, 0x80);
     }
 	
-    for (auto& iter : db) iter = 0;
+    
+	db.clear();
     bd.render(db);
     hh.render(db);
 

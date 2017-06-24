@@ -1,4 +1,4 @@
-SOURCES := drop.cpp Player.cpp Buffer.cpp myrand.cpp Hihats.cpp tables.cpp BassDrum.cpp
+SOURCES := drop.cpp Player.cpp myrand.cpp Hihats.cpp tables.cpp BassDrum.cpp Compressor.cpp
 # Objs are all the sources, with .cpp replaced by .o
 OBJS := $(SOURCES:.cpp=.o)
 CXXFLAGS += -std=c++1y

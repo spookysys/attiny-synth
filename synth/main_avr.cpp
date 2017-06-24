@@ -5,10 +5,22 @@
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
 #include <util/delay.h>
-#include "common.h"
-#include "Player.h"
+#include "common.hpp"
+#include "Player.hpp"
+#include "Buffer.hpp"
+
 
 static const uint8_t LED_BRIGHTNESS = 0x40;
+
+// current streaming position in mixbuffers
+static volatile uint8_t stream_pos = 0;
+
+// mixbuffers
+static Buffer mixbuffers[2];
+
+// the player
+static Player player;
+
 
 // initialize
 void init()
@@ -25,7 +37,7 @@ void init()
 
 	// Sample streaming interrupt
 	TCCR1 = (1<<CTC1) | (1<<CS11) | (1<<CS10); // Set prescaler to F_CPU / 4
-	uint8_t timer1_oc = F_CPU / (globals::sample_rate * 4ULL);
+	uint8_t timer1_oc = F_CPU / (globals::SAMPLE_RATE * 4ULL);
 	OCR1A = timer1_oc; // isr value
 	OCR1C = timer1_oc;
 	TCNT1 = 0;
@@ -33,20 +45,17 @@ void init()
 }
 
 
-// current streaming position in mixbuff
-static volatile uint8_t stream_pos = 0;
-
 
 // streaming interrupt
 ISR(TIMER1_COMPA_vect)
 {
-	int16_t* mixbuff = globals::mixbuff[0]; // flatten the two buffers into one
+	int16_t* mixbuff = mixbuffers[0].data(); // flatten the two buffers into one
 	int16_t val = uint16_t(mixbuff[stream_pos]) + 0x80;
 	if (unlikely(val<0)) val = 0;
 	else if (unlikely(val>=0xFF)) val = 0xFF;
 	OCR0A = uint8_t(val);
 	mixbuff[stream_pos] = 0;
-	stream_pos = (stream_pos+1) & ((globals::mixbuff_len<<1)-1);
+	stream_pos = (stream_pos+1) & ((globals::SAMPLES_PER_BUFFER<<1)-1);
 }
 
 
@@ -54,27 +63,24 @@ ISR(TIMER1_COMPA_vect)
 // do it now
 int main(void)
 {
-    static Player player;
 
 	// initialize
 	init();
 	
 	// Start playback
-	player.reset();
 	sei();
 
 	// Play music
-	uint32_t pos=0;
 	while(1) {
 		// Buffer SWAP0
-		while(stream_pos < globals::mixbuff_len) {};
-		player.render(globals::SWAP0, pos++);
-		if (stream_pos < globals::mixbuff_len) fail();
+		while(stream_pos < globals::SAMPLES_PER_BUFFER) {};
+		player.render(mixbuffers[0]);
+		if (stream_pos < globals::SAMPLES_PER_BUFFER) assert(0);
 		
 		// Buffer SWAP1
-		while(stream_pos >= globals::mixbuff_len) {};
-		player.render(globals::SWAP1, pos++);
-		if (stream_pos >= globals::mixbuff_len) fail();
+		while(stream_pos >= globals::SAMPLES_PER_BUFFER) {};
+		player.render(mixbuffers[1]);
+		if (stream_pos >= globals::SAMPLES_PER_BUFFER) assert(0);
 	}
 }
 

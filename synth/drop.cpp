@@ -79,10 +79,10 @@ int main(int argc, char* argv[])
     cout << "Rendering" << endl;
     
 
-    std::array<Buffer, length_in_buffers> buffs;
+    Buffer buffs[length_in_buffers];
 
     static Player player;
-    for (auto& buff : buffs) player.render(buff);
+    for (int i=0; i<length_in_buffers; i++) player.render(buffs[i]);
 
     wav::write_wav("drop.wav", buffs[0].data(), length_in_buffers*globals::SAMPLES_PER_BUFFER, true);
 

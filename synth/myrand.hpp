@@ -23,6 +23,7 @@ namespace myrand {
         uint8_t lsb = states.state16 & 1;
         states.state16 >>= 1;
         if (lsb || unlikely(!states.state16 && !lsb)) states.state16 ^= 0xb400;
+		return states.state16;
     }
 
     static uint32_t rand32()
@@ -30,6 +31,7 @@ namespace myrand {
         uint8_t lsb = states.state32 & 1;
         states.state32 >>= 1;
         if (lsb || unlikely(!states.state32 && !lsb)) states.state32 ^= 0x80200003;
+		return states.state32;
     }
 
 }

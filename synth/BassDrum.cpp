@@ -23,7 +23,7 @@ void BassDrum::trigger()
 
 void BassDrum::render(Buffer& db)
 {
-    static_assert(tables::sin.size()==256, "Unexpected table size");
+    static_assert(sizeof(tables::sin)==256, "Unexpected table size");
     
     switch(state) {
         case OFF: 

@@ -2,6 +2,8 @@
 #include <array>
 #include "Buffer.hpp"
 
+// TODO this class
+
 template<NUM_BUFFERS=4, SPEED=64>
 class Phaser
 {
