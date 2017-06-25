@@ -3,10 +3,12 @@ SOURCES := drop.cpp Player.cpp myrand.cpp Hihats.cpp tables.cpp BassDrum.cpp Com
 OBJS := $(SOURCES:.cpp=.o)
 CXXFLAGS += -std=c++1y
 
-all: drop
+all: drop.wav
 
-# Compile the binary 't' by calling the compiler with cflags, lflags, and any libs (if defined) and the list of objects.
-drop: $(OBJS)
+drop.wav: drop.exe
+	./drop.exe
+
+drop.exe: $(OBJS)
 	$(CXX) $(CXXFLAGS) -o drop.exe $(OBJS) $(LFLAGS) $(LIBS)
 
 # Get a .o from a .cpp by calling compiler with cflags and includes (if defined)

@@ -8,6 +8,6 @@ Release
 /samples/tmp*
 /samples/done*
 /samples/wav*
-drop.exe
-drop.wav
-*.o
+synth/drop.exe
+synth/drop.wav
+synth/*.o
