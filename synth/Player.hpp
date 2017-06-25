@@ -14,7 +14,7 @@ class Player
     OneLiner<uint32_t> one_liner;
     Compressor compressor;
     Buffer pre_compress;
-    OneSynth<> synth;
+    OneSynth synth;
 public:
     Player();
     void render(Buffer& db);
