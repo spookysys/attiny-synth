@@ -5,6 +5,7 @@
 #include "OneLiner.hpp"
 #include "Compressor.hpp"
 #include "OneSynth.hpp"
+#include "Drumpf.hpp"
 
 class Player
 {
@@ -15,6 +16,7 @@ class Player
     Compressor compressor;
     Buffer pre_compress;
     OneSynth synth;
+    Drumpf drumpf;
 public:
     Player();
     void render(Buffer& db);

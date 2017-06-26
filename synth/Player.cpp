@@ -7,11 +7,13 @@ static int8_t synth_wf(uint32_t t)
 {
     int16_t tmp = 0;
     tmp += int8_t(t);
-    tmp += int8_t(t + (t>>6));
-    tmp += int8_t(t>>1);
-    tmp += int8_t((t>>1) + (t>>7));
-    if (tmp < -128) return -128;
-    else if (tmp > 127) return 127;
+    tmp += int8_t(t + (t >> 6));
+    tmp += int8_t(t >> 1);
+    tmp += int8_t((t >> 1) + (t >> 7));
+    if (tmp < -128)
+        return -128;
+    else if (tmp > 127)
+        return 127;
     return tmp;
 }
 
@@ -24,37 +26,188 @@ void Player::render(Buffer &db)
 {
     myrand::rand32();
 
-    // Trigger bassdrum
-    if ((pos & 0x7FF) == 0)
+    if (pos < 0x8000)
     {
-        bd.trigger();
-    }
+        switch (pos & 0x3FFF)
+        {
+        case 0x0000:
+            drumpf.trigger(AMEN_01);
+            break;
+        case 0x022d:
+            drumpf.trigger(AMEN_02);
+            break;
+        case 0x0429:
+            drumpf.trigger(AMEN_03);
+            break;
+        case 0x064f:
+            drumpf.trigger(AMEN_04);
+            break;
+        case 0x0751:
+            drumpf.trigger(AMEN_05);
+            break;
+        case 0x084e:
+            drumpf.trigger(AMEN_06);
+            break;
+        case 0x0947:
+            drumpf.trigger(AMEN_07);
+            break;
+        case 0x0a33:
+            drumpf.trigger(AMEN_08);
+            break;
+        case 0x0b61:
+            drumpf.trigger(AMEN_09);
+            break;
+        case 0x0c23:
+            drumpf.trigger(AMEN_10);
+            break;
+        case 0x0e48:
+            drumpf.trigger(AMEN_11);
+            break;
+        case 0x0f51:
+            drumpf.trigger(AMEN_12);
+            break;
+        case 0x1041:
+            drumpf.trigger(AMEN_13);
+            break;
+        case 0x123f:
+            drumpf.trigger(AMEN_14);
+            break;
+        case 0x144e:
+            drumpf.trigger(AMEN_15);
+            break;
+        case 0x166e:
+            drumpf.trigger(AMEN_16);
+            break;
+        case 0x1770:
+            drumpf.trigger(AMEN_17);
+            break;
+        case 0x186b:
+            drumpf.trigger(AMEN_18);
+            break;
+        case 0x1951:
+            drumpf.trigger(AMEN_19);
+            break;
+        case 0x1a50:
+            drumpf.trigger(AMEN_20);
+            break;
+        case 0x1b81:
+            drumpf.trigger(AMEN_21);
+            break;
+        case 0x1c5b:
+            drumpf.trigger(AMEN_22);
+            break;
+        case 0x1e5f:
+            drumpf.trigger(AMEN_23);
+            break;
+        case 0x1f72:
+            drumpf.trigger(AMEN_24);
+            break;
+        case 0x2052:
+            drumpf.trigger(AMEN_25);
+            break;
+        case 0x225a:
+            drumpf.trigger(AMEN_26);
+            break;
+        case 0x2464:
+            drumpf.trigger(AMEN_27);
+            break;
+        case 0x2660:
+            drumpf.trigger(AMEN_28);
+            break;
+        case 0x276a:
+            drumpf.trigger(AMEN_29);
+            break;
+        case 0x285e:
+            drumpf.trigger(AMEN_30);
+            break;
+        case 0x295b:
+            drumpf.trigger(AMEN_31);
+            break;
+        case 0x2a3a:
+            drumpf.trigger(AMEN_32);
+            break;
+        case 0x2c51:
+            drumpf.trigger(AMEN_33);
+            break;
+        case 0x2e34:
+            drumpf.trigger(AMEN_34);
+            break;
+        case 0x304b:
+            drumpf.trigger(AMEN_35);
+            break;
+        case 0x315d:
+            drumpf.trigger(AMEN_36);
+            break;
+        case 0x3238:
+            drumpf.trigger(AMEN_37);
+            break;
+        case 0x334c:
+            drumpf.trigger(AMEN_38);
+            break;
+        case 0x3426:
+            drumpf.trigger(AMEN_39);
+            break;
+        case 0x363e:
+            drumpf.trigger(AMEN_40);
+            break;
+        case 0x3749:
+            drumpf.trigger(AMEN_41);
+            break;
+        case 0x3835:
+            drumpf.trigger(AMEN_42);
+            break;
+        case 0x3929:
+            drumpf.trigger(AMEN_43);
+            break;
+        case 0x3a0d:
+            drumpf.trigger(AMEN_44);
+            break;
+        case 0x3c3f:
+            drumpf.trigger(AMEN_45);
+            break;
+        case 0x3e0b:
+            drumpf.trigger(AMEN_46);
+            break;
+        }
 
-    // Trigger hihat
-    if ((pos & 0xFF) == 0)
-    {
-        uint16_t vol = (((pos >> 8) & 0x7) == 4) ? 0x40 : 0x20;
-        hh.trigger(vol, 0x80);
+        db.clear();
+        drumpf.render(db);
     }
+    else
+    {
 
-    // trigger synth
-    if (((pos & 0xFFF) == 0x400))
-    {
-        synth.trigger((uint16_t(myrand::rand8())) + 200);
-    }
-    else if (((pos & 0xFFF) == 0x680))
-    {
-        synth.release();
-    }
+        // Trigger bassdrum
+        if ((pos & 0x7FF) == 0)
+        {
+            bd.trigger();
+        }
 
-    pre_compress.clear();
-    one_liner.render(pre_compress, 3);
-    
-    db.clear();
-    bd.render(db);
-    hh.render(db);
-    synth.render(db, synth_wf);
-    compressor.render(db, pre_compress);
+        // Trigger hihat
+        if ((pos & 0xFF) == 0)
+        {
+            uint16_t vol = (((pos >> 8) & 0x7) == 4) ? 0x40 : 0x20;
+            hh.trigger(vol, 0x80);
+        }
+
+        // trigger synth
+        if (((pos & 0xFFF) == 0x400))
+        {
+            synth.trigger((uint16_t(myrand::rand8())) + 200);
+        }
+        else if (((pos & 0xFFF) == 0x680))
+        {
+            synth.release();
+        }
+
+        pre_compress.clear();
+        one_liner.render(pre_compress, 3);
+
+        db.clear();
+        bd.render(db);
+        hh.render(db);
+        synth.render(db, synth_wf);
+        compressor.render(db, pre_compress);
+    }
 
     pos++;
 }
