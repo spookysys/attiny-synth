@@ -222,6 +222,9 @@
     <Compile Include="Compressor.hpp">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Drumpf.cpp">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Drumpf.hpp">
       <SubType>compile</SubType>
     </Compile>
