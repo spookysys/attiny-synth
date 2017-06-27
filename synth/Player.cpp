@@ -42,7 +42,7 @@ void Player::render(Buffer &db)
             break;
 
         case 0x315d:
-            drumpf.trigger(/*AMEN_36*/AMEN_19);
+            drumpf.trigger(/*AMEN_36*//*AMEN_19*/AMEN_05);
             break;
 
         case 0x022d:
@@ -53,11 +53,11 @@ void Player::render(Buffer &db)
             drumpf.trigger(/*AMEN_14*/AMEN_13);
             break;
         case 0x3238:
-            drumpf.trigger(/*AMEN_37*/AMEN_20);
+            drumpf.trigger(/*AMEN_37*/AMEN_08);
             break;
 
         case 0x334c:
-            drumpf.trigger(/*AMEN_38*/AMEN_21);
+            drumpf.trigger(/*AMEN_38*/AMEN_09);
             break;
 
         case 0x0429:
@@ -90,7 +90,7 @@ void Player::render(Buffer &db)
         case 0x084e:
         case 0x186b:
         case 0x285e:
-            drumpf.trigger(AMEN_06);
+            drumpf.trigger(/*AMEN_06*/AMEN_04);
             break;
         case 0x3835:
             drumpf.trigger(AMEN_42);
@@ -99,10 +99,10 @@ void Player::render(Buffer &db)
         case 0x0947:
         case 0x1951:
         case 0x295b:
-            drumpf.trigger(AMEN_07);
+            drumpf.trigger(AMEN_05);
             break;
         case 0x3929:
-            drumpf.trigger(AMEN_43);
+            drumpf.trigger(/*AMEN_43*/AMEN_05);
             break;
 
         case 0x0a33:
@@ -126,7 +126,7 @@ void Player::render(Buffer &db)
             drumpf.trigger(AMEN_10);
             break;
         case 0x2c51:
-            drumpf.trigger(AMEN_16);
+            drumpf.trigger(/*AMEN_16*/AMEN_04);
             break;
         case 0x3c3f:
             drumpf.trigger(AMEN_45);
@@ -134,7 +134,7 @@ void Player::render(Buffer &db)
 
         case 0x0e48:
         case 0x1e5f:
-            drumpf.trigger(AMEN_11);
+            drumpf.trigger(/*AMEN_11*/AMEN_04);
             break;
         case 0x2e34:
             drumpf.trigger(/*AMEN_34*/AMEN_15);
@@ -145,7 +145,7 @@ void Player::render(Buffer &db)
             
         case 0x0f51:
         case 0x1f72:
-            drumpf.trigger(AMEN_12);
+            drumpf.trigger(/*AMEN_12*/AMEN_05);
             break;
 
         default:;

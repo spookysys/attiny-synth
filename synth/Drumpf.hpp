@@ -9,7 +9,7 @@
 #define USE_AMEN_04
 #define USE_AMEN_05
 #define USE_AMEN_06
-#define USE_AMEN_07
+//#define USE_AMEN_07
 #define USE_AMEN_08
 #define USE_AMEN_09
 #define USE_AMEN_10
@@ -23,7 +23,7 @@
 //#define USE_AMEN_18
 #define USE_AMEN_19
 #define USE_AMEN_20
-#define USE_AMEN_21
+//#define USE_AMEN_21
 //#define USE_AMEN_22
 #define USE_AMEN_23
 //#define USE_AMEN_24
