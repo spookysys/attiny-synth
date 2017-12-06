@@ -53,10 +53,10 @@ void BassDrum::render(Buffer& db)
             v1 = (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += 0x100;
             v2 = (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += 0x100;
             v3 = (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += 0x100;
-            v0 = mymath::mul_s8s8u8_shr8(v0, this->pitch_vol>>8); pitch_vol -= pitch_vol>>8;
-            v1 = mymath::mul_s8s8u8_shr8(v1, this->pitch_vol>>8); pitch_vol -= pitch_vol>>8;
-            v2 = mymath::mul_s8s8u8_shr8(v2, this->pitch_vol>>8); pitch_vol -= pitch_vol>>8;
-            v3 = mymath::mul_s8s8u8_shr8(v3, this->pitch_vol>>8); pitch_vol -= pitch_vol>>8;
+            v0 = mymath::mul_s8_s8u8_shr8(v0, this->pitch_vol>>8); pitch_vol -= pitch_vol>>8;
+            v1 = mymath::mul_s8_s8u8_shr8(v1, this->pitch_vol>>8); pitch_vol -= pitch_vol>>8;
+            v2 = mymath::mul_s8_s8u8_shr8(v2, this->pitch_vol>>8); pitch_vol -= pitch_vol>>8;
+            v3 = mymath::mul_s8_s8u8_shr8(v3, this->pitch_vol>>8); pitch_vol -= pitch_vol>>8;
             db[0] += (this->last_v>>1)+(v0>>1);
             db[1] += v0;
             db[2] += (v0>>1)+(v1>>1);

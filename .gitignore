@@ -4,10 +4,7 @@ Release
 /.vs
 /dox/*/AVR*/*
 /dox/*/AT*/*
-/samples/99drums/*
-/samples/tmp*
-/samples/done*
-/samples/wav*
-synth/drop.exe
-synth/drop.wav
+/samples/*
+synth/*.exe
+synth/*.wav
 synth/*.o

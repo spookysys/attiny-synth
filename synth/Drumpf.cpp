@@ -20,7 +20,8 @@ struct DrumEnv
 
 struct DrumFilter
 {
-    int8_t a2, a3, b1, b2, b3;
+	int16_t a2, a3;
+    int8_t b1, b2, b3;
 };
 
 struct Drum
@@ -134,12 +135,12 @@ void Drumpf::Filter::init(const drums::DrumFilter &op)
 }
 int8_t Drumpf::Filter::get(int8_t xx)
 {
-    int8_t b1_xx = mymath::mul_s8s8s8_shr8(b1, xx);
-    int8_t b2_x1 = mymath::mul_s8s8s8_shr8(b2, xn_1);
-    int8_t b3_x2 = mymath::mul_s8s8s8_shr7(b3, xn_2);
-    int8_t a2_y1 = mymath::mul_s8s8s8_shr6(a2, yn_1);
-    int8_t a3_y2 = mymath::mul_s8s8s8_shr7(a3, yn_2);
-    int8_t yy = int16_t(b1_xx) + int16_t(b2_x1) + int16_t(b3_x2) - int16_t(a2_y1) - int16_t(a3_y2);
+    int8_t a2_y1 = mymath::mul_s8_s16s8_shr8(a2, yn_1);
+    int8_t a3_y2 = mymath::mul_s8_s16s8_shr8(a3, yn_2);
+    int8_t b1_xx = mymath::mul_s8_s8s8_shr8(b1, xx);
+    int8_t b2_x1 = mymath::mul_s8_s8s8_shr8(b2, xn_1);
+    int8_t b3_x2 = mymath::mul_s8_s8s8_shr8(b3, xn_2);
+    int8_t yy = b1_xx + b2_x1 + b3_x2 - a2_y1 - a3_y2;
 
     this->xn_2 = this->xn_1;
     this->yn_2 = this->yn_1;
@@ -205,7 +206,7 @@ void Drumpf::render(Buffer &dest)
         {
             int8_t noiz = myrand::rand8();
             int8_t val = treble_filter.get(noiz);
-            val = mymath::mul_s8s8u8_shr8(val, amplitude);
+            val = mymath::mul_s8_s8u8_shr8(val, amplitude);
             dest[i] += val;
         }
 

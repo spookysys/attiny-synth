@@ -89,7 +89,8 @@ class Drumpf
 
     class Filter
     {
-        int8_t a2, a3, b1, b2, b3;
+        int16_t a2, a3;
+        int8_t b1, b2, b3;
         int8_t xn_1, xn_2;
         int8_t yn_1, yn_2;
 

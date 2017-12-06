@@ -27,14 +27,14 @@ class OneSynth
 		case OFF:
 			return;
 		case RAMP:
-			db[0] += mymath::mul_s8s8u8_shr8(v[0], 0x10);
-			db[1] += mymath::mul_s8s8u8_shr8(v[1], 0x30);
-			db[2] += mymath::mul_s8s8u8_shr8(v[2], 0x50);
-			db[3] += mymath::mul_s8s8u8_shr8(v[3], 0x70);
-			db[4] += mymath::mul_s8s8u8_shr8(v[4], 0x90);
-			db[5] += mymath::mul_s8s8u8_shr8(v[5], 0xB0);
-			db[6] += mymath::mul_s8s8u8_shr8(v[6], 0xD0);
-			db[7] += mymath::mul_s8s8u8_shr8(v[7], 0xF0);
+			db[0] += mymath::mul_s8_s8u8_shr8(v[0], 0x10);
+			db[1] += mymath::mul_s8_s8u8_shr8(v[1], 0x30);
+			db[2] += mymath::mul_s8_s8u8_shr8(v[2], 0x50);
+			db[3] += mymath::mul_s8_s8u8_shr8(v[3], 0x70);
+			db[4] += mymath::mul_s8_s8u8_shr8(v[4], 0x90);
+			db[5] += mymath::mul_s8_s8u8_shr8(v[5], 0xB0);
+			db[6] += mymath::mul_s8_s8u8_shr8(v[6], 0xD0);
+			db[7] += mymath::mul_s8_s8u8_shr8(v[7], 0xF0);
 			state = SUSTAIN;
 			break;
 		case SUSTAIN:
@@ -48,14 +48,14 @@ class OneSynth
 			db[7] += v[7];
 			break;
 		case DECAY:
-			db[0] += mymath::mul_s8s8u8_shr8(v[0], vol >> 8);
-			db[1] += mymath::mul_s8s8u8_shr8(v[1], vol >> 8);
-			db[2] += mymath::mul_s8s8u8_shr8(v[2], vol >> 8);
-			db[3] += mymath::mul_s8s8u8_shr8(v[3], vol >> 8);
-			db[4] += mymath::mul_s8s8u8_shr8(v[4], vol >> 8);
-			db[5] += mymath::mul_s8s8u8_shr8(v[5], vol >> 8);
-			db[6] += mymath::mul_s8s8u8_shr8(v[6], vol >> 8);
-			db[7] += mymath::mul_s8s8u8_shr8(v[7], vol >> 8);
+			db[0] += mymath::mul_s8_s8u8_shr8(v[0], vol >> 8);
+			db[1] += mymath::mul_s8_s8u8_shr8(v[1], vol >> 8);
+			db[2] += mymath::mul_s8_s8u8_shr8(v[2], vol >> 8);
+			db[3] += mymath::mul_s8_s8u8_shr8(v[3], vol >> 8);
+			db[4] += mymath::mul_s8_s8u8_shr8(v[4], vol >> 8);
+			db[5] += mymath::mul_s8_s8u8_shr8(v[5], vol >> 8);
+			db[6] += mymath::mul_s8_s8u8_shr8(v[6], vol >> 8);
+			db[7] += mymath::mul_s8_s8u8_shr8(v[7], vol >> 8);
 			vol -= uint16_t(vol >> decay_speed);
 			if ((vol >> 8) == 0)
 				this->state = OFF;

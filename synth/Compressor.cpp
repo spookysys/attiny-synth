@@ -50,12 +50,12 @@ void Compressor::render(Buffer& db, const Buffer& sb)
     uint8_t vol = analyze(db);
 
     // render sound
-    db[0] += mymath::mul_s8s8u8_shr8(sb[0], vol);
-    db[1] += mymath::mul_s8s8u8_shr8(sb[1], vol);
-    db[2] += mymath::mul_s8s8u8_shr8(sb[2], vol);
-    db[3] += mymath::mul_s8s8u8_shr8(sb[3], vol);
-    db[4] += mymath::mul_s8s8u8_shr8(sb[4], vol);
-    db[5] += mymath::mul_s8s8u8_shr8(sb[5], vol);
-    db[6] += mymath::mul_s8s8u8_shr8(sb[6], vol);
-    db[7] += mymath::mul_s8s8u8_shr8(sb[7], vol);
+    db[0] += mymath::mul_s8_s8u8_shr8(sb[0], vol);
+    db[1] += mymath::mul_s8_s8u8_shr8(sb[1], vol);
+    db[2] += mymath::mul_s8_s8u8_shr8(sb[2], vol);
+    db[3] += mymath::mul_s8_s8u8_shr8(sb[3], vol);
+    db[4] += mymath::mul_s8_s8u8_shr8(sb[4], vol);
+    db[5] += mymath::mul_s8_s8u8_shr8(sb[5], vol);
+    db[6] += mymath::mul_s8_s8u8_shr8(sb[6], vol);
+    db[7] += mymath::mul_s8_s8u8_shr8(sb[7], vol);
 }
