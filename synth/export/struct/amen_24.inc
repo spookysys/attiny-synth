@@ -1,7 +1,7 @@
-// -0.0002419753581644, 0.7891979117124999 // treble envelope floats
-{ 127, 202 }, // treble envelope
-// 1.000000, -0.045457, 0.079501, 0.430430, -0.071331, -0.447131 // treble filter floats
-{ -12, 20, 110, -18, -114 }, // treble filter
+// 236.0000000000000000, 50028.0000000000000000 // treble envelope floats
+{ 236, 50028 }, // treble envelope
+// 1.000000, -0.036131, 0.078840, 0.487474, 0.061624, -0.373807 // treble filter floats
+{ -9, 20, 125, 16, -96 }, // treble filter
 {
     sizeof(amen_24_data),
     amen_24_data // bass data
