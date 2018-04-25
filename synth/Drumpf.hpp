@@ -101,8 +101,9 @@ class Drumpf
 
     AdpcmDecoder adpcmDecoder;
     int8_t bass_0, bass_1;
-    uint32_t treble_amplitude;
-    uint16_t treble_increment;
+	uint32_t treble_volume;
+	uint32_t treble_half;
+	uint32_t treble_slope;
     Filter treble_filter;
 
   public:

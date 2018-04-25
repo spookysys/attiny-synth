@@ -2,7 +2,7 @@
 #include "Buffer.hpp"
 #include "myrand.hpp"
 
-template <typename T = uint32_t> // shorter types are faster
+template <typename T = uint32_t> // shorter types are faster but they loop
 class OneLiner
 {
     T t = 0;
@@ -33,15 +33,14 @@ class OneLiner
     void render(Buffer &db, uint8_t sel)
     {
         int8_t val;
-        val = eval(t++, sel);
-        db[0] += val;
-        db[1] += val;
-        db[2] += val;
-        db[3] += val;
-        val = eval(t++, sel);
-        db[4] += val;
-        db[5] += val;
-        db[6] += val;
-        db[7] += val;
+        // 4x downsampled... change this if you want
+        for (uint8_t i = 0; i < globals::SAMPLES_PER_BUFFER; i += 4)
+        {
+            val = eval(t++, sel);
+            db[i+0] += val;
+            db[i+1] += val;
+            db[i+2] += val;
+            db[i+3] += val;
+        }
     };
 };

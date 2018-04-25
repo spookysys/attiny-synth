@@ -29,43 +29,41 @@ void BassDrum::render(Buffer& db)
         case OFF: 
             break;
         case SLIDE: {
-            int8_t last_v;
-            db[0] += (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += pitch_vol;
-            db[1] += (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += pitch_vol;
-            db[2] += (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += pitch_vol;
-            db[3] += (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += pitch_vol;
-            db[4] += (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += pitch_vol;
-            db[5] += (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += pitch_vol;
-            db[6] += (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += pitch_vol;
-            last_v = (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += pitch_vol;
-            db[7] += last_v;
-            pitch_vol -= pitch_vol>>6;
+            int8_t tmp;
+            for (uint8_t i=0; i<globals::SAMPLES_PER_BUFFER; i+=4)
+            {
+                db[i+0] += (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += pitch_vol;
+                db[i+1] += (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += pitch_vol;
+                db[i+2] += (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += pitch_vol;
+                tmp = (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += pitch_vol;
+                db[i+3] += tmp;
+            }
+            pitch_vol -= pitch_vol>>5;
             if (pitch_vol < 0x80) {
-                this->last_v = last_v;
                 this->state = DECAY;
                 this->pitch_vol = 0xFFFF; // pitch_vol is now volume
+                this->last_v = tmp;
             }
         } break;
         case DECAY:
         {
-            int8_t v0, v1, v2, v3;
-            v0 = (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += 0x100;
-            v1 = (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += 0x100;
-            v2 = (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += 0x100;
-            v3 = (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += 0x100;
-            v0 = mymath::mul_s8_s8u8_shr8(v0, this->pitch_vol>>8); pitch_vol -= pitch_vol>>8;
-            v1 = mymath::mul_s8_s8u8_shr8(v1, this->pitch_vol>>8); pitch_vol -= pitch_vol>>8;
-            v2 = mymath::mul_s8_s8u8_shr8(v2, this->pitch_vol>>8); pitch_vol -= pitch_vol>>8;
-            v3 = mymath::mul_s8_s8u8_shr8(v3, this->pitch_vol>>8); pitch_vol -= pitch_vol>>8;
-            db[0] += (this->last_v>>1)+(v0>>1);
-            db[1] += v0;
-            db[2] += (v0>>1)+(v1>>1);
-            db[3] += v1;
-            db[4] += (v1>>1)+(v2>>1);
-            db[5] += v2;
-            db[6] += (v2>>1)+(v3>>1);
-            db[7] += v3;
-            this->last_v = v3;
+            int8_t tmp = this->last_v;
+            for (uint8_t i=0; i<globals::SAMPLES_PER_BUFFER; i+=4)
+            {
+                int8_t v0, v1;
+                v0 = (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += 0x100;
+                v1 = (int8_t)pgm_read_byte(&tables::sin[pos>>8]); pos += 0x100;
+                v0 = mymath::mul_s8_s8u8_shr8(v0, this->pitch_vol>>8); pitch_vol -= pitch_vol>>7;
+                v1 = mymath::mul_s8_s8u8_shr8(v1, this->pitch_vol>>8); pitch_vol -= pitch_vol>>7;
+                db[i+0] += (tmp>>1)+(v0>>1);
+                db[i+1] += v0;
+                db[i+2] += (v0>>1)+(v1>>1);
+                db[i+3] += v1;
+                tmp = v1;
+            }
+            this->last_v = tmp;
+            if (pitch_vol < 0x100)
+                state = OFF;
         } break;
     }
 }

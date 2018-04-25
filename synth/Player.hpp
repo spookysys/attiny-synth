@@ -4,16 +4,17 @@
 #include "Hihats.hpp"
 #include "OneLiner.hpp"
 #include "Compressor.hpp"
-#include "OneSynth.hpp"
 #include "Drumpf.hpp"
+#include "OneSynth.hpp"
 
 class Player
 {
     uint32_t pos = 0;
+    uint8_t one_liner_sel = 0;
     BassDrum bd;
     Hihats hh;
     OneLiner<uint32_t> one_liner;
-    Compressor compressor;
+    Compressor compressor1, compressor2;
     Buffer pre_compress;
     OneSynth synth;
     Drumpf drumpf;

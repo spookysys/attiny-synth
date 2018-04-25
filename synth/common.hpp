@@ -12,6 +12,7 @@ static uint8_t pgm_read_byte(const void* ptr) { return *(const uint8_t*)ptr; }
 #define unlikely(x)    __builtin_expect(!!(x), 0)
 
 namespace globals {
-    static const uint16_t SAMPLE_RATE = 22050;
-    static const uint8_t  SAMPLES_PER_BUFFER = 8;
+    static constexpr uint16_t SAMPLE_RATE = 22050;
+    static constexpr uint8_t  SAMPLES_PER_BUFFER = 16;
+    static constexpr uint8_t  SAMPLES_PER_BUFFER_LOG2 = 4;
 }

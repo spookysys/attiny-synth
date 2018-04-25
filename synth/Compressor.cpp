@@ -22,10 +22,10 @@ uint8_t Compressor::analyze(const Buffer &sb)
 
     // grab volume from buffer
     uint16_t vol = 0;
-    vol += abs(sb[0]);
-    vol += abs(sb[2]);
-    vol += abs(sb[4]);
-    vol += abs(sb[6]);
+    vol += abs(sb[globals::SAMPLES_PER_BUFFER*0/4]);
+    vol += abs(sb[globals::SAMPLES_PER_BUFFER*1/4]);
+    vol += abs(sb[globals::SAMPLES_PER_BUFFER*2/4]);
+    vol += abs(sb[globals::SAMPLES_PER_BUFFER*3/4]);
     if (vol > max_volume-min_volume)
         vol = max_volume-min_volume;
     vol = (vol << 8) | vol;
@@ -50,12 +50,11 @@ void Compressor::render(Buffer& db, const Buffer& sb)
     uint8_t vol = analyze(db);
 
     // render sound
-    db[0] += mymath::mul_s8_s8u8_shr8(sb[0], vol);
-    db[1] += mymath::mul_s8_s8u8_shr8(sb[1], vol);
-    db[2] += mymath::mul_s8_s8u8_shr8(sb[2], vol);
-    db[3] += mymath::mul_s8_s8u8_shr8(sb[3], vol);
-    db[4] += mymath::mul_s8_s8u8_shr8(sb[4], vol);
-    db[5] += mymath::mul_s8_s8u8_shr8(sb[5], vol);
-    db[6] += mymath::mul_s8_s8u8_shr8(sb[6], vol);
-    db[7] += mymath::mul_s8_s8u8_shr8(sb[7], vol);
+    for (uint8_t i=0; i<globals::SAMPLES_PER_BUFFER; i+=4)
+    {
+        db[i+0] += mymath::mul_s8_s8u8_shr8(sb[i+0], vol);
+        db[i+1] += mymath::mul_s8_s8u8_shr8(sb[i+1], vol);
+        db[i+2] += mymath::mul_s8_s8u8_shr8(sb[i+2], vol);
+        db[i+3] += mymath::mul_s8_s8u8_shr8(sb[i+3], vol);
+    }
 }

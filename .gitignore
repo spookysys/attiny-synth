@@ -8,3 +8,4 @@ Release
 synth/*.exe
 synth/*.wav
 synth/*.o
+_*
