@@ -33,15 +33,10 @@ struct Drum
 
 #include "export/datas.inc"
 
-const Drum drums[] = {
+const Drum drums[] PROGMEM = {
 #include "export/structs.inc"
 };
 
-const char *names[] = {
-#include "export/names.inc"
-};
-
-const int num = sizeof(drums) / sizeof(*drums);
 }
 
 uint8_t Drumpf::AdpcmDecoder::getIdx()
@@ -52,7 +47,7 @@ uint8_t Drumpf::AdpcmDecoder::getIdx()
     if (subidx == 0)
     {
         subidx = 4;
-        word = ((ptr + 1) != end) ? *ptr : 0;
+        word = ((ptr + 1) != end) ? pgm_read_byte(ptr) : 0;
         ptr++;
     }
     return ret;
@@ -87,7 +82,7 @@ void Drumpf::AdpcmDecoder::trigger(const drums::AdpcmSample &sample)
     }
     if (isActive())
     {
-        this->word = *sample.data;
+        this->word = pgm_read_byte(sample.data);
         this->subidx = 4;
     }
     this->recon_1 = 0;
@@ -164,15 +159,18 @@ static inline int8_t average(int8_t a, int8_t b, uint8_t &dither)
 }
 
 // lerp
-static void lerp8(int8_t start, int8_t end, int8_t v[8])
+static void lerp(int8_t start, int8_t end, Buffer &v)
 {
     int16_t iter = start << globals::SAMPLES_PER_BUFFER_LOG2;
     int16_t step = int16_t(end) - int16_t(start);
-    int16_t dither = myrand::rand16();
+    uint16_t dither = myrand::rand16();
 
-    for (int i = 0; i < globals::SAMPLES_PER_BUFFER; i++)
+    for (uint8_t i = 0; i < globals::SAMPLES_PER_BUFFER; i++)
     {
-        v[i] = ((iter >> (globals::SAMPLES_PER_BUFFER_LOG2 - 1)) + (dither & 1)) >> 1;
+		int16_t tmp = iter >> (globals::SAMPLES_PER_BUFFER_LOG2 - 1);
+		tmp += dither & 1;
+		tmp >>= 1;
+        v[i] += tmp;
         dither >>= 1;
         iter += step;
     }
@@ -180,7 +178,8 @@ static void lerp8(int8_t start, int8_t end, int8_t v[8])
 
 void Drumpf::trigger(DrumEnums op)
 {
-    const auto drum = drums::drums[op];
+    drums::Drum drum;
+	memcpy_P(&drum, &drums::drums[op], sizeof(drums::Drum));
     adpcmDecoder.trigger(drum.bass_sample);
     treble_volume = uint32_t(drum.treble_env.volume) << 16;
     treble_half = treble_volume >> 1;
@@ -197,12 +196,7 @@ void Drumpf::render(Buffer &dest)
     {
         this->bass_1 = bass_0;
         this->bass_0 = adpcmDecoder.get();
-        int8_t v[globals::SAMPLES_PER_BUFFER];
-        lerp8(this->bass_1, bass_0, v);
-        for (int i = 0; i < globals::SAMPLES_PER_BUFFER; i++)
-        {
-            dest[i] += v[i];
-        }
+        lerp(this->bass_1, bass_0, dest);
     }
 
     // treble
@@ -214,9 +208,10 @@ void Drumpf::render(Buffer &dest)
         for (int i = 0; i < globals::SAMPLES_PER_BUFFER; i++)
         {
             int8_t noiz = myrand::rand8();
-            int8_t val = treble_filter.get(noiz);
-            val = mymath::mul_s8_s8u8_shr8(val, vol);
-            dest[i] += val;
+			//int8_t val = noiz;
+            //int8_t val = treble_filter.get(noiz);
+            //val = mymath::mul_s8_s8u8_shr8(val, vol);
+            //dest[i] += noiz;
         }
 
         if (treble_half < treble_slope)

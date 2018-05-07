@@ -9,8 +9,8 @@ drop.wav: drop.exe
 	./drop.exe
 
 drop.exe: $(OBJS)
-	$(CXX) $(CXXFLAGS) -o drop.exe $(OBJS) $(LFLAGS) $(LIBS)
+	$(CXX) $(CXXFLAGS) -o drop.exe $(OBJS) $(LFLAGS) $(LIBS) 
 
 # Get a .o from a .cpp by calling compiler with cflags and includes (if defined)
 .cpp.o:
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $<
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -g

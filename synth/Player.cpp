@@ -19,15 +19,13 @@ static int8_t synth_wf(uint32_t t)
 
 Player::Player()
 {
-    one_liner.set_time(0x2000);
-    one_liner_sel = 7;
 }
 
 #if 0
 //#undef AMEN_01
 //#define AMEN_01 KICK_VINYL02
-#undef AMEN_13
-#define AMEN_13 KICK_VINYL02
+//#undef AMEN_13
+//#define AMEN_13 KICK_VINYL02
 #endif
 
 // Timing here is very inaccurate.. should slice the loop one more time
@@ -177,21 +175,27 @@ void Player::render(Buffer &db)
     myrand::rand32();
 
     // Trigger amen
-    amen(drumpf, bd, pos+0x60);
+    //amen(drumpf, bd, pos+0x60);
 
     // Trigger bassdrum
-    //    if ((pos & 0x7FF) == 0)
-    //    {
-    //        bd.trigger();
-    //    }
+    if ((pos & 0x7FF) == 0)
+    {
+	    bd.trigger();
+        //drumpf.trigger(KICK_VINYL02);
+    }
+	
+    // Trigger snare
+    if ((pos & 0x7FF) == 0x400)
+    {
+	    drumpf.trigger(KICK_VINYL02);
+    }	
 
     // Trigger hihat
-    if ((pos & 0x7F) == 0)
+    if ((pos & 0x3FF) == 0x200)
     {
-        uint16_t vol = (((pos >> 8) & 0x7) == 4) ? 0x40 : 0x20;
-        hh.trigger(vol, 0x40);
+        hh.trigger(0x20, 0x18);
     }
-
+/*
     // trigger synth
     if (((pos & 0xFFF) == 0x400))
     {
@@ -201,26 +205,27 @@ void Player::render(Buffer &db)
     {
         synth.release();
     }
-
+*/
+/*
     // change oneliner settings
     if ((pos & 0x3FFF) == 0)
     {
         one_liner.set_time(0);
         one_liner_sel = myrand::rand16() & 0xF;
     }
-
+*/
     // mix
     db.clear();
 
     bd.render(db);
 
-    pre_compress.clear();
-    drumpf.render(pre_compress);
-    compressor1.render(db, pre_compress);
+//    pre_compress.clear();
+    drumpf.render(db);
+//    compressor1.render(db, pre_compress);
 
-    pre_compress.clear();
-    one_liner.render(pre_compress, one_liner_sel);
-    compressor2.render(db, pre_compress);
+//    pre_compress.clear();
+//    one_liner.render(pre_compress, one_liner_sel);
+//    compressor2.render(db, pre_compress);
     //synth.render(db, synth_wf);
 
     hh.render(db);
