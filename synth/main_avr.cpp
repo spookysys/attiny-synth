@@ -1,14 +1,10 @@
 //set your clock speed
-#define F_CPU 24000000UL
-
+#define F_CPU 16000000UL
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
 #include <util/delay.h>
-extern "C" {
-#include "overclock.h"
-}
 #include "common.hpp"
 #include "Player.hpp"
 #include "Buffer.hpp"
@@ -29,10 +25,6 @@ static Player player;
 // initialize
 void init()
 {
-	// overclock
-	overclockInit();
-	overclockCpu(OVERCLOCK_MAX);
-
 	// Setup ports
 	DDRB = 0xFF;
 
@@ -44,8 +36,8 @@ void init()
 	TCNT0 = 0;
 
 	// Sample streaming interrupt
-	TCCR1 = (1<<CTC1) | (1<<CS12); // Set prescaler to F_CPU / 8
-	uint8_t timer1_oc = F_CPU / (globals::SAMPLE_RATE * 8ULL);
+	TCCR1 = (1<<CTC1) | (1<<CS11) | (1<<CS10); // Set prescaler to F_CPU / 4
+	uint8_t timer1_oc = F_CPU / (globals::SAMPLE_RATE * 4ULL);
 	OCR1A = timer1_oc; // isr value
 	OCR1C = timer1_oc;
 	TCNT1 = 0;
@@ -71,6 +63,7 @@ ISR(TIMER1_COMPA_vect)
 // do it now
 int main(void)
 {
+
 	// initialize
 	init();
 	
