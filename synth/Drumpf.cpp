@@ -208,10 +208,9 @@ void Drumpf::render(Buffer &dest)
         for (int i = 0; i < globals::SAMPLES_PER_BUFFER; i++)
         {
             int8_t noiz = myrand::rand8();
-			//int8_t val = noiz;
-            //int8_t val = treble_filter.get(noiz);
-            //val = mymath::mul_s8_s8u8_shr8(val, vol);
-            //dest[i] += noiz;
+            int8_t val = treble_filter.get(noiz);
+            val = mymath::mul_s8_s8u8_shr8(val, vol);
+            dest[i] += val;
         }
 
         if (treble_half < treble_slope)

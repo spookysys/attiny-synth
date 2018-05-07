@@ -50,9 +50,9 @@
 #define USE_AMEN_45
 #define USE_AMEN_46
 
-#define USE_JK_SNR_03
+//#define USE_JK_SNR_03
 #define USE_KICK_VINYL02
-#define USE_SNARE_PUNCH
+//#define USE_SNARE_PUNCH
 #else
 #include "export/use_all.inc"
 #endif
