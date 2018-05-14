@@ -56,12 +56,7 @@ static void slideClockTo(unsigned char clock) {
 //Get osccal value, calculate the value to write when we want to overclock
 void overclockInit(void) {
 	origOsccal = OSCCAL; //This is the OSCCAL value required for 16MHz exactly.
-	//Overclock to 32MHz, by setting osccal to 200% of its original value.
-	maxOsccal = toMaxRange(OSCCAL);
-	maxOsccal &= 0x7F; //and with 0x7f to cut off range bit
-	maxOsccal += maxOsccal; // wheeee
-	if (maxOsccal > 0x7F) maxOsccal = 0x7F;
-	maxOsccal|=0x80; //reset range bit
+	maxOsccal = 0xFF; // just max it
 	currState=OVERCLOCK_STD;
 }
 
