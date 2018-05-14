@@ -13,9 +13,9 @@ class Player
     uint8_t one_liner_sel = 0;
     BassDrum bd;
     Hihats hh;
-    //OneLiner<uint32_t> one_liner;
-    //Compressor compressor1, compressor2;
-    //Buffer pre_compress;
+    OneLiner<> one_liner;
+    Compressor compressor1, compressor2;
+    Buffer pre_compress;
     //OneSynth synth;
     Drumpf drumpf;
 public:

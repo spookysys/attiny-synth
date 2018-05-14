@@ -32,15 +32,13 @@ class OneLiner
     void set_time(T t) { this->t = t; }
     void render(Buffer &db, uint8_t sel)
     {
-        int8_t val;
-        // 4x downsampled... change this if you want
+        // reduce resolution if you need cycles
         for (uint8_t i = 0; i < globals::SAMPLES_PER_BUFFER; i += 4)
         {
-            val = eval(t++, sel);
-            db[i+0] += val;
-            db[i+1] += val;
-            db[i+2] += val;
-            db[i+3] += val;
+            db[i+0] += eval(t++, sel);
+            db[i+1] += eval(t++, sel);
+            db[i+2] += eval(t++, sel);
+            db[i+3] += eval(t++, sel);
         }
     };
 };

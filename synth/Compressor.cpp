@@ -5,8 +5,8 @@
 // settings
 static const uint8_t loudness_response = 3;
 static const uint8_t quietness_response = 5;
-static const uint8_t max_volume = 220;
-static const uint8_t min_volume = 32;
+static const uint8_t max_volume = 100;
+static const uint8_t min_volume = 16;
 
 // low-pass filter for compressor response
 template <uint8_t length>

@@ -181,19 +181,19 @@ void Player::render(Buffer &db)
     if ((pos & 0x7FF) == 0)
     {
 	    bd.trigger();
-        //drumpf.trigger(KICK_VINYL02);
+        drumpf.trigger(KICK_808);
     }
 	
     // Trigger snare
     if ((pos & 0x7FF) == 0x400)
     {
-	    drumpf.trigger(KICK_VINYL02);
+	    drumpf.trigger(JK_SNR_03);
     }	
 
     // Trigger hihat
-    if ((pos & 0x3FF) == 0x200)
+    if ((pos & 0x3FF) == 0x260)
     {
-        hh.trigger(0x20, 0x18);
+        hh.trigger(0x40, 0x18);
     }
 /*
     // trigger synth
@@ -206,29 +206,31 @@ void Player::render(Buffer &db)
         synth.release();
     }
 */
-/*
+
     // change oneliner settings
     if ((pos & 0x3FFF) == 0)
     {
-        one_liner.set_time(0);
-        one_liner_sel = myrand::rand16() & 0xF;
+        //one_liner.set_time(0);
+		do 
+	        one_liner_sel = myrand::rand16() & 0x7;
+		while (one_liner_sel > 5);
     }
-*/
+
     // mix
     db.clear();
+    pre_compress.clear();
 
     bd.render(db);
-
-//    pre_compress.clear();
+    one_liner.render(pre_compress, one_liner_sel);
+    compressor1.render(db, pre_compress);
+    hh.render(db);
     drumpf.render(db);
-//    compressor1.render(db, pre_compress);
 
 //    pre_compress.clear();
-//    one_liner.render(pre_compress, one_liner_sel);
+    //one_liner.render(pre_compress, one_liner_sel);
 //    compressor2.render(db, pre_compress);
     //synth.render(db, synth_wf);
 
-    hh.render(db);
 
     pos ++;
 }
