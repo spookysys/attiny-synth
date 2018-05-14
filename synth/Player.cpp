@@ -35,12 +35,12 @@ static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
     {
     case 0x0060:
         drumpf.trigger(AMEN_01);
-        db.trigger();
+        //db.trigger();
         break;
     case 0x1040:
     case 0x2052:
         drumpf.trigger(AMEN_13);
-        db.trigger();
+        //db.trigger();
         break;
     case 0x304a:
         drumpf.trigger(AMEN_35);
@@ -48,26 +48,26 @@ static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
         break;
 
     case 0x315c:
-        db.trigger();
+        //db.trigger();
         drumpf.trigger(/*AMEN_36*/ /*AMEN_19*/ AMEN_05);
         break;
 
     case 0x022c:
-        db.trigger();
+        //db.trigger();
         drumpf.trigger(AMEN_02);
         break;
     case 0x123e:
     case 0x225a:
-        db.trigger();
+        //db.trigger();
         drumpf.trigger(/*AMEN_14*/ AMEN_13);
         break;
     case 0x3238:
-        db.trigger();
+        //db.trigger();
         drumpf.trigger(/*AMEN_37*/ AMEN_08);
         break;
 
     case 0x334c:
-        db.trigger();
+        //db.trigger();
         drumpf.trigger(/*AMEN_38*/ AMEN_09);
         break;
 
@@ -83,11 +83,11 @@ static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
     case 0x064e:
     case 0x166e:
     case 0x2660:
-        db.trigger();
+        //db.trigger();
         drumpf.trigger(AMEN_04);
         break;
     case 0x363e:
-        db.trigger();
+        //db.trigger();
         drumpf.trigger(AMEN_40);
         break;
 
@@ -97,7 +97,7 @@ static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
         drumpf.trigger(AMEN_05);
         break;
     case 0x3748:
-        db.trigger();
+        //db.trigger();
         drumpf.trigger(/*AMEN_41*/ AMEN_23);
         break;
 
@@ -107,18 +107,18 @@ static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
         drumpf.trigger(/*AMEN_06*/ AMEN_04);
         break;
     case 0x3834:
-        db.trigger();
+        //db.trigger();
         drumpf.trigger(AMEN_42);
         break;
 
     case 0x0946:
     case 0x1950:
     case 0x295b:
-        db.trigger();
+        //db.trigger();
         drumpf.trigger(AMEN_05);
         break;
     case 0x3928:
-        db.trigger();
+        //db.trigger();
         drumpf.trigger(/*AMEN_43*/ AMEN_05);
         break;
 
@@ -162,7 +162,7 @@ static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
 
     case 0x0f50:
     case 0x1f72:
-        db.trigger();
+        //db.trigger();
         drumpf.trigger(/*AMEN_12*/ AMEN_05);
         break;
 
@@ -172,29 +172,40 @@ static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
 
 void Player::render(Buffer &db)
 {
+	bool do_amen = true;
+	
     myrand::rand32();
 
-    // Trigger amen
-    //amen(drumpf, bd, pos+0x60);
+	if (do_amen) {
+		// Trigger amen
+	    amen(drumpf, bd, (pos<<1)+0x40);
 
-    // Trigger bassdrum
-    if ((pos & 0x7FF) == 0)
-    {
-	    bd.trigger();
-        drumpf.trigger(KICK_808);
-    }
+		// Trigger hihat
+		if (((pos+0x40) & 0x7F) == 0x40)
+		{
+			hh.trigger(0x60, 0xC0);
+		}
+		
+	} else {
+		// Trigger bassdrum
+		if ((pos & 0x7FF) == 0)
+		{
+			bd.trigger();
+			drumpf.trigger(KICK_808);
+		}
 	
-    // Trigger snare
-    if ((pos & 0x7FF) == 0x400)
-    {
-	    drumpf.trigger(JK_SNR_03);
-    }	
+		// Trigger snare
+		if ((pos & 0x7FF) == 0x400)
+		{
+			drumpf.trigger(JK_SNR_03);
+		}	
 
-    // Trigger hihat
-    if ((pos & 0x3FF) == 0x260)
-    {
-        hh.trigger(0x40, 0x18);
-    }
+		// Trigger hihat
+		if ((pos & 0x3FF) == 0x260)
+		{
+			hh.trigger(0x40, 0x18);
+		}
+	}
 /*
     // trigger synth
     if (((pos & 0xFFF) == 0x400))
@@ -210,7 +221,7 @@ void Player::render(Buffer &db)
     // change oneliner settings
     if ((pos & 0x3FFF) == 0)
     {
-        //one_liner.set_time(0);
+        one_liner.set_time(0);
 		do 
 	        one_liner_sel = myrand::rand16() & 0x7;
 		while (one_liner_sel > 5);
@@ -222,9 +233,9 @@ void Player::render(Buffer &db)
 
     bd.render(db);
     one_liner.render(pre_compress, one_liner_sel);
-    compressor1.render(db, pre_compress);
     hh.render(db);
     drumpf.render(db);
+    compressor1.render(db, pre_compress);
 
 //    pre_compress.clear();
     //one_liner.render(pre_compress, one_liner_sel);

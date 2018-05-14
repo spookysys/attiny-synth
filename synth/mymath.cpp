@@ -65,7 +65,7 @@ namespace mymath
 	uint32_t mpy16u(uint16_t a, uint16_t b)
 	{
 #if !defined(AVR)
-		return uint32_t(a) * uint32_t(b);
+		return (uint32_t(a) * uint32_t(b)) & 0x00FFFFFF;
 #else
 		uint32_t ret;
 		asm volatile (
@@ -77,144 +77,144 @@ namespace mymath
 
 			"brcc	noadd0_%=\n\t" // if carry set
 			"add	%C0,%A2\n\t" //     add multiplicand Low to byte 2 of res
-			"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
+			//"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
 			"noadd0_%=:\n\t"
-			"ror	%D0\n\t" // shift right result byte 3
+			//"ror	%D0\n\t" // shift right result byte 3
 			"ror	%C0\n\t" // rotate right result byte 2
 			"ror	%B0\n\t" // rotate result byte 1 and multiplier High
 			"ror	%A0\n\t" // rotate result byte 0 and multiplier Low
 
 			"brcc	noadd1_%=\n\t" // if carry set
 			"add	%C0,%A2\n\t" //     add multiplicand Low to byte 2 of res
-			"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
+			//"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
 			"noadd1_%=:\n\t"
-			"ror	%D0\n\t" // shift right result byte 3
+			//"ror	%D0\n\t" // shift right result byte 3
 			"ror	%C0\n\t" // rotate right result byte 2
 			"ror	%B0\n\t" // rotate result byte 1 and multiplier High
 			"ror	%A0\n\t" // rotate result byte 0 and multiplier Low
 
 			"brcc	noadd2_%=\n\t" // if carry set
 			"add	%C0,%A2\n\t" //     add multiplicand Low to byte 2 of res
-			"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
+			//"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
 			"noadd2_%=:\n\t"
-			"ror	%D0\n\t" // shift right result byte 3
+			//"ror	%D0\n\t" // shift right result byte 3
 			"ror	%C0\n\t" // rotate right result byte 2
 			"ror	%B0\n\t" // rotate result byte 1 and multiplier High
 			"ror	%A0\n\t" // rotate result byte 0 and multiplier Low
 
 			"brcc	noadd3_%=\n\t" // if carry set
 			"add	%C0,%A2\n\t" //     add multiplicand Low to byte 2 of res
-			"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
+			//"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
 			"noadd3_%=:\n\t"
-			"ror	%D0\n\t" // shift right result byte 3
+			//"ror	%D0\n\t" // shift right result byte 3
 			"ror	%C0\n\t" // rotate right result byte 2
 			"ror	%B0\n\t" // rotate result byte 1 and multiplier High
 			"ror	%A0\n\t" // rotate result byte 0 and multiplier Low
 
 			"brcc	noadd4_%=\n\t" // if carry set
 			"add	%C0,%A2\n\t" //     add multiplicand Low to byte 2 of res
-			"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
+			//"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
 			"noadd4_%=:\n\t"
-			"ror	%D0\n\t" // shift right result byte 3
+			//"ror	%D0\n\t" // shift right result byte 3
 			"ror	%C0\n\t" // rotate right result byte 2
 			"ror	%B0\n\t" // rotate result byte 1 and multiplier High
 			"ror	%A0\n\t" // rotate result byte 0 and multiplier Low
 
 			"brcc	noadd5_%=\n\t" // if carry set
 			"add	%C0,%A2\n\t" //     add multiplicand Low to byte 2 of res
-			"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
+			//"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
 			"noadd5_%=:\n\t"
-			"ror	%D0\n\t" // shift right result byte 3
+			//"ror	%D0\n\t" // shift right result byte 3
 			"ror	%C0\n\t" // rotate right result byte 2
 			"ror	%B0\n\t" // rotate result byte 1 and multiplier High
 			"ror	%A0\n\t" // rotate result byte 0 and multiplier Low
 
 			"brcc	noadd6_%=\n\t" // if carry set
 			"add	%C0,%A2\n\t" //     add multiplicand Low to byte 2 of res
-			"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
+			//"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
 			"noadd6_%=:\n\t"
-			"ror	%D0\n\t" // shift right result byte 3
+			//"ror	%D0\n\t" // shift right result byte 3
 			"ror	%C0\n\t" // rotate right result byte 2
 			"ror	%B0\n\t" // rotate result byte 1 and multiplier High
 			"ror	%A0\n\t" // rotate result byte 0 and multiplier Low
 
 			"brcc	noadd7_%=\n\t" // if carry sett
 			"add	%C0,%A2\n\t" //     add multiplicand Low to byte 2 of res
-			"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
+			//"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
 			"noadd7_%=:\n\t"
-			"ror	%D0\n\t" // shift right result byte 3
+			//"ror	%D0\n\t" // shift right result byte 3
 			"ror	%C0\n\t" // rotate right result byte 2
 			"ror	%B0\n\t" // rotate result byte 1 and multiplier High
 			"ror	%A0\n\t" // rotate result byte 0 and multiplier Low
 
 			"brcc	noadd8_%=\n\t" // if carry set
 			"add	%C0,%A2\n\t" //     add multiplicand Low to byte 2 of res
-			"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
+			//"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
 			"noadd8_%=:\n\t"
-			"ror	%D0\n\t" // shift right result byte 3
+			//"ror	%D0\n\t" // shift right result byte 3
 			"ror	%C0\n\t" // rotate right result byte 2
 			"ror	%B0\n\t" // rotate result byte 1 and multiplier High
 			"ror	%A0\n\t" // rotate result byte 0 and multiplier Low
 
 			"brcc	noadd9_%=\n\t" // if carry set
 			"add	%C0,%A2\n\t" //     add multiplicand Low to byte 2 of res
-			"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
+			//"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
 			"noadd9_%=:\n\t"
-			"ror	%D0\n\t" // shift right result byte 3
+			//"ror	%D0\n\t" // shift right result byte 3
 			"ror	%C0\n\t" // rotate right result byte 2
 			"ror	%B0\n\t" // rotate result byte 1 and multiplier High
 			"ror	%A0\n\t" // rotate result byte 0 and multiplier Low
 
 			"brcc	noad10_%=\n\t" // if carry set
 			"add	%C0,%A2\n\t" //     add multiplicand Low to byte 2 of res
-			"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
+			//"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
 			"noad10_%=:\n\t"
-			"ror	%D0\n\t" // shift right result byte 3
+			//"ror	%D0\n\t" // shift right result byte 3
 			"ror	%C0\n\t" // rotate right result byte 2
 			"ror	%B0\n\t" // rotate result byte 1 and multiplier High
 			"ror	%A0\n\t" // rotate result byte 0 and multiplier Low
 
 			"brcc	noad11_%=\n\t" // if carry set
 			"add	%C0,%A2\n\t" //     add multiplicand Low to byte 2 of res
-			"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
+			//"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
 			"noad11_%=:\n\t"
-			"ror	%D0\n\t" // shift right result byte 3
+			//"ror	%D0\n\t" // shift right result byte 3
 			"ror	%C0\n\t" // rotate right result byte 2
 			"ror	%B0\n\t" // rotate result byte 1 and multiplier High
 			"ror	%A0\n\t" // rotate result byte 0 and multiplier Low
 
 			"brcc	noad12_%=\n\t" // if carry set
 			"add	%C0,%A2\n\t" //     add multiplicand Low to byte 2 of res
-			"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
+			//"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
 			"noad12_%=:\n\t"
-			"ror	%D0\n\t" // shift right result byte 3
+			//"ror	%D0\n\t" // shift right result byte 3
 			"ror	%C0\n\t" // rotate right result byte 2
 			"ror	%B0\n\t" // rotate result byte 1 and multiplier High
 			"ror	%A0\n\t" // rotate result byte 0 and multiplier Low
 
 			"brcc	noad13_%=\n\t" // if carry set
 			"add	%C0,%A2\n\t" //     add multiplicand Low to byte 2 of res
-			"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
+			//"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
 			"noad13_%=:\n\t"
-			"ror	%D0\n\t" // shift right result byte 3
+			//"ror	%D0\n\t" // shift right result byte 3
 			"ror	%C0\n\t" // rotate right result byte 2
 			"ror	%B0\n\t" // rotate result byte 1 and multiplier High
 			"ror	%A0\n\t" // rotate result byte 0 and multiplier Low
 
 			"brcc	noad14_%=\n\t" // if carry set
 			"add	%C0,%A2\n\t" //     add multiplicand Low to byte 2 of res
-			"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
+			//"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
 			"noad14_%=:\n\t"
-			"ror	%D0\n\t" // shift right result byte 3
+			//"ror	%D0\n\t" // shift right result byte 3
 			"ror	%C0\n\t" // rotate right result byte 2
 			"ror	%B0\n\t" // rotate result byte 1 and multiplier High
 			"ror	%A0\n\t" // rotate result byte 0 and multiplier Low
 
 			"brcc	noad15_%=\n\t" // if carry set
 			"add	%C0,%A2\n\t" //     add multiplicand Low to byte 2 of res
-			"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
+			//"adc	%D0,%B2\n\t" //     add multiplicand high to byte 3 of res
 			"noad15_%=:\n\t"
-			"ror	%D0\n\t" // shift right result byte 3
+			//"ror	%D0\n\t" // shift right result byte 3
 			"ror	%C0\n\t" // rotate right result byte 2
 			"ror	%B0\n\t" // rotate result byte 1 and multiplier High
 			"ror	%A0\n\t" // rotate result byte 0 and multiplier Low
