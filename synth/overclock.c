@@ -35,7 +35,7 @@ static char currState;
 //that anymore... so I hope I'm right :P
 static unsigned char toMaxRange(unsigned char osccal) {
 	if (osccal&0x80) return osccal;
-	return ((osccal-0x40)>>1)+0xC0;
+	return (((osccal-0x40)>>1)) | 0x80;
 }
 
 //Change the OSCCALL in small increments/decrements so we won't piss
@@ -55,10 +55,12 @@ static void slideClockTo(unsigned char clock) {
 
 //Get osccal value, calculate the value to write when we want to overclock
 void overclockInit(void) {
-	origOsccal=OSCCAL; //This is the OSCCAL value required for 16MHz exactly.
-	//Overclock to 24MHz, by setting osccal to 150% of its original value.
-	maxOsccal=toMaxRange(OSCCAL)&0x7F; //and with 0x7f to cut off range bit
-	maxOsccal=maxOsccal+(maxOsccal>>1); //aka: maxOsccal*1.5
+	origOsccal = OSCCAL; //This is the OSCCAL value required for 16MHz exactly.
+	//Overclock to 32MHz, by setting osccal to 200% of its original value.
+	maxOsccal = toMaxRange(OSCCAL);
+	maxOsccal &= 0x7F; //and with 0x7f to cut off range bit
+	maxOsccal += maxOsccal; // wheeee
+	if (maxOsccal > 0x7F) maxOsccal = 0x7F;
 	maxOsccal|=0x80; //reset range bit
 	currState=OVERCLOCK_STD;
 }
