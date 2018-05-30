@@ -1,5 +1,8 @@
 #include "Player.hpp"
 #include "myrand.hpp"
+
+#include <stdio.h>
+
 #include <stdlib.h>
 using namespace myrand;
 
@@ -17,6 +20,57 @@ static int8_t synth_wf(uint32_t t)
     return tmp;
 }
 
+#define BASE_PITCH 65536
+
+uint16_t pitch_tab[12] = {
+  BASE_PITCH/214, // c
+  BASE_PITCH/202, // c#
+  BASE_PITCH/190, // d 
+  BASE_PITCH/180, // d#
+  BASE_PITCH/170, // e
+  BASE_PITCH/160, // f
+  BASE_PITCH/151, // f#
+  BASE_PITCH/143, // g
+  BASE_PITCH/135, // g#
+  BASE_PITCH/127, // a
+  BASE_PITCH/120, // a#
+  BASE_PITCH/113  // b
+};
+
+#define MD (1<<6) // drumpf
+#define MS (1<<6) // synth
+#define O0 (0<<4) // octave 0
+#define O1 (1<<4) // octave 1
+#define O2 (2<<4) // octave 1
+#define O3 (3<<4) // octave 1
+#define _C 0
+#define CH 1
+#define _D 2
+#define _DH 3
+#define _E 4
+#define _F 5
+#define FH 6
+#define _G 7
+#define GH 8
+#define A 9
+#define AH 10
+#define _B 11
+
+static int curr_note = 0;
+
+typedef struct note {
+ uint8_t machine_oct_note;
+ uint8_t pos;
+ uint8_t len;
+} note;
+
+
+static note song[] = { 
+	{ MD| 0|O0,0,3 },
+	{ MS|_C|O1,1,2 }
+};
+
+
 Player::Player()
 {
 }
@@ -28,9 +82,47 @@ Player::Player()
 //#define AMEN_13 KICK_VINYL02
 #endif
 
+// 
+#define BREAK_FREQUENCY 9
+#define BREAK_OFFSET_MAGNITUDE (9+(rand()&0x3))
+#define BREAK_SHUFFLE_AMOUNT 2
+
+// Initial sequence used for break generation
+int breaktab[] = {
+    0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+    16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
+};
+
+static int mul = 1<<12;
 // Timing here is very inaccurate.. should slice the loop one more time
 static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
 {
+    static int prev_breakstep = 0;
+    // pos >>= 1;
+    int breaktabsize = sizeof(breaktab)/sizeof(int);
+    int breakstep = (pos>>BREAK_FREQUENCY); 
+    if ( prev_breakstep != breakstep )
+    {
+        // Shuffle sequence
+        for ( int breaks = 0; breaks<BREAK_SHUFFLE_AMOUNT; breaks++)
+        {
+            int one = rand() % breaktabsize;
+            int two = rand() % breaktabsize;
+            int tmp = breaktab[one];
+            breaktab[one] = breaktab[two];
+            breaktab[two] = tmp;
+        }
+        // Break offset multiplier
+        mul = 1<<BREAK_OFFSET_MAGNITUDE;
+    }
+    prev_breakstep = breakstep;
+
+    // Only apply break during a specific timewindow part of the sequence
+    if ( ((pos & 0xfff) > 0x07ff) ) 
+    {
+        pos += breaktab[breakstep%(sizeof(breaktab)/sizeof(int))]*mul;
+    }
+
     switch (pos & 0x3FFF)
     {
     case 0x0060:
@@ -209,7 +301,7 @@ void Player::render(Buffer &db)
 /*
     // trigger synth
     if (((pos & 0xFFF) == 0x400))
-    {
+   {
         synth.trigger((uint16_t(myrand::rand8())) + 200);
     }
     else if (((pos & 0xFFF) == 0x680))

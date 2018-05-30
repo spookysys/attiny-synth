@@ -7,6 +7,7 @@ all: drop.wav
 
 drop.wav: drop.exe
 	./drop.exe
+	afplay $@
 
 drop.exe: $(OBJS)
 	$(CXX) $(CXXFLAGS) -o drop.exe $(OBJS) $(LFLAGS) $(LIBS) 
