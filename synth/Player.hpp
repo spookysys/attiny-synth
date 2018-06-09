@@ -20,5 +20,5 @@ class Player
     Drumpf drumpf;
 public:
     Player();
-    void render(Buffer& db);
+    void render(Buffer& db, Buffer& pb);
 };

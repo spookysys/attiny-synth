@@ -2,7 +2,7 @@
 #include "myrand.hpp"
 
 #include <stdio.h>
-
+#include <math.h>
 #include <stdlib.h>
 using namespace myrand;
 
@@ -98,7 +98,6 @@ static int mul = 1<<12;
 static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
 {
     static int prev_breakstep = 0;
-    // pos >>= 1;
     int breaktabsize = sizeof(breaktab)/sizeof(int);
     int breakstep = (pos>>BREAK_FREQUENCY); 
     if ( prev_breakstep != breakstep )
@@ -262,7 +261,60 @@ static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
     }
 }
 
-void Player::render(Buffer &db)
+
+void phaser_test(int pos,Buffer &db, Buffer &pb)
+{
+    static int phaser_entry_num = 0;
+    static int prev_entered_phaser = 0;
+    if ( ((pos & 0x3ff) > 0x7f) ) 
+    {
+        static int phaser_depth = 8;
+        static int phaser_shift = 0;
+        static float phaser_speed = 0;
+        static float phaser_sign = 0;
+        static int phaser_strength = 0;
+        if ( prev_entered_phaser == 0 )
+        {
+            phaser_entry_num++;
+            phaser_depth = (rand() & 0x7)+1;
+            phaser_shift = 16-phaser_depth;
+            phaser_speed = (rand() & 0x1f+1)/5000.0f;
+            phaser_sign = ((rand()&0x7) > 4) ? 1 : -1;
+            phaser_strength = (rand()&1)+1;
+        }
+        prev_entered_phaser = 1;
+        static float t = 0.0f;
+        static float t2 = 0.0f;
+
+        int so = sin(t)*(float)phaser_depth - phaser_shift;
+        for (int i = 0; i < globals::SAMPLES_PER_BUFFER; i++)
+        {
+            int offs = i+so;
+            int a,b;
+            a = db[i];
+            if ( offs < 0 )
+            {
+                b = pb[globals::SAMPLES_PER_BUFFER+offs];
+            } 
+            else if ( offs >= globals::SAMPLES_PER_BUFFER) 
+            {
+                offs = (globals::SAMPLES_PER_BUFFER-1)-(offs-globals::SAMPLES_PER_BUFFER);
+                b = db[offs];
+            } else 
+            {
+                b = db[offs];
+            }
+            int r = 2*a-((a-b)>>phaser_strength)*phaser_sign;
+            db[i] = r;
+        }
+        t += phaser_speed;
+    } else {
+        prev_entered_phaser = 0;
+    }
+}
+
+
+void Player::render(Buffer &db, Buffer &pb)
 {
 	bool do_amen = true;
 	
@@ -327,6 +379,10 @@ void Player::render(Buffer &db)
     one_liner.render(pre_compress, one_liner_sel);
     hh.render(db);
     drumpf.render(db);
+
+    phaser_test(pos, db, pb );
+
+   
     compressor1.render(db, pre_compress);
 
 //    pre_compress.clear();

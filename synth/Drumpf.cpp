@@ -200,7 +200,7 @@ void Drumpf::render(Buffer &dest)
     }
 
     // treble
-    if (this->treble_volume)
+    if ( this->treble_volume)
     {
         uint16_t vol_ = this->treble_volume >> 16;
         uint8_t vol = (vol_ > 255) ? 255 : vol_;

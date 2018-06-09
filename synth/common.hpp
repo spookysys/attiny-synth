@@ -18,3 +18,5 @@ namespace globals {
     static constexpr uint8_t  SAMPLES_PER_BUFFER = 16;
     static constexpr uint8_t  SAMPLES_PER_BUFFER_LOG2 = 4;
 }
+
+static_assert( globals::SAMPLES_PER_BUFFER == (1<<globals::SAMPLES_PER_BUFFER_LOG2), "globals::SAMPLES_PER_BUFFER_LOG2 not set correctly" );
