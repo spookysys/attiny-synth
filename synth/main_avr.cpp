@@ -63,7 +63,6 @@ ISR(TIMER1_COMPA_vect)
 	if (unlikely(val<0)) val = 0;
 	else if (unlikely(val>=0xFF)) val = 0xFF;
 	OCR0A = uint8_t(val);
-	mixbuff[stream_pos] = 0;
 	stream_pos = (stream_pos+1) & ((globals::SAMPLES_PER_BUFFER<<1)-1);
 }
 
@@ -82,15 +81,16 @@ int main(void)
 	sei();
 
 	// Play music
+	mixbuffers[1].clear();
 	while(1) {
 		// Buffer SWAP0
 		while(stream_pos < globals::SAMPLES_PER_BUFFER) {};
-		player.render(mixbuffers[0]);
+		player.render(mixbuffers[0], mixbuffers[1]);
 		if (stream_pos < globals::SAMPLES_PER_BUFFER) assert(0);
 		
 		// Buffer SWAP1
 		while(stream_pos >= globals::SAMPLES_PER_BUFFER) {};
-		player.render(mixbuffers[1]);
+		player.render(mixbuffers[1], mixbuffers[0]);
 		if (stream_pos >= globals::SAMPLES_PER_BUFFER) assert(0);
 	}
 }
