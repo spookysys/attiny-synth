@@ -86,7 +86,7 @@ Player::Player()
 
 // 
 #define BREAK_FREQUENCY 9
-#define BREAK_OFFSET_MAGNITUDE (9+(rand()&0x3))
+#define BREAK_OFFSET_MAGNITUDE (9+(myrand::rand32()&0x3))
 #define BREAK_SHUFFLE_AMOUNT 2
 
 // Initial sequence used for break generation
@@ -107,8 +107,8 @@ static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
         // Shuffle sequence
         for ( int breaks = 0; breaks<BREAK_SHUFFLE_AMOUNT; breaks++)
         {
-            int one = rand() % breaktabsize;
-            int two = rand() % breaktabsize;
+            int one = myrand::rand32() % breaktabsize;
+            int two = myrand::rand32() % breaktabsize;
             int tmp = breaktab[one];
             breaktab[one] = breaktab[two];
             breaktab[two] = tmp;
@@ -281,12 +281,12 @@ void phaser_test(int pos,Buffer &db, Buffer &pb)
         if ( prev_entered_phaser == 0 )
         {
             phaser_entry_num++;
-            phaser_depth = (rand() & 0x7)+1;
+            phaser_depth = (myrand::rand32() & 0x7)+1;
             phaser_shift = 16-phaser_depth;
-            phaser_speed = (rand() & 0x1f+1);
-            phaser_speed2 = (rand() & 0x3f+1);
-            phaser_sign =  ((rand()&0x7) > 3) ? -1 : 1;
-            phaser_strength = (rand()&1)+1;
+            phaser_speed = (myrand::rand32() & 0x1f+1);
+            phaser_speed2 = (myrand::rand32() & 0x3f+1);
+            phaser_sign =  ((myrand::rand32()&0x7) > 3) ? -1 : 1;
+            phaser_strength = (myrand::rand32()&1)+1;
         }
         prev_entered_phaser = 1;
         static int8_t t = 0;
