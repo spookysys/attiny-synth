@@ -266,18 +266,18 @@ static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
 
 void phaser_test(int pos,Buffer &db, Buffer &pb)
 {
-    static int phaser_entry_num = 0;
-    static int prev_entered_phaser = 0;
+    static int8_t phaser_entry_num = 0;
+    static int8_t prev_entered_phaser = 0;
     if ( ((pos & 0x3ff) > 0x7f) ) 
     {
-        static int phaser_depth = 8;
-        static int phaser_shift = 0;
-        static int phaser_speed = 0;
-        static int phaser_speed2 = 0;
-        static int phaser_sign = 0;
-        static int phaser_strength = 0;
-        static int rprev = 0;
-        int phaser_filter = 0;
+        static int8_t phaser_depth = 8;
+        static int8_t phaser_shift = 0;
+        static int8_t phaser_speed = 0;
+        static int8_t phaser_speed2 = 0;
+        static int8_t phaser_sign = 0;
+        static int8_t phaser_strength = 0;
+        static int16_t rprev = 0;
+        int16_t phaser_filter = 0;
         if ( prev_entered_phaser == 0 )
         {
             phaser_entry_num++;
@@ -289,8 +289,8 @@ void phaser_test(int pos,Buffer &db, Buffer &pb)
             phaser_strength = (rand()&1)+1;
         }
         prev_entered_phaser = 1;
-        static int t = 0;
-        static int t2 = 0;
+        static int8_t t = 0;
+        static int8_t t2 = 0;
 
         int so = ((pgm_read_byte(&tables::sin[(t>>8)&0xff])*phaser_depth)>>8) - phaser_shift;
         phaser_filter = ((pgm_read_byte(&tables::sin[(t2>>8)&0xff])*128)>>8) + 256;
