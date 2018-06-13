@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include "tables.hpp"
+
 using namespace myrand;
 
 static int8_t synth_wf(uint32_t t)
@@ -126,12 +128,12 @@ static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
     {
     case 0x0060:
         drumpf.trigger(AMEN_01);
-        //db.trigger();
+       // db.trigger();
         break;
     case 0x1040:
     case 0x2052:
         drumpf.trigger(AMEN_13);
-        //db.trigger();
+      //  db.trigger();
         break;
     case 0x304a:
         drumpf.trigger(AMEN_35);
@@ -270,23 +272,30 @@ void phaser_test(int pos,Buffer &db, Buffer &pb)
     {
         static int phaser_depth = 8;
         static int phaser_shift = 0;
-        static float phaser_speed = 0;
-        static float phaser_sign = 0;
+        static int phaser_speed = 0;
+        static int phaser_speed2 = 0;
+        static int phaser_sign = 0;
         static int phaser_strength = 0;
+        static int rprev = 0;
+        int phaser_filter = 0;
         if ( prev_entered_phaser == 0 )
         {
             phaser_entry_num++;
             phaser_depth = (rand() & 0x7)+1;
             phaser_shift = 16-phaser_depth;
-            phaser_speed = (rand() & 0x1f+1)/5000.0f;
-            phaser_sign = ((rand()&0x7) > 4) ? 1 : -1;
+            phaser_speed = (rand() & 0x1f+1);
+            phaser_speed2 = (rand() & 0x3f+1);
+            phaser_sign =  ((rand()&0x7) > 3) ? -1 : 1;
             phaser_strength = (rand()&1)+1;
         }
         prev_entered_phaser = 1;
-        static float t = 0.0f;
-        static float t2 = 0.0f;
+        static int t = 0;
+        static int t2 = 0;
 
-        int so = sin(t)*(float)phaser_depth - phaser_shift;
+        int so = ((pgm_read_byte(&tables::sin[(t>>8)&0xff])*phaser_depth)>>8) - phaser_shift;
+        phaser_filter = ((pgm_read_byte(&tables::sin[(t2>>8)&0xff])*128)>>8) + 256;
+        if ( phaser_filter > 256) phaser_filter = 256;
+        if ( phaser_filter < 0 ) phaser_filter = 0;
         for (int i = 0; i < globals::SAMPLES_PER_BUFFER; i++)
         {
             int offs = i+so;
@@ -305,9 +314,11 @@ void phaser_test(int pos,Buffer &db, Buffer &pb)
                 b = db[offs];
             }
             int r = 2*a-((a-b)>>phaser_strength)*phaser_sign;
-            db[i] = r;
+            db[i] = rprev+(((r-rprev)*phaser_filter)>>8);
+            rprev = db[i];
         }
         t += phaser_speed;
+        t2 += phaser_speed2;
     } else {
         prev_entered_phaser = 0;
     }
@@ -379,10 +390,8 @@ void Player::render(Buffer &db, Buffer &pb)
     one_liner.render(pre_compress, one_liner_sel);
     hh.render(db);
     drumpf.render(db);
-
+ 
     phaser_test(pos, db, pb );
-
-   
     compressor1.render(db, pre_compress);
 
 //    pre_compress.clear();
