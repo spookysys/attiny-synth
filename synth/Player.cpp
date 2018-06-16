@@ -86,42 +86,43 @@ Player::Player()
 
 // 
 #define BREAK_FREQUENCY 9
-#define BREAK_OFFSET_MAGNITUDE (9+(myrand::rand32()&0x3))
+#define BREAK_OFFSET_MAGNITUDE (9+(myrand::rand16()&0x3))
 #define BREAK_SHUFFLE_AMOUNT 2
 
 // Initial sequence used for break generation
-int breaktab[] = {
+uint8_t breaktab[] = {
     0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
     16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
 };
+static const uint8_t breaktab_mask = 0x1F;
 
-static int mul = 1<<12;
+static int mul_shl = 12;
+
 // Timing here is very inaccurate.. should slice the loop one more time
 static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
 {
     static int prev_breakstep = 0;
-    int breaktabsize = sizeof(breaktab)/sizeof(int);
     int breakstep = (pos>>BREAK_FREQUENCY); 
     if ( prev_breakstep != breakstep )
     {
         // Shuffle sequence
         for ( int breaks = 0; breaks<BREAK_SHUFFLE_AMOUNT; breaks++)
         {
-            int one = myrand::rand32() % breaktabsize;
-            int two = myrand::rand32() % breaktabsize;
+            int one = myrand::rand16() & breaktab_mask;
+            int two = myrand::rand16() & breaktab_mask;
             int tmp = breaktab[one];
             breaktab[one] = breaktab[two];
             breaktab[two] = tmp;
         }
         // Break offset multiplier
-        mul = 1<<BREAK_OFFSET_MAGNITUDE;
+        mul_shl = BREAK_OFFSET_MAGNITUDE;
     }
     prev_breakstep = breakstep;
 
     // Only apply break during a specific timewindow part of the sequence
-    if ( ((pos & 0xfff) > 0x07ff) ) 
+    if ( ((pos & 0xfff) >= 0x0800) ) 
     {
-        pos += breaktab[breakstep%(sizeof(breaktab)/sizeof(int))]*mul;
+        pos += breaktab[breakstep & breaktab_mask] << mul_shl;
     }
 
     switch (pos & 0x3FFF)

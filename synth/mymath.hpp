@@ -3,7 +3,7 @@
 
 namespace mymath
 {
-    // regular expanding multiplies
+    // regular widening multiplies
     uint16_t mul_u16_u8u8(uint8_t a, uint8_t b);
     uint32_t mul_u24_u16u8(uint16_t a, uint8_t b);
 
