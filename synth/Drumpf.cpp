@@ -133,14 +133,14 @@ void Drumpf::Filter::init(const drums::DrumFilter &op)
 }
 int8_t Drumpf::Filter::get(int8_t xx)
 {
-    int8_t b1_xx = mymath::mul_s8_s8s8_shr8(b1, xx);
-    int8_t b2_x1 = mymath::mul_s8_s8s8_shr8(b2, xn_1);
-    int8_t b3_x2 = mymath::mul_s8_s8s8_shr8(b3, xn_2);
+    int8_t b1_xx = mymath::mulhi_s8s8(b1, xx);
+    int8_t b2_x1 = mymath::mulhi_s8s8(b2, xn_1);
+    int8_t b3_x2 = mymath::mulhi_s8s8(b3, xn_2);
     this->xn_2 = this->xn_1;
     this->xn_1 = xx;
 
-    int16_t a2_y1 = mymath::mul_s16_s16s8_shr8(a2, yn_1);
-    int16_t a3_y2 = mymath::mul_s16_s16s8_shr8(a3, yn_2);
+    int16_t a2_y1 = mymath::mulhi_s16s8(a2, yn_1);
+    int16_t a3_y2 = mymath::mulhi_s16s8(a3, yn_2);
     int16_t yy = int8_t(b1_xx + b2_x1 + b3_x2) - a2_y1 - a3_y2;
     if (yy > 127)
         yy = 127;
@@ -209,7 +209,7 @@ void Drumpf::render(Buffer &dest)
         {
             int8_t noiz = myrand::rand8();
             int8_t val = treble_filter.get(noiz);
-            val = mymath::mul_s8_s8u8_shr8(val, vol);
+            val = mymath::mulhi_s8u8(val, vol);
             dest[i] += val;
         }
 

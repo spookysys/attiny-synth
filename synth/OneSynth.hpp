@@ -33,13 +33,13 @@ class OneSynth
 			for (uint8_t i = 0; i < globals::SAMPLES_PER_BUFFER; i += 4)
 			{
 				amp += amp_inc;
-				db[i + 0] += mymath::mul_s8_s8u8_shr8(v[i + 0], amp);
+				db[i + 0] += mymath::mulhi_s8u8(v[i + 0], amp);
 				amp += amp_inc;
-				db[i + 1] += mymath::mul_s8_s8u8_shr8(v[i + 1], amp);
+				db[i + 1] += mymath::mulhi_s8u8(v[i + 1], amp);
 				amp += amp_inc;
-				db[i + 2] += mymath::mul_s8_s8u8_shr8(v[i + 2], amp);
+				db[i + 2] += mymath::mulhi_s8u8(v[i + 2], amp);
 				amp += amp_inc;
-				db[i + 3] += mymath::mul_s8_s8u8_shr8(v[i + 3], amp);
+				db[i + 3] += mymath::mulhi_s8u8(v[i + 3], amp);
 			}
 			state = SUSTAIN;
 		}
@@ -59,10 +59,10 @@ class OneSynth
 		{
 			for (uint8_t i = 0; i < globals::SAMPLES_PER_BUFFER; i += 4)
 			{
-				db[i + 0] += mymath::mul_s8_s8u8_shr8(v[i + 0], vol >> 8);
-				db[i + 1] += mymath::mul_s8_s8u8_shr8(v[i + 1], vol >> 8);
-				db[i + 2] += mymath::mul_s8_s8u8_shr8(v[i + 2], vol >> 8);
-				db[i + 3] += mymath::mul_s8_s8u8_shr8(v[i + 3], vol >> 8);
+				db[i + 0] += mymath::mulhi_s8u8(v[i + 0], vol >> 8);
+				db[i + 1] += mymath::mulhi_s8u8(v[i + 1], vol >> 8);
+				db[i + 2] += mymath::mulhi_s8u8(v[i + 2], vol >> 8);
+				db[i + 3] += mymath::mulhi_s8u8(v[i + 3], vol >> 8);
 				vol -= uint16_t(vol >> decay_speed);
 				if ((vol >> 8) == 0)
 				{

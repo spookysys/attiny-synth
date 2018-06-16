@@ -52,9 +52,9 @@ void Compressor::render(Buffer& db, const Buffer& sb)
     // render sound
     for (uint8_t i=0; i<globals::SAMPLES_PER_BUFFER; i+=4)
     {
-        db[i+0] += mymath::mul_s8_s8u8_shr8(sb[i+0], vol);
-        db[i+1] += mymath::mul_s8_s8u8_shr8(sb[i+1], vol);
-        db[i+2] += mymath::mul_s8_s8u8_shr8(sb[i+2], vol);
-        db[i+3] += mymath::mul_s8_s8u8_shr8(sb[i+3], vol);
+        db[i+0] += mymath::mulhi_s8u8(sb[i+0], vol);
+        db[i+1] += mymath::mulhi_s8u8(sb[i+1], vol);
+        db[i+2] += mymath::mulhi_s8u8(sb[i+2], vol);
+        db[i+3] += mymath::mulhi_s8u8(sb[i+3], vol);
     }
 }

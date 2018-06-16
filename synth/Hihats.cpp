@@ -17,8 +17,8 @@ void Hihats::render(Buffer &db)
     if (vol) {
         for (int8_t i=0; i<globals::SAMPLES_PER_BUFFER; i+=4)
         {
-            int8_t r0 = mymath::mul_s8_s8u8_shr8(myrand::rand8(), vol);
-            int8_t r1 = mymath::mul_s8_s8u8_shr8(myrand::rand8(), vol);
+            int8_t r0 = mymath::mulhi_s8u8(myrand::rand8(), vol);
+            int8_t r1 = mymath::mulhi_s8u8(myrand::rand8(), vol);
             db[i+0] += r0; // supercheap highpass filter
             db[i+1] -= r0;
             db[i+2] += r1;

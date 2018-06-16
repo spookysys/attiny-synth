@@ -10,6 +10,8 @@ namespace myrand {
 
     extern States states;
 
+    void srand();
+
     static uint8_t rand8() 
     {
         uint8_t lsb = states.state8 & 1;
