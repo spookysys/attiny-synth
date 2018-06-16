@@ -80,8 +80,8 @@ Player::Player()
 #if 0
 //#undef AMEN_01
 //#define AMEN_01 KICK_VINYL02
-//#undef AMEN_13
-//#define AMEN_13 KICK_VINYL02
+#undef AMEN_13
+#define AMEN_13 KICK_VINYL02
 #endif
 
 // 
@@ -281,14 +281,15 @@ void phaser_test(int pos,Buffer &db, Buffer &pb)
         if ( !prev_entered_phaser )
         {
             phaser_entry_num++;
-            phaser_depth = (myrand::rand16() & 0x7) + 1;
+            phaser_depth = (myrand::rand16() & 0x0F) + 1;
             phaser_shift = 16 - phaser_depth;
             phaser_speed = (myrand::rand16() & 0x1f) + 1;
             phaser_speed2 = (myrand::rand16() & 0x3f) + 1;
-            phaser_neg =  int16_t(myrand::rand16()) >= 0;
-            phaser_strength = (myrand::rand16() & 3) + 1;
+            phaser_neg = int16_t(myrand::rand16()) >= 0;
+            phaser_strength = (myrand::rand16() & 1) + 1;
         }
         prev_entered_phaser = true;
+
 
         static uint16_t t = 0;
         static uint16_t t2 = 0;
@@ -298,16 +299,8 @@ void phaser_test(int pos,Buffer &db, Buffer &pb)
         so = mymath::mulhi_u8u8(so, phaser_depth);
         so += phaser_shift;
 
-        uint8_t phaser_filter;
-        {
-            static const int center = 196;
-            int8_t tmp = int8_t(pgm_read_byte(&tables::sin[t2>>8])) >> 1;
-            if (tmp < 256 - center)
-                phaser_filter = center + tmp;
-            else
-                phaser_filter = 0; /* deactivate */
-        } 
-
+        uint16_t phaser_filter = 100 + ((pgm_read_byte(&tables::sin[t2>>8]) + 128) >> 1);
+        
         for (uint8_t i = 0; i < globals::SAMPLES_PER_BUFFER; i++)
         {
             int16_t b;
@@ -328,7 +321,7 @@ void phaser_test(int pos,Buffer &db, Buffer &pb)
             if (phaser_neg) diff = -diff;
             int16_t r = a + (diff >> phaser_strength);
             
-            if (phaser_filter)
+            if (phaser_filter < 256)
                 r = rprev + mymath::mulhi_s16u8(r-rprev, phaser_filter);
 
             db[i] = r;
@@ -402,14 +395,14 @@ void Player::render(Buffer &db, Buffer &pb)
 
     // mix
     db.clear();
-    pre_compress.clear();
+//    pre_compress.clear();
 
-    bd.render(db);
-    one_liner.render(pre_compress, one_liner_sel);
-    hh.render(db);
+//    bd.render(db);
+//    one_liner.render(pre_compress, one_liner_sel);
+//    hh.render(db);
     drumpf.render(db);
  
-    compressor1.render(db, pre_compress);
+//    compressor1.render(db, pre_compress);
     phaser_test(pos, db, pb );
 
 //    pre_compress.clear();
