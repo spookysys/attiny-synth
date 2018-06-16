@@ -3,7 +3,7 @@
 
 namespace myrand {
     union States {
-        uint32_t state32 = 0xbeefbabe;
+        uint32_t state32;
         uint16_t state16;
         uint8_t state8;
     };

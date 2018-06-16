@@ -269,7 +269,7 @@ void phaser_test(int pos,Buffer &db, Buffer &pb)
 {
     static int8_t phaser_entry_num = 0;
     static int8_t prev_entered_phaser = 0;
-    if ( ((pos & 0x3ff) > 0x7f) ) 
+    if ( ((pos & 0x3ff) >= 0x80) ) 
     {
         static int8_t phaser_depth = 8;
         static int8_t phaser_shift = 0;
@@ -286,7 +286,7 @@ void phaser_test(int pos,Buffer &db, Buffer &pb)
             phaser_shift = 16-phaser_depth;
             phaser_speed = (myrand::rand32() & 0x1f+1);
             phaser_speed2 = (myrand::rand32() & 0x3f+1);
-            phaser_sign =  ((myrand::rand32()&0x7) > 3) ? -1 : 1;
+            phaser_sign =  ((myrand::rand32()&0x7) >= 4) ? -1 : 1;
             phaser_strength = (myrand::rand32()&1)+1;
         }
         prev_entered_phaser = 1;

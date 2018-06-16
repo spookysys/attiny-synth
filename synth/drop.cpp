@@ -4,6 +4,7 @@
 #include <iostream>
 #include "Buffer.hpp"
 #include "Player.hpp"
+#include "myrand.hpp"
 
 using namespace std;
 
@@ -82,6 +83,9 @@ int main(int argc, char* argv[])
     Buffer buffs[length_in_buffers];
 
     static Player player;
+
+    myrand::srand();
+
     for (int i=1; i<length_in_buffers; i++) player.render(buffs[i],buffs[i-1]);
 
     wav::write_wav("drop.wav", buffs[0].data(), length_in_buffers*globals::SAMPLES_PER_BUFFER, true);

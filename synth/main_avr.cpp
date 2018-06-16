@@ -12,6 +12,7 @@ extern "C"
 #include "common.hpp"
 #include "Player.hpp"
 #include "Buffer.hpp"
+#include "myrand.hpp"
 
 
 static const uint8_t LED_BRIGHTNESS = 0x40;
@@ -29,6 +30,7 @@ static Player player;
 // initialize
 void init()
 {
+	// Overclock
 	overclockInit();
 	overclockCpu(OVERCLOCK_MAX);
 	
@@ -70,6 +72,8 @@ ISR(TIMER1_COMPA_vect)
 // do it now
 int main(void)
 {
+	// srand
+	myrand::srand();
 
 	// initialize
 	init();
