@@ -15,4 +15,5 @@ namespace mymath
     int8_t mulhi_s8s8(int8_t a, int8_t b);
     int8_t mulhi_s8u8(int8_t a, uint8_t b);
     int16_t mulhi_s16s8(int16_t a, int8_t b);
+    int16_t mulhi_s16u8(int16_t a, uint8_t b);
 }

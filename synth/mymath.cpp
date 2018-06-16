@@ -177,14 +177,6 @@ namespace mymath
             return r;
     }
 
-    int8_t mulhi_s8u8(int8_t a, uint8_t b)
-    {
-        if (a < 0)
-            return -mulhi_u8u8(-a, b);
-        else
-            return mulhi_u8u8(a, b);
-    }
-
     int16_t mulhi_s16s8(int16_t a, int8_t b)
     {
         int8_t s = (a >> 8) ^ b;
@@ -197,6 +189,22 @@ namespace mymath
             return -r;
         else
             return r;
+    }
+
+    int8_t mulhi_s8u8(int8_t a, uint8_t b)
+    {
+        if (a < 0)
+            return -mulhi_u8u8(-a, b);
+        else
+            return mulhi_u8u8(a, b);
+    }
+
+    int16_t mulhi_s16u8(int16_t a, uint8_t b)
+    {
+        if (a < 0)
+            return -mulhi_u16u8(-a, b);
+        else
+            return mulhi_u16u8(a, b);
     }
 
 }
