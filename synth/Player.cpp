@@ -265,51 +265,49 @@ static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
 }
 
 
-void phaser_test(int pos,Buffer &db, Buffer &pb)
+void phaser_test(int pos, Buffer &db, Buffer &pb)
 {
     static uint8_t phaser_entry_num = 0;
     static bool prev_entered_phaser = false;
-    if ( ((pos & 0x3ff) >= 0x80) ) 
+    if ((pos & 0x3ff) == 0x80)
+        prev_entered_phaser = false;
+
+    static int8_t phaser_depth = 0;
+    static int8_t phaser_shift = 0;
+    static int8_t phaser_speed = 0;
+    static int8_t filter_speed = 0;
+    static bool phaser_neg = false;
+    static int8_t phaser_strength = 0;
+    if (!prev_entered_phaser)
     {
-        static int8_t phaser_depth = 0;
-        static int8_t phaser_shift = 0;
-        static int8_t phaser_speed = 0;
-        static int8_t phaser_speed2 = 0;
-        static bool phaser_neg = false;
-        static int8_t phaser_strength = 0;
-        static int16_t rprev = 0;
-        if ( !prev_entered_phaser )
-        {
-            phaser_entry_num++;
-            phaser_depth = (myrand::rand16() & 0x0F) + 1;
-            phaser_shift = 16 - phaser_depth;
-            phaser_speed = (myrand::rand16() & 0x1f) + 1;
-            phaser_speed2 = (myrand::rand16() & 0x3f) + 1;
-            phaser_neg = int16_t(myrand::rand16()) >= 0;
-            phaser_strength = (myrand::rand16() & 1) + 1;
-        }
-        prev_entered_phaser = true;
+        phaser_entry_num++;
+        phaser_depth = (myrand::rand16() & 0x0F) + 1;
+        phaser_shift = 16 - phaser_depth;
+        phaser_speed = (myrand::rand16() & 0x1f) + 1;
+        filter_speed = (myrand::rand16() & 0x3f) + 1;
+        phaser_neg = int16_t(myrand::rand16()) >= 0;
+        phaser_strength = (myrand::rand16() & 1) + 1;
+    }
+    prev_entered_phaser = true;
 
-
+    // phaser
+    {
         static uint16_t t = 0;
-        static uint16_t t2 = 0;
 
         uint8_t so;
-        so = pgm_read_byte(&tables::sin[t>>8]) + 128;
+        so = pgm_read_byte(&tables::sin[t >> 8]) + 128;
         so = mymath::mulhi_u8u8(so, phaser_depth);
         so += phaser_shift;
 
-        uint16_t phaser_filter = 100 + ((pgm_read_byte(&tables::sin[t2>>8]) + 128) >> 1);
-        
         for (uint8_t i = 0; i < globals::SAMPLES_PER_BUFFER; i++)
         {
             int16_t b;
-            if ( so <= i )
+            if (so <= i)
             {
                 uint8_t offs = i - so;
                 assert(offs >= 0 && offs < globals::SAMPLES_PER_BUFFER);
                 b = db[offs];
-            } 
+            }
             else
             {
                 uint8_t offs = i - so + globals::SAMPLES_PER_BUFFER;
@@ -318,20 +316,32 @@ void phaser_test(int pos,Buffer &db, Buffer &pb)
             }
             int16_t a = db[i];
             int16_t diff = a - b;
-            if (phaser_neg) diff = -diff;
-            int16_t r = a + (diff >> phaser_strength);
-            
-            if (phaser_filter < 256)
-                r = rprev + mymath::mulhi_s16u8(r-rprev, phaser_filter);
+            if (phaser_neg)
+                diff = -diff;
+            db[i] = a + (diff >> phaser_strength);
+        }
+        t += phaser_speed;
+    }
 
-            db[i] = r;
+    // filter
+    {
+        static uint16_t filter_t = 0;
+        uint8_t phaser_filter = pgm_read_byte(&tables::sin[filter_t >> 8]) + 128;
+
+        static int16_t rprev = 0;
+        for (uint8_t i = 0; i < globals::SAMPLES_PER_BUFFER; i++)
+        {
+            int16_t r = db[i];
+            if (r >= 0x0800)
+                r = 0x07FF;
+            if (r < -0x0800)
+                r = -0x0800;
+            r <<= 4;
+            r = mymath::mulhi_s16u8(r - rprev, phaser_filter) + rprev;
+            db[i] = r >> 4;
             rprev = r;
         }
-
-        t += phaser_speed;
-        t2 += phaser_speed2;
-    } else {
-        prev_entered_phaser = false;
+        filter_t += filter_speed;
     }
 }
 
