@@ -13,8 +13,16 @@ static int8_t synth_wf(uint32_t t)
     int16_t tmp = 0;
     tmp += int8_t(t);
     tmp += int8_t(t + (t >> 6));
-    tmp += int8_t(t >> 1);
+  //  tmp += int8_t(t >> 1);
     tmp += int8_t((t >> 1) + (t >> 7));
+ //   tmp += int8_t(t+t);
+ //   tmp += int8_t(t>>2);
+//    tmp += int8_t(t + (t >> 6));
+ //   tmp += int8_t(t >> 2);
+  //   tmp += int8_t((t >> 4) + (t >> 2));
+     tmp >>= 4;
+   //  tmp <<= 2;
+
     if (tmp < -128)
         return -128;
     else if (tmp > 127)
@@ -22,7 +30,7 @@ static int8_t synth_wf(uint32_t t)
     return tmp;
 }
 
-#define BASE_PITCH 65536
+#define BASE_PITCH 10000
 
 uint16_t pitch_tab[12] = {
   BASE_PITCH/214, // c
@@ -281,9 +289,9 @@ void phaser_test(int pos, Buffer &db, Buffer &pb)
     if (!prev_entered_phaser)
     {
         phaser_entry_num++;
-        phaser_depth = (myrand::rand16() & 0x0F) + 1;
+        phaser_depth = (myrand::rand16() & 0x0F);
         phaser_shift = 16 - phaser_depth;
-        phaser_speed = (myrand::rand16() & 0x1f) + 1;
+        phaser_speed = (myrand::rand16() & 0xff) + 1;
         filter_speed = (myrand::rand16() & 0x3f) + 1;
         phaser_neg = int16_t(myrand::rand16()) >= 0;
         phaser_strength = (myrand::rand16() & 1) + 1;
@@ -318,12 +326,13 @@ void phaser_test(int pos, Buffer &db, Buffer &pb)
             int16_t diff = a - b;
             if (phaser_neg)
                 diff = -diff;
-            db[i] = a + (diff >> phaser_strength);
+            db[i] = a+a+a + (diff >> phaser_strength);
         }
         t += phaser_speed;
     }
 
     // filter
+    if ( 0 )
     {
         static uint16_t filter_t = 0;
         uint8_t phaser_filter = pgm_read_byte(&tables::sin[filter_t >> 8]) + 128;
@@ -382,17 +391,41 @@ void Player::render(Buffer &db, Buffer &pb)
 			hh.trigger(0x40, 0x18);
 		}
 	}
-/*
+
     // trigger synth
-    if (((pos & 0xFFF) == 0x400))
-   {
-        synth.trigger((uint16_t(myrand::rand8())) + 200);
-    }
-    else if (((pos & 0xFFF) == 0x680))
+    if (((pos & 0xFFF) == 0x00) || (pos & 0xFFF) == 0x700 )
     {
-        synth.release();
+        static int arp_pos = 0;
+        static uint32_t arp[] = { 
+                                  pitch_tab[_C], 
+                                  pitch_tab[_C],
+                                  pitch_tab[_C], 
+                                  pitch_tab[FH],
+                                  pitch_tab[_C], 
+                                  pitch_tab[FH],
+                                  uint32_t(pitch_tab[_C]*2),
+                                  uint32_t(pitch_tab[FH]*2),
+                                  };
+        int one = myrand::rand16() & 7;
+        int two = myrand::rand16() & 7;
+        int tmp = arp[one];
+        arp[one] = arp[two];
+        arp[two] = tmp;
+      //  arp_pos += myrand::rand8()&3;
+      //  arp_pos &= 3;
+        arp_pos++;
+        arp_pos  &= 7;
+        synth.trigger(arp[arp_pos]);
     }
-*/
+
+    if ( (pos & 0x1FF) == 0x00 )
+    {
+        static uint16_t arp[] = { pitch_tab[_G], pitch_tab[_C] };
+       // arpeggio.trigger(arp[myrand::rand8()&1]);
+    } else {
+       // arpeggio.release();
+    }
+
 
     // change oneliner settings
     if ((pos & 0x3FFF) == 0)
@@ -405,16 +438,22 @@ void Player::render(Buffer &db, Buffer &pb)
 
     // mix
     db.clear();
-//    pre_compress.clear();
+    pre_compress.clear();
 
 //    bd.render(db);
-//    one_liner.render(pre_compress, one_liner_sel);
+    //  one_liner.render(pre_compress, one_liner_sel);
 //    hh.render(db);
-    drumpf.render(db);
- 
-//    compressor1.render(db, pre_compress);
+    if ( pos > 0xffff )
+    {
+       drumpf.render(db);
+    }
+    
+    synth.render(db, synth_wf);
+    arpeggio.render(db, synth_wf);
     phaser_test(pos, db, pb );
 
+    compressor1.render(db, pre_compress);
+  
 //    pre_compress.clear();
     //one_liner.render(pre_compress, one_liner_sel);
 //    compressor2.render(db, pre_compress);

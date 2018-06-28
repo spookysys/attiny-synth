@@ -8,7 +8,7 @@
 
 using namespace std;
 
-static const int length_in_seconds = 60;
+static const int length_in_seconds = 240;
 static const int length_in_buffers = (length_in_seconds * globals::SAMPLE_RATE) / globals::SAMPLES_PER_BUFFER;
 
 
