@@ -59,7 +59,9 @@ void init()
 ISR(TIMER1_COMPA_vect)
 {
 	int16_t* mixbuff = mixbuffers[0].data(); // flatten the two buffers into one
-	int16_t val = uint16_t(mixbuff[stream_pos]) + 0x80;
+	int16_t val = uint16_t(mixbuff[stream_pos]);
+	val >>= 1;
+	val += 0x80;
 	if (unlikely(val<0)) val = 0;
 	else if (unlikely(val>=0xFF)) val = 0xFF;
 	OCR0A = uint8_t(val);

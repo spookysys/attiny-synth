@@ -59,6 +59,7 @@ namespace wav {
             int8_t* wdata = (int8_t*)malloc(num_samples);
             for (int i=0; i<num_samples; i++) {
                 int16_t val = data[i];
+                val >>= 1;
                 val += 128;
                 if (val<0) val = 0;
                 if (val>255) val = 255;
@@ -67,6 +68,7 @@ namespace wav {
             fwrite(wdata, 1, num_samples, fid);
             free(wdata);
         } else {
+            assert(false);
             fwrite(data, 2, num_samples, fid);
         }
         fclose(fid);
