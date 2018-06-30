@@ -354,20 +354,20 @@ void Player::render(Buffer &db, Buffer &pb)
 
 	if (do_amen) {
 		// Trigger amen
-	    amen(drumpf, bd, (pos<<1)+0x40);
+//	    amen(drumpf, bd, (pos<<1)+0x40);
 
 		// Trigger hihat
-		if (((pos+0x40) & 0x7F) == 0x40)
+		if ((pos & 0x7F) == 0)
 		{
 			hh.trigger(0x60, 0xC0);
 		}
 		
-	} else {
+//	} else {
 		// Trigger bassdrum
 		if ((pos & 0x7FF) == 0)
 		{
 			bd.trigger();
-			drumpf.trigger(KICK_808);
+//			drumpf.trigger(KICK_808);
 		}
 	
 		// Trigger snare
@@ -376,11 +376,6 @@ void Player::render(Buffer &db, Buffer &pb)
 			drumpf.trigger(JK_SNR_03);
 		}	
 
-		// Trigger hihat
-		if ((pos & 0x3FF) == 0x260)
-		{
-			hh.trigger(0x40, 0x18);
-		}
 	}
 /*
     // trigger synth
@@ -407,13 +402,13 @@ void Player::render(Buffer &db, Buffer &pb)
     db.clear();
 //    pre_compress.clear();
 
-//    bd.render(db);
+    bd.render(db);
 //    one_liner.render(pre_compress, one_liner_sel);
 //    hh.render(db);
     drumpf.render(db);
  
 //    compressor1.render(db, pre_compress);
-    phaser_test(pos, db, pb );
+//    phaser_test(pos, db, pb );
 
 //    pre_compress.clear();
     //one_liner.render(pre_compress, one_liner_sel);

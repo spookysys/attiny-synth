@@ -1,6 +1,7 @@
 #include "Drumpf.hpp"
 #include "mymath.hpp"
 #include "myrand.hpp"
+#include "misc.hpp"
 
 using namespace std;
 
@@ -156,24 +157,6 @@ static inline int8_t average(int8_t a, int8_t b, uint8_t &dither)
     int8_t val = (int16_t(a) + int16_t(b) + (dither & 1)) >> 1;
     dither >>= 1;
     return val;
-}
-
-// lerp
-static void lerp(int8_t start, int8_t end, Buffer &v)
-{
-    int16_t iter = start << globals::SAMPLES_PER_BUFFER_LOG2;
-    int16_t step = int16_t(end) - int16_t(start);
-    uint16_t dither = myrand::rand16();
-
-    for (uint8_t i = 0; i < globals::SAMPLES_PER_BUFFER; i++)
-    {
-		int16_t tmp = iter >> (globals::SAMPLES_PER_BUFFER_LOG2 - 1);
-		tmp += dither & 1;
-		tmp >>= 1;
-        v[i] += tmp;
-        dither >>= 1;
-        iter += step;
-    }
 }
 
 void Drumpf::trigger(DrumEnums op)
