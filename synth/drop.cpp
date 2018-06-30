@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
     cout << "Rendering" << endl;
     
 
-    Buffer buffs[length_in_buffers];
+    static Buffer buffs[length_in_buffers];
 
     static Player player;
 
