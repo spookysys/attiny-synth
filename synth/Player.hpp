@@ -16,8 +16,7 @@ class Player
     OneLiner<> one_liner;
     Compressor compressor1, compressor2;
     Buffer pre_compress;
-    OneSynth synth;
-    OneSynth arpeggio;
+    //OneSynth synth;
     Drumpf drumpf;
 public:
     Player();

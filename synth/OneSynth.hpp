@@ -2,20 +2,14 @@
 #include "common.hpp"
 #include "Buffer.hpp"
 #include "mymath.hpp"
-#include <stdio.h>
 
 // Play a waveform at different pitches with a simple volume envelope
 class OneSynth
 {
 	uint8_t decay_speed;
-	uint8_t portamento_speed;
-	uint8_t portamento_iterator;
-
 	uint32_t pos;
 	uint16_t vol;
 	uint16_t pitch;
-	uint16_t dest_pitch;
-
 
 	enum State
 	{
@@ -24,7 +18,6 @@ class OneSynth
 		SUSTAIN,
 		DECAY
 	} state;
-
 
 	void render_inner(Buffer &db, int8_t *v)
 	{
@@ -83,21 +76,9 @@ class OneSynth
 	}
 
   public:
-	OneSynth(uint8_t decay_speed = 1)
+	OneSynth(uint8_t decay_speed = 6)
 	{
 		reset(decay_speed);
-	}
-
-	void mul_pitch(int8_t mul)
-	{
-		printf( "hei\n");
-		if ( mul == 0 ) return;
-		if ( mul > 0 ) {
-			this->pitch <<= mul;
-		} else {
-			this->pitch >>= -mul;
-		}
-		this->portamento_speed = 3;
 	}
 
 	void reset(uint8_t decay_speed)
@@ -105,7 +86,6 @@ class OneSynth
 		this->decay_speed = decay_speed;
 		this->pos = 0;
 		this->vol = 0;
-		this->portamento_speed = 60;
 		this->state = OFF;
 	}
 
@@ -117,30 +97,29 @@ class OneSynth
 
 		int8_t v[globals::SAMPLES_PER_BUFFER];
 
-		for ( int i = 0; i<globals::SAMPLES_PER_BUFFER; i++ )
-		{
-			v[i] = waveform_func(pos >> 6);
-			pos += pitch;
-			if ( portamento_iterator == portamento_speed  )
-			{
-				if ( pitch < dest_pitch ) pitch++;
-				if ( pitch > dest_pitch ) pitch--;
-				portamento_iterator = 0;
-			}
-			portamento_iterator++;
-		}
-
-
+		v[0] = waveform_func(pos >> 8);
+		pos += pitch;
+		v[1] = waveform_func(pos >> 8);
+		pos += pitch;
+		v[2] = waveform_func(pos >> 8);
+		pos += pitch;
+		v[3] = waveform_func(pos >> 8);
+		pos += pitch;
+		v[4] = waveform_func(pos >> 8);
+		pos += pitch;
+		v[5] = waveform_func(pos >> 8);
+		pos += pitch;
+		v[6] = waveform_func(pos >> 8);
+		pos += pitch;
+		v[7] = waveform_func(pos >> 8);
+		pos += pitch;
 		render_inner(db, v);
 	}
 
 	void trigger(uint32_t pitch, uint32_t pos = -1)
 	{
 		state = RAMP;
-		this->dest_pitch = pitch;
-		this->portamento_iterator = 0;
-		this->portamento_speed = 140;
-//		this->pitch = pitch;
+		this->pitch = pitch;
 		if (pos != uint32_t(-1))
 			this->pos = pos;
 	}
