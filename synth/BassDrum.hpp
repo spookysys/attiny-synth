@@ -14,6 +14,6 @@ class BassDrum
     uint8_t vol;
     int8_t lastval;
 public:
-    void trigger();
+    void trigger(bool accent=true);
     void render(Buffer& db);
 };
