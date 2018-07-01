@@ -8,8 +8,10 @@
 
 using namespace std;
 
-static const int length_in_seconds = 240;
-static const int length_in_buffers = (length_in_seconds * globals::SAMPLE_RATE) / globals::SAMPLES_PER_BUFFER;
+static const int length_in_buffers = 1<<18;
+
+// how much to shift down before clipping
+static const int downshift = 2;
 
 
 namespace wav {
@@ -59,7 +61,7 @@ namespace wav {
             int8_t* wdata = (int8_t*)malloc(num_samples);
             for (int i=0; i<num_samples; i++) {
                 int16_t val = data[i];
-                val >>= 1;
+                val >>= downshift;
                 val += 128;
                 if (val<0) val = 0;
                 if (val>255) val = 255;

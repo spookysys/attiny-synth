@@ -3,56 +3,23 @@
 #include "Buffer.hpp"
 
 #ifdef AVR
-#define USE_AMEN_01
-#define USE_AMEN_02
-#define USE_AMEN_03
-#define USE_AMEN_04
-#define USE_AMEN_05
-#define USE_AMEN_06
-//#define USE_AMEN_07
-#define USE_AMEN_08
-#define USE_AMEN_09
-#define USE_AMEN_10
-#define USE_AMEN_11
-#define USE_AMEN_12
-#define USE_AMEN_13
-//#define USE_AMEN_14
-#define USE_AMEN_15
-#define USE_AMEN_16
-//#define USE_AMEN_17
-//#define USE_AMEN_18
-#define USE_AMEN_19
-#define USE_AMEN_20
-//#define USE_AMEN_21
-//#define USE_AMEN_22
-#define USE_AMEN_23
-//#define USE_AMEN_24
-//#define USE_AMEN_25
-//#define USE_AMEN_26
-//#define USE_AMEN_27
-//#define USE_AMEN_28
-//#define USE_AMEN_29
-//#define USE_AMEN_30
-//#define USE_AMEN_31
-//#define USE_AMEN_32
-//#define USE_AMEN_33
-//#define USE_AMEN_34
-#define USE_AMEN_35
-//#define USE_AMEN_36
-//#define USE_AMEN_37
-//#define USE_AMEN_38
-#define USE_AMEN_39
-#define USE_AMEN_40
-//#define USE_AMEN_41
-#define USE_AMEN_42
-#define USE_AMEN_43
-#define USE_AMEN_44
-#define USE_AMEN_45
-#define USE_AMEN_46
 
 #define USE_JK_SNR_03
 #define USE_KICK_VINYL02
 #define USE_KICK_808
+
+#define USE_AMEN_BDHH_5
+#define USE_AMEN_BDHHSOFT
+#define USE_AMEN_BDSOFT_3
+#define USE_AMEN_CRASHBD
+#define USE_AMEN_HH_2
+#define USE_AMEN_HIT
+#define USE_AMEN_LOUDBDHH
+#define USE_AMEN_RIDE
+#define USE_AMEN_SNARE
+//#define USE_AMEN_SNAREHARD
+//#define USE_AMEN_SNAREHISS
+#define USE_AMEN_SOFTSNARE_7
 
 #else
 #include "export/use_all.inc"
@@ -62,6 +29,9 @@ enum DrumEnums
 {
 #include "export/enums.inc"
 };
+
+
+
 
 namespace drums
 {

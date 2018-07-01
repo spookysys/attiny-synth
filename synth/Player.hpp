@@ -14,8 +14,7 @@ class Player
     BassDrum bd;
     Hihats hh;
     OneLiner<> one_liner;
-    Compressor compressor1, compressor2;
-    Buffer pre_compress;
+    Compressor compressor;
     OneSynth synth;
     OneSynth arpeggio;
     Drumpf drumpf;

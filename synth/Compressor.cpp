@@ -3,10 +3,10 @@
 #include <stdlib.h>
 
 // settings
-static const uint8_t loudness_response = 3;
-static const uint8_t quietness_response = 5;
-static const uint8_t max_volume = 100;
-static const uint8_t min_volume = 16;
+static const uint8_t loudness_response_time = 2;
+static const uint8_t quietness_response_time = 3;
+static const uint8_t max_volume = 80;
+static const uint8_t min_volume = 10;
 
 // low-pass filter for compressor response
 template <uint8_t length>
@@ -32,29 +32,31 @@ uint8_t Compressor::analyze(const Buffer &sb)
 
     // response
     if (vol > sense)
-        sense = filter<loudness_response>(sense, vol); // fast response to loudness
+        sense = filter<loudness_response_time>(sense, vol); // fast response to loudness
     else
-        sense = filter<quietness_response>(sense, vol); // slow response to quietness
+        sense = filter<quietness_response_time>(sense, vol); // slow response to quietness
 
     // calculate desired volume
-    uint16_t tmp = sense >> 8;
+    uint16_t tmp = max_volume - (sense >> 8);
     if (tmp > max_volume)
         tmp = max_volume;
-    return max_volume - tmp;
+    if (tmp < 0)
+        tmp = 0;
+    return tmp;
 }
 
 //template <uint8_t reduce, typename WaveformT>
-void Compressor::render(Buffer& db, const Buffer& sb)
+void Compressor::render(Buffer& destination, Buffer& sidechain, const Buffer& mixin)
 {
     // update compressor response
-    uint8_t vol = analyze(db);
+    uint8_t vol = analyze(sidechain);
 
     // render sound
     for (uint8_t i=0; i<globals::SAMPLES_PER_BUFFER; i+=4)
     {
-        db[i+0] += mymath::mulhi_s8u8(sb[i+0], vol);
-        db[i+1] += mymath::mulhi_s8u8(sb[i+1], vol);
-        db[i+2] += mymath::mulhi_s8u8(sb[i+2], vol);
-        db[i+3] += mymath::mulhi_s8u8(sb[i+3], vol);
+        destination[i+0] += mymath::mulhi_s16u8(mixin[i+0], vol);
+        destination[i+1] += mymath::mulhi_s16u8(mixin[i+1], vol);
+        destination[i+2] += mymath::mulhi_s16u8(mixin[i+2], vol);
+        destination[i+3] += mymath::mulhi_s16u8(mixin[i+3], vol);
     }
 }

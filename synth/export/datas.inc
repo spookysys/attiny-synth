@@ -1,3 +1,228 @@
+#ifdef USE_AMEN_BDHH_2
+static const unsigned char amen_bdhh_2_data[] PROGMEM = {
+#include "data/amen_bdhh_2.inc"
+};
+#endif
+#ifdef USE_AMEN_BDHH_3
+static const unsigned char amen_bdhh_3_data[] PROGMEM = {
+#include "data/amen_bdhh_3.inc"
+};
+#endif
+#ifdef USE_AMEN_BDHH_4
+static const unsigned char amen_bdhh_4_data[] PROGMEM = {
+#include "data/amen_bdhh_4.inc"
+};
+#endif
+#ifdef USE_AMEN_BDHH_5
+static const unsigned char amen_bdhh_5_data[] PROGMEM = {
+#include "data/amen_bdhh_5.inc"
+};
+#endif
+#ifdef USE_AMEN_BDHH
+static const unsigned char amen_bdhh_data[] PROGMEM = {
+#include "data/amen_bdhh.inc"
+};
+#endif
+#ifdef USE_AMEN_BDHHSOFT_2
+static const unsigned char amen_bdhhsoft_2_data[] PROGMEM = {
+#include "data/amen_bdhhsoft_2.inc"
+};
+#endif
+#ifdef USE_AMEN_BDHHSOFT_3
+static const unsigned char amen_bdhhsoft_3_data[] PROGMEM = {
+#include "data/amen_bdhhsoft_3.inc"
+};
+#endif
+#ifdef USE_AMEN_BDHHSOFT
+static const unsigned char amen_bdhhsoft_data[] PROGMEM = {
+#include "data/amen_bdhhsoft.inc"
+};
+#endif
+#ifdef USE_AMEN_BDSOFT_2
+static const unsigned char amen_bdsoft_2_data[] PROGMEM = {
+#include "data/amen_bdsoft_2.inc"
+};
+#endif
+#ifdef USE_AMEN_BDSOFT_3
+static const unsigned char amen_bdsoft_3_data[] PROGMEM = {
+#include "data/amen_bdsoft_3.inc"
+};
+#endif
+#ifdef USE_AMEN_BDSOFT
+static const unsigned char amen_bdsoft_data[] PROGMEM = {
+#include "data/amen_bdsoft.inc"
+};
+#endif
+#ifdef USE_AMEN_CRASHBD
+static const unsigned char amen_crashbd_data[] PROGMEM = {
+#include "data/amen_crashbd.inc"
+};
+#endif
+#ifdef USE_AMEN_HH_10
+static const unsigned char amen_hh_10_data[] PROGMEM = {
+#include "data/amen_hh_10.inc"
+};
+#endif
+#ifdef USE_AMEN_HH_11
+static const unsigned char amen_hh_11_data[] PROGMEM = {
+#include "data/amen_hh_11.inc"
+};
+#endif
+#ifdef USE_AMEN_HH_2
+static const unsigned char amen_hh_2_data[] PROGMEM = {
+#include "data/amen_hh_2.inc"
+};
+#endif
+#ifdef USE_AMEN_HH_3
+static const unsigned char amen_hh_3_data[] PROGMEM = {
+#include "data/amen_hh_3.inc"
+};
+#endif
+#ifdef USE_AMEN_HH_4
+static const unsigned char amen_hh_4_data[] PROGMEM = {
+#include "data/amen_hh_4.inc"
+};
+#endif
+#ifdef USE_AMEN_HH_5
+static const unsigned char amen_hh_5_data[] PROGMEM = {
+#include "data/amen_hh_5.inc"
+};
+#endif
+#ifdef USE_AMEN_HH_6
+static const unsigned char amen_hh_6_data[] PROGMEM = {
+#include "data/amen_hh_6.inc"
+};
+#endif
+#ifdef USE_AMEN_HH_7
+static const unsigned char amen_hh_7_data[] PROGMEM = {
+#include "data/amen_hh_7.inc"
+};
+#endif
+#ifdef USE_AMEN_HH_8
+static const unsigned char amen_hh_8_data[] PROGMEM = {
+#include "data/amen_hh_8.inc"
+};
+#endif
+#ifdef USE_AMEN_HH_9
+static const unsigned char amen_hh_9_data[] PROGMEM = {
+#include "data/amen_hh_9.inc"
+};
+#endif
+#ifdef USE_AMEN_HH
+static const unsigned char amen_hh_data[] PROGMEM = {
+#include "data/amen_hh.inc"
+};
+#endif
+#ifdef USE_AMEN_HIT
+static const unsigned char amen_hit_data[] PROGMEM = {
+#include "data/amen_hit.inc"
+};
+#endif
+#ifdef USE_AMEN_LOUDBDHH
+static const unsigned char amen_loudbdhh_data[] PROGMEM = {
+#include "data/amen_loudbdhh.inc"
+};
+#endif
+#ifdef USE_AMEN_RIDE
+static const unsigned char amen_ride_data[] PROGMEM = {
+#include "data/amen_ride.inc"
+};
+#endif
+#ifdef USE_AMEN_SNARE_2
+static const unsigned char amen_snare_2_data[] PROGMEM = {
+#include "data/amen_snare_2.inc"
+};
+#endif
+#ifdef USE_AMEN_SNARE_3
+static const unsigned char amen_snare_3_data[] PROGMEM = {
+#include "data/amen_snare_3.inc"
+};
+#endif
+#ifdef USE_AMEN_SNARE_4
+static const unsigned char amen_snare_4_data[] PROGMEM = {
+#include "data/amen_snare_4.inc"
+};
+#endif
+#ifdef USE_AMEN_SNARE_5
+static const unsigned char amen_snare_5_data[] PROGMEM = {
+#include "data/amen_snare_5.inc"
+};
+#endif
+#ifdef USE_AMEN_SNARE_6
+static const unsigned char amen_snare_6_data[] PROGMEM = {
+#include "data/amen_snare_6.inc"
+};
+#endif
+#ifdef USE_AMEN_SNARE
+static const unsigned char amen_snare_data[] PROGMEM = {
+#include "data/amen_snare.inc"
+};
+#endif
+#ifdef USE_AMEN_SNAREHARD
+static const unsigned char amen_snarehard_data[] PROGMEM = {
+#include "data/amen_snarehard.inc"
+};
+#endif
+#ifdef USE_AMEN_SNAREHISS
+static const unsigned char amen_snarehiss_data[] PROGMEM = {
+#include "data/amen_snarehiss.inc"
+};
+#endif
+#ifdef USE_AMEN_SOFTSNARE_10
+static const unsigned char amen_softsnare_10_data[] PROGMEM = {
+#include "data/amen_softsnare_10.inc"
+};
+#endif
+#ifdef USE_AMEN_SOFTSNARE_11
+static const unsigned char amen_softsnare_11_data[] PROGMEM = {
+#include "data/amen_softsnare_11.inc"
+};
+#endif
+#ifdef USE_AMEN_SOFTSNARE_2
+static const unsigned char amen_softsnare_2_data[] PROGMEM = {
+#include "data/amen_softsnare_2.inc"
+};
+#endif
+#ifdef USE_AMEN_SOFTSNARE_3
+static const unsigned char amen_softsnare_3_data[] PROGMEM = {
+#include "data/amen_softsnare_3.inc"
+};
+#endif
+#ifdef USE_AMEN_SOFTSNARE_4
+static const unsigned char amen_softsnare_4_data[] PROGMEM = {
+#include "data/amen_softsnare_4.inc"
+};
+#endif
+#ifdef USE_AMEN_SOFTSNARE_5
+static const unsigned char amen_softsnare_5_data[] PROGMEM = {
+#include "data/amen_softsnare_5.inc"
+};
+#endif
+#ifdef USE_AMEN_SOFTSNARE_6
+static const unsigned char amen_softsnare_6_data[] PROGMEM = {
+#include "data/amen_softsnare_6.inc"
+};
+#endif
+#ifdef USE_AMEN_SOFTSNARE_7
+static const unsigned char amen_softsnare_7_data[] PROGMEM = {
+#include "data/amen_softsnare_7.inc"
+};
+#endif
+#ifdef USE_AMEN_SOFTSNARE_8
+static const unsigned char amen_softsnare_8_data[] PROGMEM = {
+#include "data/amen_softsnare_8.inc"
+};
+#endif
+#ifdef USE_AMEN_SOFTSNARE_9
+static const unsigned char amen_softsnare_9_data[] PROGMEM = {
+#include "data/amen_softsnare_9.inc"
+};
+#endif
+#ifdef USE_AMEN_SOFTSNARE
+static const unsigned char amen_softsnare_data[] PROGMEM = {
+#include "data/amen_softsnare.inc"
+};
+#endif
 #ifdef USE_GURO_HTFL_HT_015_03
 #endif
 #ifdef USE_GURO_SCFL_HT_015_03
@@ -299,236 +524,6 @@ static const unsigned char zdjn_hat_psfl_ht_015_02_data[] PROGMEM = {
 #ifdef USE_ZDJN_HAT_PSFL_HT_015_03
 static const unsigned char zdjn_hat_psfl_ht_015_03_data[] PROGMEM = {
 #include "data/zdjn_hat_psfl_ht_015_03.inc"
-};
-#endif
-#ifdef USE_AMEN_01
-static const unsigned char amen_01_data[] PROGMEM = {
-#include "data/amen_01.inc"
-};
-#endif
-#ifdef USE_AMEN_02
-static const unsigned char amen_02_data[] PROGMEM = {
-#include "data/amen_02.inc"
-};
-#endif
-#ifdef USE_AMEN_03
-static const unsigned char amen_03_data[] PROGMEM = {
-#include "data/amen_03.inc"
-};
-#endif
-#ifdef USE_AMEN_04
-static const unsigned char amen_04_data[] PROGMEM = {
-#include "data/amen_04.inc"
-};
-#endif
-#ifdef USE_AMEN_05
-static const unsigned char amen_05_data[] PROGMEM = {
-#include "data/amen_05.inc"
-};
-#endif
-#ifdef USE_AMEN_06
-static const unsigned char amen_06_data[] PROGMEM = {
-#include "data/amen_06.inc"
-};
-#endif
-#ifdef USE_AMEN_07
-static const unsigned char amen_07_data[] PROGMEM = {
-#include "data/amen_07.inc"
-};
-#endif
-#ifdef USE_AMEN_08
-static const unsigned char amen_08_data[] PROGMEM = {
-#include "data/amen_08.inc"
-};
-#endif
-#ifdef USE_AMEN_09
-static const unsigned char amen_09_data[] PROGMEM = {
-#include "data/amen_09.inc"
-};
-#endif
-#ifdef USE_AMEN_10
-static const unsigned char amen_10_data[] PROGMEM = {
-#include "data/amen_10.inc"
-};
-#endif
-#ifdef USE_AMEN_11
-static const unsigned char amen_11_data[] PROGMEM = {
-#include "data/amen_11.inc"
-};
-#endif
-#ifdef USE_AMEN_12
-static const unsigned char amen_12_data[] PROGMEM = {
-#include "data/amen_12.inc"
-};
-#endif
-#ifdef USE_AMEN_13
-static const unsigned char amen_13_data[] PROGMEM = {
-#include "data/amen_13.inc"
-};
-#endif
-#ifdef USE_AMEN_14
-static const unsigned char amen_14_data[] PROGMEM = {
-#include "data/amen_14.inc"
-};
-#endif
-#ifdef USE_AMEN_15
-static const unsigned char amen_15_data[] PROGMEM = {
-#include "data/amen_15.inc"
-};
-#endif
-#ifdef USE_AMEN_16
-static const unsigned char amen_16_data[] PROGMEM = {
-#include "data/amen_16.inc"
-};
-#endif
-#ifdef USE_AMEN_17
-static const unsigned char amen_17_data[] PROGMEM = {
-#include "data/amen_17.inc"
-};
-#endif
-#ifdef USE_AMEN_18
-static const unsigned char amen_18_data[] PROGMEM = {
-#include "data/amen_18.inc"
-};
-#endif
-#ifdef USE_AMEN_19
-static const unsigned char amen_19_data[] PROGMEM = {
-#include "data/amen_19.inc"
-};
-#endif
-#ifdef USE_AMEN_20
-static const unsigned char amen_20_data[] PROGMEM = {
-#include "data/amen_20.inc"
-};
-#endif
-#ifdef USE_AMEN_21
-static const unsigned char amen_21_data[] PROGMEM = {
-#include "data/amen_21.inc"
-};
-#endif
-#ifdef USE_AMEN_22
-static const unsigned char amen_22_data[] PROGMEM = {
-#include "data/amen_22.inc"
-};
-#endif
-#ifdef USE_AMEN_23
-static const unsigned char amen_23_data[] PROGMEM = {
-#include "data/amen_23.inc"
-};
-#endif
-#ifdef USE_AMEN_24
-static const unsigned char amen_24_data[] PROGMEM = {
-#include "data/amen_24.inc"
-};
-#endif
-#ifdef USE_AMEN_25
-static const unsigned char amen_25_data[] PROGMEM = {
-#include "data/amen_25.inc"
-};
-#endif
-#ifdef USE_AMEN_26
-static const unsigned char amen_26_data[] PROGMEM = {
-#include "data/amen_26.inc"
-};
-#endif
-#ifdef USE_AMEN_27
-static const unsigned char amen_27_data[] PROGMEM = {
-#include "data/amen_27.inc"
-};
-#endif
-#ifdef USE_AMEN_28
-static const unsigned char amen_28_data[] PROGMEM = {
-#include "data/amen_28.inc"
-};
-#endif
-#ifdef USE_AMEN_29
-static const unsigned char amen_29_data[] PROGMEM = {
-#include "data/amen_29.inc"
-};
-#endif
-#ifdef USE_AMEN_30
-static const unsigned char amen_30_data[] PROGMEM = {
-#include "data/amen_30.inc"
-};
-#endif
-#ifdef USE_AMEN_31
-static const unsigned char amen_31_data[] PROGMEM = {
-#include "data/amen_31.inc"
-};
-#endif
-#ifdef USE_AMEN_32
-static const unsigned char amen_32_data[] PROGMEM = {
-#include "data/amen_32.inc"
-};
-#endif
-#ifdef USE_AMEN_33
-static const unsigned char amen_33_data[] PROGMEM = {
-#include "data/amen_33.inc"
-};
-#endif
-#ifdef USE_AMEN_34
-static const unsigned char amen_34_data[] PROGMEM = {
-#include "data/amen_34.inc"
-};
-#endif
-#ifdef USE_AMEN_35
-static const unsigned char amen_35_data[] PROGMEM = {
-#include "data/amen_35.inc"
-};
-#endif
-#ifdef USE_AMEN_36
-static const unsigned char amen_36_data[] PROGMEM = {
-#include "data/amen_36.inc"
-};
-#endif
-#ifdef USE_AMEN_37
-static const unsigned char amen_37_data[] PROGMEM = {
-#include "data/amen_37.inc"
-};
-#endif
-#ifdef USE_AMEN_38
-static const unsigned char amen_38_data[] PROGMEM = {
-#include "data/amen_38.inc"
-};
-#endif
-#ifdef USE_AMEN_39
-static const unsigned char amen_39_data[] PROGMEM = {
-#include "data/amen_39.inc"
-};
-#endif
-#ifdef USE_AMEN_40
-static const unsigned char amen_40_data[] PROGMEM = {
-#include "data/amen_40.inc"
-};
-#endif
-#ifdef USE_AMEN_41
-static const unsigned char amen_41_data[] PROGMEM = {
-#include "data/amen_41.inc"
-};
-#endif
-#ifdef USE_AMEN_42
-static const unsigned char amen_42_data[] PROGMEM = {
-#include "data/amen_42.inc"
-};
-#endif
-#ifdef USE_AMEN_43
-static const unsigned char amen_43_data[] PROGMEM = {
-#include "data/amen_43.inc"
-};
-#endif
-#ifdef USE_AMEN_44
-static const unsigned char amen_44_data[] PROGMEM = {
-#include "data/amen_44.inc"
-};
-#endif
-#ifdef USE_AMEN_45
-static const unsigned char amen_45_data[] PROGMEM = {
-#include "data/amen_45.inc"
-};
-#endif
-#ifdef USE_AMEN_46
-static const unsigned char amen_46_data[] PROGMEM = {
-#include "data/amen_46.inc"
 };
 #endif
 #ifdef USE_CLAP_808

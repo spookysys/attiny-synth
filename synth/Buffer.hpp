@@ -26,6 +26,11 @@ public:
 	int16_t* data() {
 		return data_;
 	}
+	void mixin(Buffer& sb)
+	{
+		for (uint8_t i=0; i<globals::SAMPLES_PER_BUFFER; i++)
+			(*this)[i] += sb[i];
+	}
 	void clear() {
 	    for (auto& iter : data_) iter = 0;
 	}

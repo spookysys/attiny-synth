@@ -3,11 +3,13 @@
 #include "mymath.hpp"
 #include "misc.hpp"
 
+// settings
 static const uint16_t start_pitch=1000;
 static const uint16_t end_pitch=50;
 static const uint16_t slide_speed_1=5;
 static const uint16_t slide_speed_2=6;
 static const uint16_t decay_speed=3;
+static const bool make_it_loud = true;
 
 void BassDrum::trigger(bool accent)
 {
@@ -31,6 +33,13 @@ void BassDrum::render(Buffer& db)
                 int8_t v1 = pgm_read_byte(&tables::sin[pos>>8]); pos += pitch;
                 int8_t v2 = pgm_read_byte(&tables::sin[pos>>8]); pos += pitch;
                 int8_t v3 = pgm_read_byte(&tables::sin[pos>>8]); pos += pitch;
+                if (!make_it_loud)
+                {
+                    v0 >>= 1;
+                    v1 >>= 1;
+                    v2 >>= 1;
+                    v3 >>= 1;
+                }
                 if (!(this->vol & 0x80))
                 {
                     v0 >>= 1;

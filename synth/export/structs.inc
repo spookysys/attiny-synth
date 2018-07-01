@@ -1,3 +1,228 @@
+#ifdef USE_AMEN_BDHH_2
+{
+#include "struct/amen_bdhh_2.inc"
+},
+#endif
+#ifdef USE_AMEN_BDHH_3
+{
+#include "struct/amen_bdhh_3.inc"
+},
+#endif
+#ifdef USE_AMEN_BDHH_4
+{
+#include "struct/amen_bdhh_4.inc"
+},
+#endif
+#ifdef USE_AMEN_BDHH_5
+{
+#include "struct/amen_bdhh_5.inc"
+},
+#endif
+#ifdef USE_AMEN_BDHH
+{
+#include "struct/amen_bdhh.inc"
+},
+#endif
+#ifdef USE_AMEN_BDHHSOFT_2
+{
+#include "struct/amen_bdhhsoft_2.inc"
+},
+#endif
+#ifdef USE_AMEN_BDHHSOFT_3
+{
+#include "struct/amen_bdhhsoft_3.inc"
+},
+#endif
+#ifdef USE_AMEN_BDHHSOFT
+{
+#include "struct/amen_bdhhsoft.inc"
+},
+#endif
+#ifdef USE_AMEN_BDSOFT_2
+{
+#include "struct/amen_bdsoft_2.inc"
+},
+#endif
+#ifdef USE_AMEN_BDSOFT_3
+{
+#include "struct/amen_bdsoft_3.inc"
+},
+#endif
+#ifdef USE_AMEN_BDSOFT
+{
+#include "struct/amen_bdsoft.inc"
+},
+#endif
+#ifdef USE_AMEN_CRASHBD
+{
+#include "struct/amen_crashbd.inc"
+},
+#endif
+#ifdef USE_AMEN_HH_10
+{
+#include "struct/amen_hh_10.inc"
+},
+#endif
+#ifdef USE_AMEN_HH_11
+{
+#include "struct/amen_hh_11.inc"
+},
+#endif
+#ifdef USE_AMEN_HH_2
+{
+#include "struct/amen_hh_2.inc"
+},
+#endif
+#ifdef USE_AMEN_HH_3
+{
+#include "struct/amen_hh_3.inc"
+},
+#endif
+#ifdef USE_AMEN_HH_4
+{
+#include "struct/amen_hh_4.inc"
+},
+#endif
+#ifdef USE_AMEN_HH_5
+{
+#include "struct/amen_hh_5.inc"
+},
+#endif
+#ifdef USE_AMEN_HH_6
+{
+#include "struct/amen_hh_6.inc"
+},
+#endif
+#ifdef USE_AMEN_HH_7
+{
+#include "struct/amen_hh_7.inc"
+},
+#endif
+#ifdef USE_AMEN_HH_8
+{
+#include "struct/amen_hh_8.inc"
+},
+#endif
+#ifdef USE_AMEN_HH_9
+{
+#include "struct/amen_hh_9.inc"
+},
+#endif
+#ifdef USE_AMEN_HH
+{
+#include "struct/amen_hh.inc"
+},
+#endif
+#ifdef USE_AMEN_HIT
+{
+#include "struct/amen_hit.inc"
+},
+#endif
+#ifdef USE_AMEN_LOUDBDHH
+{
+#include "struct/amen_loudbdhh.inc"
+},
+#endif
+#ifdef USE_AMEN_RIDE
+{
+#include "struct/amen_ride.inc"
+},
+#endif
+#ifdef USE_AMEN_SNARE_2
+{
+#include "struct/amen_snare_2.inc"
+},
+#endif
+#ifdef USE_AMEN_SNARE_3
+{
+#include "struct/amen_snare_3.inc"
+},
+#endif
+#ifdef USE_AMEN_SNARE_4
+{
+#include "struct/amen_snare_4.inc"
+},
+#endif
+#ifdef USE_AMEN_SNARE_5
+{
+#include "struct/amen_snare_5.inc"
+},
+#endif
+#ifdef USE_AMEN_SNARE_6
+{
+#include "struct/amen_snare_6.inc"
+},
+#endif
+#ifdef USE_AMEN_SNARE
+{
+#include "struct/amen_snare.inc"
+},
+#endif
+#ifdef USE_AMEN_SNAREHARD
+{
+#include "struct/amen_snarehard.inc"
+},
+#endif
+#ifdef USE_AMEN_SNAREHISS
+{
+#include "struct/amen_snarehiss.inc"
+},
+#endif
+#ifdef USE_AMEN_SOFTSNARE_10
+{
+#include "struct/amen_softsnare_10.inc"
+},
+#endif
+#ifdef USE_AMEN_SOFTSNARE_11
+{
+#include "struct/amen_softsnare_11.inc"
+},
+#endif
+#ifdef USE_AMEN_SOFTSNARE_2
+{
+#include "struct/amen_softsnare_2.inc"
+},
+#endif
+#ifdef USE_AMEN_SOFTSNARE_3
+{
+#include "struct/amen_softsnare_3.inc"
+},
+#endif
+#ifdef USE_AMEN_SOFTSNARE_4
+{
+#include "struct/amen_softsnare_4.inc"
+},
+#endif
+#ifdef USE_AMEN_SOFTSNARE_5
+{
+#include "struct/amen_softsnare_5.inc"
+},
+#endif
+#ifdef USE_AMEN_SOFTSNARE_6
+{
+#include "struct/amen_softsnare_6.inc"
+},
+#endif
+#ifdef USE_AMEN_SOFTSNARE_7
+{
+#include "struct/amen_softsnare_7.inc"
+},
+#endif
+#ifdef USE_AMEN_SOFTSNARE_8
+{
+#include "struct/amen_softsnare_8.inc"
+},
+#endif
+#ifdef USE_AMEN_SOFTSNARE_9
+{
+#include "struct/amen_softsnare_9.inc"
+},
+#endif
+#ifdef USE_AMEN_SOFTSNARE
+{
+#include "struct/amen_softsnare.inc"
+},
+#endif
 #ifdef USE_GURO_HTFL_HT_015_03
 {
 #include "struct/guro_htfl_ht_015_03.inc"
@@ -326,236 +551,6 @@
 #ifdef USE_ZDJN_HAT_PSFL_HT_015_03
 {
 #include "struct/zdjn_hat_psfl_ht_015_03.inc"
-},
-#endif
-#ifdef USE_AMEN_01
-{
-#include "struct/amen_01.inc"
-},
-#endif
-#ifdef USE_AMEN_02
-{
-#include "struct/amen_02.inc"
-},
-#endif
-#ifdef USE_AMEN_03
-{
-#include "struct/amen_03.inc"
-},
-#endif
-#ifdef USE_AMEN_04
-{
-#include "struct/amen_04.inc"
-},
-#endif
-#ifdef USE_AMEN_05
-{
-#include "struct/amen_05.inc"
-},
-#endif
-#ifdef USE_AMEN_06
-{
-#include "struct/amen_06.inc"
-},
-#endif
-#ifdef USE_AMEN_07
-{
-#include "struct/amen_07.inc"
-},
-#endif
-#ifdef USE_AMEN_08
-{
-#include "struct/amen_08.inc"
-},
-#endif
-#ifdef USE_AMEN_09
-{
-#include "struct/amen_09.inc"
-},
-#endif
-#ifdef USE_AMEN_10
-{
-#include "struct/amen_10.inc"
-},
-#endif
-#ifdef USE_AMEN_11
-{
-#include "struct/amen_11.inc"
-},
-#endif
-#ifdef USE_AMEN_12
-{
-#include "struct/amen_12.inc"
-},
-#endif
-#ifdef USE_AMEN_13
-{
-#include "struct/amen_13.inc"
-},
-#endif
-#ifdef USE_AMEN_14
-{
-#include "struct/amen_14.inc"
-},
-#endif
-#ifdef USE_AMEN_15
-{
-#include "struct/amen_15.inc"
-},
-#endif
-#ifdef USE_AMEN_16
-{
-#include "struct/amen_16.inc"
-},
-#endif
-#ifdef USE_AMEN_17
-{
-#include "struct/amen_17.inc"
-},
-#endif
-#ifdef USE_AMEN_18
-{
-#include "struct/amen_18.inc"
-},
-#endif
-#ifdef USE_AMEN_19
-{
-#include "struct/amen_19.inc"
-},
-#endif
-#ifdef USE_AMEN_20
-{
-#include "struct/amen_20.inc"
-},
-#endif
-#ifdef USE_AMEN_21
-{
-#include "struct/amen_21.inc"
-},
-#endif
-#ifdef USE_AMEN_22
-{
-#include "struct/amen_22.inc"
-},
-#endif
-#ifdef USE_AMEN_23
-{
-#include "struct/amen_23.inc"
-},
-#endif
-#ifdef USE_AMEN_24
-{
-#include "struct/amen_24.inc"
-},
-#endif
-#ifdef USE_AMEN_25
-{
-#include "struct/amen_25.inc"
-},
-#endif
-#ifdef USE_AMEN_26
-{
-#include "struct/amen_26.inc"
-},
-#endif
-#ifdef USE_AMEN_27
-{
-#include "struct/amen_27.inc"
-},
-#endif
-#ifdef USE_AMEN_28
-{
-#include "struct/amen_28.inc"
-},
-#endif
-#ifdef USE_AMEN_29
-{
-#include "struct/amen_29.inc"
-},
-#endif
-#ifdef USE_AMEN_30
-{
-#include "struct/amen_30.inc"
-},
-#endif
-#ifdef USE_AMEN_31
-{
-#include "struct/amen_31.inc"
-},
-#endif
-#ifdef USE_AMEN_32
-{
-#include "struct/amen_32.inc"
-},
-#endif
-#ifdef USE_AMEN_33
-{
-#include "struct/amen_33.inc"
-},
-#endif
-#ifdef USE_AMEN_34
-{
-#include "struct/amen_34.inc"
-},
-#endif
-#ifdef USE_AMEN_35
-{
-#include "struct/amen_35.inc"
-},
-#endif
-#ifdef USE_AMEN_36
-{
-#include "struct/amen_36.inc"
-},
-#endif
-#ifdef USE_AMEN_37
-{
-#include "struct/amen_37.inc"
-},
-#endif
-#ifdef USE_AMEN_38
-{
-#include "struct/amen_38.inc"
-},
-#endif
-#ifdef USE_AMEN_39
-{
-#include "struct/amen_39.inc"
-},
-#endif
-#ifdef USE_AMEN_40
-{
-#include "struct/amen_40.inc"
-},
-#endif
-#ifdef USE_AMEN_41
-{
-#include "struct/amen_41.inc"
-},
-#endif
-#ifdef USE_AMEN_42
-{
-#include "struct/amen_42.inc"
-},
-#endif
-#ifdef USE_AMEN_43
-{
-#include "struct/amen_43.inc"
-},
-#endif
-#ifdef USE_AMEN_44
-{
-#include "struct/amen_44.inc"
-},
-#endif
-#ifdef USE_AMEN_45
-{
-#include "struct/amen_45.inc"
-},
-#endif
-#ifdef USE_AMEN_46
-{
-#include "struct/amen_46.inc"
 },
 #endif
 #ifdef USE_CLAP_808

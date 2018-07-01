@@ -1,3 +1,138 @@
+#ifdef USE_AMEN_BDHH_2
+AMEN_BDHH_2,
+#endif
+#ifdef USE_AMEN_BDHH_3
+AMEN_BDHH_3,
+#endif
+#ifdef USE_AMEN_BDHH_4
+AMEN_BDHH_4,
+#endif
+#ifdef USE_AMEN_BDHH_5
+AMEN_BDHH_5,
+#endif
+#ifdef USE_AMEN_BDHH
+AMEN_BDHH,
+#endif
+#ifdef USE_AMEN_BDHHSOFT_2
+AMEN_BDHHSOFT_2,
+#endif
+#ifdef USE_AMEN_BDHHSOFT_3
+AMEN_BDHHSOFT_3,
+#endif
+#ifdef USE_AMEN_BDHHSOFT
+AMEN_BDHHSOFT,
+#endif
+#ifdef USE_AMEN_BDSOFT_2
+AMEN_BDSOFT_2,
+#endif
+#ifdef USE_AMEN_BDSOFT_3
+AMEN_BDSOFT_3,
+#endif
+#ifdef USE_AMEN_BDSOFT
+AMEN_BDSOFT,
+#endif
+#ifdef USE_AMEN_CRASHBD
+AMEN_CRASHBD,
+#endif
+#ifdef USE_AMEN_HH_10
+AMEN_HH_10,
+#endif
+#ifdef USE_AMEN_HH_11
+AMEN_HH_11,
+#endif
+#ifdef USE_AMEN_HH_2
+AMEN_HH_2,
+#endif
+#ifdef USE_AMEN_HH_3
+AMEN_HH_3,
+#endif
+#ifdef USE_AMEN_HH_4
+AMEN_HH_4,
+#endif
+#ifdef USE_AMEN_HH_5
+AMEN_HH_5,
+#endif
+#ifdef USE_AMEN_HH_6
+AMEN_HH_6,
+#endif
+#ifdef USE_AMEN_HH_7
+AMEN_HH_7,
+#endif
+#ifdef USE_AMEN_HH_8
+AMEN_HH_8,
+#endif
+#ifdef USE_AMEN_HH_9
+AMEN_HH_9,
+#endif
+#ifdef USE_AMEN_HH
+AMEN_HH,
+#endif
+#ifdef USE_AMEN_HIT
+AMEN_HIT,
+#endif
+#ifdef USE_AMEN_LOUDBDHH
+AMEN_LOUDBDHH,
+#endif
+#ifdef USE_AMEN_RIDE
+AMEN_RIDE,
+#endif
+#ifdef USE_AMEN_SNARE_2
+AMEN_SNARE_2,
+#endif
+#ifdef USE_AMEN_SNARE_3
+AMEN_SNARE_3,
+#endif
+#ifdef USE_AMEN_SNARE_4
+AMEN_SNARE_4,
+#endif
+#ifdef USE_AMEN_SNARE_5
+AMEN_SNARE_5,
+#endif
+#ifdef USE_AMEN_SNARE_6
+AMEN_SNARE_6,
+#endif
+#ifdef USE_AMEN_SNARE
+AMEN_SNARE,
+#endif
+#ifdef USE_AMEN_SNAREHARD
+AMEN_SNAREHARD,
+#endif
+#ifdef USE_AMEN_SNAREHISS
+AMEN_SNAREHISS,
+#endif
+#ifdef USE_AMEN_SOFTSNARE_10
+AMEN_SOFTSNARE_10,
+#endif
+#ifdef USE_AMEN_SOFTSNARE_11
+AMEN_SOFTSNARE_11,
+#endif
+#ifdef USE_AMEN_SOFTSNARE_2
+AMEN_SOFTSNARE_2,
+#endif
+#ifdef USE_AMEN_SOFTSNARE_3
+AMEN_SOFTSNARE_3,
+#endif
+#ifdef USE_AMEN_SOFTSNARE_4
+AMEN_SOFTSNARE_4,
+#endif
+#ifdef USE_AMEN_SOFTSNARE_5
+AMEN_SOFTSNARE_5,
+#endif
+#ifdef USE_AMEN_SOFTSNARE_6
+AMEN_SOFTSNARE_6,
+#endif
+#ifdef USE_AMEN_SOFTSNARE_7
+AMEN_SOFTSNARE_7,
+#endif
+#ifdef USE_AMEN_SOFTSNARE_8
+AMEN_SOFTSNARE_8,
+#endif
+#ifdef USE_AMEN_SOFTSNARE_9
+AMEN_SOFTSNARE_9,
+#endif
+#ifdef USE_AMEN_SOFTSNARE
+AMEN_SOFTSNARE,
+#endif
 #ifdef USE_GURO_HTFL_HT_015_03
 GURO_HTFL_HT_015_03,
 #endif
@@ -195,144 +330,6 @@ ZDJN_HAT_PSFL_HT_015_02,
 #endif
 #ifdef USE_ZDJN_HAT_PSFL_HT_015_03
 ZDJN_HAT_PSFL_HT_015_03,
-#endif
-#ifdef USE_AMEN_01
-AMEN_01,
-#endif
-#ifdef USE_AMEN_02
-AMEN_02,
-#endif
-#ifdef USE_AMEN_03
-AMEN_03,
-#endif
-#ifdef USE_AMEN_04
-AMEN_04,
-#endif
-#ifdef USE_AMEN_05
-AMEN_05,
-#endif
-#ifdef USE_AMEN_06
-AMEN_06,
-#endif
-#ifdef USE_AMEN_07
-AMEN_07,
-#endif
-#ifdef USE_AMEN_08
-AMEN_08,
-#endif
-#ifdef USE_AMEN_09
-AMEN_09,
-#endif
-#ifdef USE_AMEN_10
-AMEN_10,
-#endif
-#ifdef USE_AMEN_11
-AMEN_11,
-#endif
-#ifdef USE_AMEN_12
-AMEN_12,
-#endif
-#ifdef USE_AMEN_13
-AMEN_13,
-#endif
-#ifdef USE_AMEN_14
-AMEN_14,
-#endif
-#ifdef USE_AMEN_15
-AMEN_15,
-#endif
-#ifdef USE_AMEN_16
-AMEN_16,
-#endif
-#ifdef USE_AMEN_17
-AMEN_17,
-#endif
-#ifdef USE_AMEN_18
-AMEN_18,
-#endif
-#ifdef USE_AMEN_19
-AMEN_19,
-#endif
-#ifdef USE_AMEN_20
-AMEN_20,
-#endif
-#ifdef USE_AMEN_21
-AMEN_21,
-#endif
-#ifdef USE_AMEN_22
-AMEN_22,
-#endif
-#ifdef USE_AMEN_23
-AMEN_23,
-#endif
-#ifdef USE_AMEN_24
-AMEN_24,
-#endif
-#ifdef USE_AMEN_25
-AMEN_25,
-#endif
-#ifdef USE_AMEN_26
-AMEN_26,
-#endif
-#ifdef USE_AMEN_27
-AMEN_27,
-#endif
-#ifdef USE_AMEN_28
-AMEN_28,
-#endif
-#ifdef USE_AMEN_29
-AMEN_29,
-#endif
-#ifdef USE_AMEN_30
-AMEN_30,
-#endif
-#ifdef USE_AMEN_31
-AMEN_31,
-#endif
-#ifdef USE_AMEN_32
-AMEN_32,
-#endif
-#ifdef USE_AMEN_33
-AMEN_33,
-#endif
-#ifdef USE_AMEN_34
-AMEN_34,
-#endif
-#ifdef USE_AMEN_35
-AMEN_35,
-#endif
-#ifdef USE_AMEN_36
-AMEN_36,
-#endif
-#ifdef USE_AMEN_37
-AMEN_37,
-#endif
-#ifdef USE_AMEN_38
-AMEN_38,
-#endif
-#ifdef USE_AMEN_39
-AMEN_39,
-#endif
-#ifdef USE_AMEN_40
-AMEN_40,
-#endif
-#ifdef USE_AMEN_41
-AMEN_41,
-#endif
-#ifdef USE_AMEN_42
-AMEN_42,
-#endif
-#ifdef USE_AMEN_43
-AMEN_43,
-#endif
-#ifdef USE_AMEN_44
-AMEN_44,
-#endif
-#ifdef USE_AMEN_45
-AMEN_45,
-#endif
-#ifdef USE_AMEN_46
-AMEN_46,
 #endif
 #ifdef USE_CLAP_808
 CLAP_808,

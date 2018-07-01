@@ -143,10 +143,10 @@ int8_t Drumpf::Filter::get(int8_t xx)
     int16_t a2_y1 = mymath::mulhi_s16s8(a2, yn_1);
     int16_t a3_y2 = mymath::mulhi_s16s8(a3, yn_2);
     int16_t yy = b1_xx + b2_x1 + b3_x2 - a2_y1 - a3_y2;
-//    if (yy > 127)
-//        yy = 127;
-//    if (yy < -128)
-//        yy = -128;
+    if (yy > 127)
+        yy = 127;
+    if (yy < -128)
+        yy = -128;
     this->yn_2 = this->yn_1;
     this->yn_1 = yy;
     return yy;

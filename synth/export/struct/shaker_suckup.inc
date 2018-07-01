@@ -1,7 +1,7 @@
-// 278.0000000000000000, 65535.0000000000000000 // treble envelope floats
-{ 278, 65535 }, // treble envelope
-// 1.000000, -0.961382, 0.720991, 0.216198, -0.309071, 0.019055 // treble filter floats
-{ -246, 185, 55, -79, 5 }, // treble filter
+// 285.0000000000000000, 65535.0000000000000000 // treble envelope floats
+{ 285, 65535 }, // treble envelope
+// 1.000000, -0.961382, 0.720991, 0.210206, -0.300505, 0.018527 // treble filter floats
+{ -246, 185, 54, -77, 5 }, // treble filter
 {
     0,
     nullptr

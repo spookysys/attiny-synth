@@ -20,8 +20,9 @@ static int8_t synth_wf(uint32_t t)
 //    tmp += int8_t(t + (t >> 6));
  //   tmp += int8_t(t >> 2);
   //   tmp += int8_t((t >> 4) + (t >> 2));
-     tmp >>= 4;
-   //  tmp <<= 2;
+    
+    // I'm tweaking the volume using the compressor's "max_volume" setting
+    tmp >>= 1; 
 
     if (tmp < -128)
         return -128;
@@ -93,7 +94,7 @@ Player::Player()
 #endif
 
 // 
-#define BREAK_FREQUENCY 9
+#define BREAK_FREQUENCY 10
 #define BREAK_OFFSET_MAGNITUDE (9+(myrand::rand16()&0x3))
 #define BREAK_SHUFFLE_AMOUNT 2
 
@@ -106,9 +107,10 @@ static const uint8_t breaktab_mask = 0x1F;
 
 static int mul_shl = 12;
 
-// Timing here is very inaccurate.. should slice the loop one more time
-static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
+
+static void amen(Drumpf &drumpf, BassDrum &bd, uint16_t pos)
 {
+    
     static int prev_breakstep = 0;
     int breakstep = (pos>>BREAK_FREQUENCY); 
     if ( prev_breakstep != breakstep )
@@ -128,146 +130,93 @@ static void amen(Drumpf &drumpf, BassDrum &db, uint16_t pos)
     prev_breakstep = breakstep;
 
     // Only apply break during a specific timewindow part of the sequence
-    if ( ((pos & 0xfff) >= 0x0800) ) 
+    if ( (((pos<<1) & 0x1C908) >= 0x0800) ) 
     {
         pos += breaktab[breakstep & breaktab_mask] << mul_shl;
     }
 
-    switch (pos & 0x3FFF)
+
+    // Trigger amen samples
+    switch (pos & 0x1FFF)
     {
-    case 0x0060:
-        drumpf.trigger(AMEN_01);
-       // db.trigger();
+    case 0x100:
+    case 0x800:
+    case 0x900:
+    case 0x1000:
+    case 0x1100:
+        drumpf.trigger(AMEN_BDHH_5);
+        bd.trigger(false);
         break;
-    case 0x1040:
-    case 0x2052:
-        drumpf.trigger(AMEN_13);
-      //  db.trigger();
+    case 0x500:
+    case 0xD00:
+    case 0x1900:
+        drumpf.trigger(AMEN_BDHHSOFT);
+        //bd.trigger(false);
         break;
-    case 0x304a:
-        drumpf.trigger(AMEN_35);
-        //        db.trigger();
+    case 0x580:
+    case 0xD80:
+    case 0x1980:
+        drumpf.trigger(AMEN_BDSOFT_3);
+        bd.trigger(false);
         break;
-
-    case 0x315c:
-        //db.trigger();
-        drumpf.trigger(/*AMEN_36*/ /*AMEN_19*/ AMEN_05);
+    case 0x1D00:
+        drumpf.trigger(AMEN_CRASHBD);
+        bd.trigger(true);
         break;
-
-    case 0x022c:
-        //db.trigger();
-        drumpf.trigger(AMEN_02);
+    case 0x300:
+    case 0x400:
+    case 0x700:
+    case 0xB00:
+    case 0xC00:
+    case 0xF00:
+    case 0x1300:
+    case 0x1400:
+    case 0x1800:
+    case 0x1B00:
+    case 0x1C00:
+        drumpf.trigger(AMEN_HH_2);
         break;
-    case 0x123e:
-    case 0x225a:
-        //db.trigger();
-        drumpf.trigger(/*AMEN_14*/ AMEN_13);
+    case 0x0000:
+        drumpf.trigger(AMEN_HIT);
+        bd.trigger(false);
         break;
-    case 0x3238:
-        //db.trigger();
-        drumpf.trigger(/*AMEN_37*/ AMEN_08);
+    case 0x1500:
+        drumpf.trigger(AMEN_LOUDBDHH);
+        bd.trigger(true);
         break;
-
-    case 0x334c:
-        //db.trigger();
-        drumpf.trigger(/*AMEN_38*/ AMEN_09);
+    case 0x1600:
+        drumpf.trigger(AMEN_RIDE);
         break;
-
-    case 0x0428:
-    case 0x144e:
-    case 0x2464:
-        drumpf.trigger(AMEN_03);
+    case 0x200:
+    case 0x600:
+    case 0xA00:
+    case 0xE00:
+    case 0x1200:
+    case 0x1700:
+        drumpf.trigger(AMEN_SNARE);
+        //bd.trigger(false);
         break;
-    case 0x3426:
-        drumpf.trigger(AMEN_39);
+    case 0x1A00:
+        drumpf.trigger(/*AMEN_SNAREHARD*/AMEN_SNARE);
+        bd.trigger(false);
         break;
-
-    case 0x064e:
-    case 0x166e:
-    case 0x2660:
-        //db.trigger();
-        drumpf.trigger(AMEN_04);
+    case 0x1F00:
+        drumpf.trigger(/*AMEN_SNAREHISS*/AMEN_SNARE);
+        //bd.trigger(false);
         break;
-    case 0x363e:
-        //db.trigger();
-        drumpf.trigger(AMEN_40);
+    case 0x380:
+    case 0x480:
+    case 0x780:
+    case 0xB80:
+    case 0xC80:
+    case 0xF80:
+    case 0x1380:
+    case 0x1480:
+    case 0x1880:
+    case 0x1B80:
+    case 0x1C80:
+        drumpf.trigger(AMEN_SOFTSNARE_7);
         break;
-
-    case 0x0750:
-    case 0x1770:
-    case 0x276a:
-        drumpf.trigger(AMEN_05);
-        break;
-    case 0x3748:
-        //db.trigger();
-        drumpf.trigger(/*AMEN_41*/ AMEN_23);
-        break;
-
-    case 0x084e:
-    case 0x186a:
-    case 0x285e:
-        drumpf.trigger(/*AMEN_06*/ AMEN_04);
-        break;
-    case 0x3834:
-        //db.trigger();
-        drumpf.trigger(AMEN_42);
-        break;
-
-    case 0x0946:
-    case 0x1950:
-    case 0x295b:
-        //db.trigger();
-        drumpf.trigger(AMEN_05);
-        break;
-    case 0x3928:
-        //db.trigger();
-        drumpf.trigger(/*AMEN_43*/ AMEN_05);
-        break;
-
-    case 0x0a32:
-    case 0x1a50:
-        drumpf.trigger(AMEN_08);
-        break;
-    case 0x2a3a:
-        drumpf.trigger(AMEN_13);
-        break;
-    case 0x3a0c:
-        drumpf.trigger(AMEN_44);
-        break;
-
-    case 0x0b60:
-    case 0x1b80:
-        drumpf.trigger(AMEN_09);
-        break;
-
-    case 0x0c22:
-    case 0x1c5a:
-        drumpf.trigger(AMEN_10);
-        break;
-    case 0x2c50:
-        drumpf.trigger(/*AMEN_16*/ AMEN_04);
-        break;
-    case 0x3c00:
-        drumpf.trigger(AMEN_45);
-        break;
-
-    case 0x0e48:
-    case 0x1e5e:
-        drumpf.trigger(/*AMEN_11*/ AMEN_04);
-        break;
-    case 0x2e34:
-        drumpf.trigger(/*AMEN_34*/ AMEN_15);
-        break;
-    case 0x3e0a:
-        drumpf.trigger(AMEN_46);
-        break;
-
-    case 0x0f50:
-    case 0x1f72:
-        //db.trigger();
-        drumpf.trigger(/*AMEN_12*/ AMEN_05);
-        break;
-
     default:;
     }
 }
@@ -357,35 +306,32 @@ void phaser_test(int pos, Buffer &db, Buffer &pb)
 
 void Player::render(Buffer &db, Buffer &pb)
 {
-	bool do_amen = true;
-	
     myrand::rand32();
 
-	if (do_amen) {
-		// Trigger amen
-//	    amen(drumpf, bd, (pos<<1)+0x40);
+    // Trigger amen
+    amen(drumpf, bd, pos);
 
-		// Trigger hihat
-		if ((pos & 0x7F) == 0)
-		{
-			hh.trigger(0x60, 0xC0);
-		}
-		
-//	} else {
-		// Trigger bassdrum
-		if ((pos & 0x7FF) == 0)
-		{
-			bd.trigger();
-//			drumpf.trigger(KICK_808);
-		}
-	
-		// Trigger snare
-		if ((pos & 0x7FF) == 0x400)
-		{
-			drumpf.trigger(JK_SNR_03);
-		}	
-
-	}
+    // Trigger hihat
+    if (1)
+    {
+        if ((pos & 0xFF) == 0)
+        {
+            hh.trigger(0x1A, 0x05);
+        }
+    }
+    else
+    {
+        if ((pos & 0x7F) == 0)
+        {
+            hh.trigger(0x60, 0xC0);
+        }
+    }
+    
+    // Trigger snare
+    if ((pos & 0x7FF) == 0x400)
+    {
+		//drumpf.trigger(JK_SNR_03);
+    }
 
     // trigger synth
     if (((pos & 0xFFF) == 0x00) || (pos & 0xFFF) == 0x700 )
@@ -423,36 +369,39 @@ void Player::render(Buffer &db, Buffer &pb)
 
 
     // change oneliner settings
-    if ((pos & 0x3FFF) == 0)
+    if ((pos & 0x7FFF) == 0)
     {
         one_liner.set_time(0);
 		do 
 	        one_liner_sel = myrand::rand16() & 0x7;
 		while (one_liner_sel > 5);
     }
+    
 
     // mix
-    db.clear();
-    pre_compress.clear();
+    Buffer sidechain;
+    Buffer mixin;
 
-//    bd.render(db);
-    //  one_liner.render(pre_compress, one_liner_sel);
-//    hh.render(db);
-    if ( pos > 0xffff )
-    {
-       drumpf.render(db);
-    }
-    
-    synth.render(db, synth_wf);
-    arpeggio.render(db, synth_wf);
-    phaser_test(pos, db, pb );
+    sidechain.clear();
+    mixin.clear();
 
-    compressor1.render(db, pre_compress);
-  
-//    pre_compress.clear();
-    //one_liner.render(pre_compress, one_liner_sel);
-//    compressor2.render(db, pre_compress);
-    //synth.render(db, synth_wf);
+    if ( pos > 0x07FFF )
+        hh.render(db);
+    if ( pos > 0x0DFFF )
+        bd.render(sidechain);
+    if ( pos > 0x0FFFF )
+        drumpf.render(db);
+    if ( pos > 0xFFFF && ((pos & 0xFFFF) > 0x07FFF))
+        one_liner.render(mixin, one_liner_sel);
+    if ( pos <= 0xFFFF || ((pos & 0xFFFF) <= 0x0BFFF))
+        synth.render(mixin, synth_wf);
+    //arpeggio.render(mixin, synth_wf);
+
+    compressor.render(db, sidechain, mixin);
+
+    db.mixin(sidechain);
+
+    phaser_test(pos, db, pb);
 
 
     pos ++;
