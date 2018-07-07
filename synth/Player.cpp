@@ -31,7 +31,7 @@ static int8_t synth_wf(uint32_t t)
     return tmp;
 }
 
-#define BASE_PITCH 10000
+#define BASE_PITCH 256 * 214
 
 uint16_t pitch_tab[12] = {
   BASE_PITCH/214, // c
@@ -139,6 +139,10 @@ static void amen(Drumpf &drumpf, BassDrum &bd, uint16_t pos)
     // Trigger amen samples
     switch (pos & 0x1FFF)
     {
+    case 0x0000:
+        drumpf.trigger(AMEN_HIT);
+        bd.trigger(false);
+        break;
     case 0x100:
     case 0x800:
     case 0x900:
@@ -175,10 +179,6 @@ static void amen(Drumpf &drumpf, BassDrum &bd, uint16_t pos)
     case 0x1B00:
     case 0x1C00:
         drumpf.trigger(AMEN_HH_2);
-        break;
-    case 0x0000:
-        drumpf.trigger(AMEN_HIT);
-        bd.trigger(false);
         break;
     case 0x1500:
         drumpf.trigger(AMEN_LOUDBDHH);

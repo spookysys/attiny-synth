@@ -119,12 +119,12 @@ class OneSynth
 
 		for ( int i = 0; i<globals::SAMPLES_PER_BUFFER; i++ )
 		{
-			v[i] = waveform_func(pos >> 6);
+			v[i] = waveform_func(pos >> 8);
 			pos += pitch;
 			if ( portamento_iterator == portamento_speed  )
 			{
-				if ( pitch < dest_pitch ) pitch++;
-				if ( pitch > dest_pitch ) pitch--;
+				if ( pitch < dest_pitch ) pitch+=4;
+				if ( pitch > dest_pitch ) pitch-=4;
 				portamento_iterator = 0;
 			}
 			portamento_iterator++;
