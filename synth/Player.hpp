@@ -9,16 +9,16 @@
 
 class Player
 {
-    uint32_t pos = 0;
-    uint8_t one_liner_sel = 0;
+    uint32_t pos;
+    uint8_t one_liner_sel;
     BassDrum bd;
     Hihats hh;
-    OneLiner<> one_liner;
+    OneLiner<uint16_t> one_liner;
     Compressor compressor;
     OneSynth synth;
     OneSynth arpeggio;
     Drumpf drumpf;
 public:
-    Player();
+    void init();
     void render(Buffer& db, Buffer& pb);
 };

@@ -1,6 +1,6 @@
+#include <stdlib.h>
 #include "Compressor.hpp"
 #include "mymath.hpp"
-#include <stdlib.h>
 
 // settings
 static const uint8_t loudness_response_time = 2;

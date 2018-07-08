@@ -5,7 +5,7 @@
 template <typename T = uint32_t> // shorter types are faster but they loop
 class OneLiner
 {
-    T t = 0;
+    T t;
 
     static int8_t eval(T t, uint8_t sel)
     {
@@ -29,6 +29,7 @@ class OneLiner
     }
 
   public:
+    void init() { set_time(0); }
     void set_time(T t) { this->t = t; }
     void render(Buffer &db, uint8_t sel)
     {

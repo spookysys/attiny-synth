@@ -162,7 +162,10 @@ static inline int8_t average(int8_t a, int8_t b, uint8_t &dither)
 void Drumpf::trigger(DrumEnums op)
 {
     drums::Drum drum;
-	memcpy_P(&drum, &drums::drums[op], sizeof(drums::Drum));
+    uint8_t* sp = ((uint8_t*)&drums::drums) + (size_t)mymath::mul_u16_u8u8(op, sizeof(drum));
+    uint8_t* dp = (uint8_t*)&drum;
+	for (uint8_t i=0; i<sizeof(drums::Drum); i++)
+        *dp++ = pgm_read_byte(sp++);
     adpcmDecoder.trigger(drum.bass_sample);
     treble_volume = uint32_t(drum.treble_env.volume) << 16;
     treble_half = treble_volume >> 1;

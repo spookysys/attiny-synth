@@ -1,5 +1,5 @@
 #include "myrand.hpp"
-#if !defined(AVR)
+#if false && !defined(AVR)
 #include <ctime>
 #endif
 
@@ -8,7 +8,7 @@ namespace myrand {
 
     void srand()
     {
-#if !defined(AVR)
+#if false && !defined(AVR)
 		states.state32 = time(nullptr);
 #else
         /* todo */

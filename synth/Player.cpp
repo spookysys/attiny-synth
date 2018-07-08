@@ -1,51 +1,34 @@
 #include "Player.hpp"
 #include "myrand.hpp"
-
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
 #include "tables.hpp"
 
 using namespace myrand;
 
-static int8_t synth_wf(uint16_t t)
-{
-    int16_t tmp = 0;
-    tmp += int8_t(t);
-    tmp += int8_t(t + (t >> 6));
-  //  tmp += int8_t(t >> 1);
-    tmp += int8_t((t >> 1) + (t >> 7));
- //   tmp += int8_t(t+t);
- //   tmp += int8_t(t>>2);
-//    tmp += int8_t(t + (t >> 6));
- //   tmp += int8_t(t >> 2);
-  //   tmp += int8_t((t >> 4) + (t >> 2));
-    
-    // I'm tweaking the volume using the compressor's "max_volume" setting
-    tmp >>= 1; 
 
-    if (tmp < -128)
-        return -128;
-    else if (tmp > 127)
-        return 127;
-    return tmp;
+static int16_t synth_wf(uint16_t t)
+{
+	int16_t tmp = 0;
+	tmp += int8_t(t);
+	tmp += int8_t(t + (t >> 6));
+//  tmp += int8_t(t >> 1);
+	tmp += int8_t((t >> 1) + (t >> 7));
+//   tmp += int8_t(t+t);
+//   tmp += int8_t(t>>2);
+//    tmp += int8_t(t + (t >> 6));
+//   tmp += int8_t(t >> 2);
+//   tmp += int8_t((t >> 4) + (t >> 2));
+	return tmp;
 }
 
-static int8_t sag_wf(uint16_t t)
+static int16_t sag_wf(uint16_t t)
 {
     int16_t tmp = 0;
     tmp += int8_t(t);
     tmp += int8_t(t+t);
-    tmp >>= 1; 
-
-    if (tmp < -128)
-        return -128;
-    else if (tmp > 127)
-        return 127;
     return tmp;
 }
 
-#define BASE_PITCH 256 * 214
+#define BASE_PITCH (256 * 214)
 
 static constexpr uint16_t pitch_tab[12] = {
   BASE_PITCH/214, // c
@@ -117,40 +100,39 @@ struct Chord
             int16_t v = 0;
             int8_t vib1 = tables::sin[vibpos1>>8]; 
             vibpos1 += 20; 
-            v += synth_wf(poses[0]>>8); poses[0] += chord_pitches[0] - (vib1>>3) + (vib1>>4);
-            v += synth_wf(poses[1]>>8); poses[1] += chord_pitches[1] + (vib1>>3);
-            v += synth_wf(poses[2]>>8); poses[2] += chord_pitches[2] - (vib1>>3);
-            v += synth_wf(poses[3]>>8); poses[3] += chord_pitches[3] + (vib1>>3) - (vib1>>4);
-            v += synth_wf(poses[4]>>8); poses[4] += chord_pitches[4] - (vib1>>3) + (vib1>>4);
+            vib1 >>= 2;
+            v += sag_wf(poses[0]>>8); poses[0] += chord_pitches[0] - (vib1) + (vib1>>1);
+            v += sag_wf(poses[1]>>8); poses[1] += chord_pitches[1] + (vib1);
+            v += sag_wf(poses[2]>>8); poses[2] += chord_pitches[2] - (vib1);
+            v += sag_wf(poses[3]>>8); poses[3] += chord_pitches[3] + (vib1) - (vib1>>1);
+            v += sag_wf(poses[4]>>8); poses[4] += chord_pitches[4] - (vib1) + (vib1>>1);
             db[i] += v>>5;
         }
     }
 } chord;
 
-Player::Player()
-{
-}
-
-#if 0
-//#undef AMEN_01
-//#define AMEN_01 KICK_VINYL02
-#undef AMEN_13
-#define AMEN_13 KICK_VINYL02
-#endif
-
-// 
 #define BREAK_FREQUENCY 10
 #define BREAK_OFFSET_MAGNITUDE (9+(myrand::rand16()&0x3))
 #define BREAK_SHUFFLE_AMOUNT 2
 
 // Initial sequence used for break generation
-uint8_t breaktab[] = {
-    0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-    16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
-};
+static uint8_t breaktab[32];
 static const uint8_t breaktab_mask = 0x1F;
-
 static int mul_shl = 12;
+
+void Player::init()
+{
+    bd.init();
+    drumpf.init();
+    synth.init();
+    arpeggio.init();
+    one_liner.init();
+    hh.init();
+    for (uint8_t i=0; i<sizeof(breaktab)/sizeof(*breaktab); i++)
+        breaktab[i] = i;
+    pos = 0;
+    one_liner_sel = 0;
+}
 
 bool drumblocker(uint16_t pos)
 {
@@ -200,9 +182,9 @@ static void amen(Drumpf &drumpf, BassDrum &bd, uint16_t pos)
     switch (pos & 0x1FFF)
     {
     case 0x0000:
-        drumpf.trigger(AMEN_HIT);
-        bd.trigger(false);
-        break;
+//        drumpf.trigger(AMEN_HIT);
+//        bd.trigger(false);
+//        break;
     case 0x100:
     case 0x800:
     case 0x900:
@@ -436,7 +418,7 @@ void Player::render(Buffer &db, Buffer &pb)
 
     if ( (pos & 0x7F) == 0x00 )
     {
-        static constexpr uint32_t arp[] = { (uint16_t)(pitch_tab[_C]*2),
+        static const uint32_t arp[] = { (uint16_t)(pitch_tab[_C]*2),
                                             (uint16_t)(pitch_tab[_C]*3),
                                             (uint16_t)(pitch_tab[_C]*4), 
                                             (uint16_t)(pitch_tab[_C]*6),
@@ -473,24 +455,25 @@ void Player::render(Buffer &db, Buffer &pb)
     sidechain.clear();
     mixin.clear();
 
-    if ( !drumblocker(pos) )
+    if ( pos < 0x8000 || !drumblocker(pos) )
     {
-        if ( pos > 0x07FFF )
+        if ( pos > 0x7FFF )
             hh.render(db);
-        if ( pos > 0x0DFFF )
+        if ( pos > 0xFFFF )
+        {
             bd.render(sidechain);
-        if ( pos > 0x0FFFF )
             drumpf.render(db);
+        }
     }
 
     if ( pos > 0xFFFF && ((pos & 0xFFFF) > 0x07FFF))
         one_liner.render(mixin, one_liner_sel);
 
     if ( pos <= 0xFFFF || ((pos & 0xFFFF) <= 0x07FFF))
-    {
-        synth.render(mixin, synth_wf);
-        arpeggio.render(mixin, sag_wf);
-    }
+        //synth.render(mixin, synth_wf);
+
+    if ( pos > 0xFFFF && ((pos & 0xFFFF) <= 0x07FFF))
+        //arpeggio.render(mixin, sag_wf);
 
 
     if ( pos > 0xFFFF && ((pos & 0xFFFF) > 0x07FFF))

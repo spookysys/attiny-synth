@@ -1,9 +1,6 @@
 #include "Hihats.hpp"
 #include "myrand.hpp"
 #include "mymath.hpp"
-Hihats::Hihats()
-{
-}
 
 void Hihats::trigger(uint8_t volume, uint8_t falloff)
 {

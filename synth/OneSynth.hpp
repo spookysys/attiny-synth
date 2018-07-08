@@ -4,6 +4,7 @@
 #include "mymath.hpp"
 #include <stdio.h>
 
+
 // Play a waveform at different pitches with a simple volume envelope
 class OneSynth
 {
@@ -73,7 +74,6 @@ class OneSynth
 				uint16_t prev_vol = vol;
 				vol -= decay_speed<<4; // uint16_t(vol >> decay_speed);
 				// vol >>= 1; // (decay_speed<<8); // uint16_t(vol >> decay_speed);
-				printf( "%hu ", vol);
 				if (prev_vol < vol )
 				{
 					vol = 0;
@@ -87,10 +87,7 @@ class OneSynth
 	}
 
   public:
-	OneSynth(uint8_t decay_speed = 1)
-	{
-		reset(decay_speed);
-	}
+    void init() { reset(1); }
 
 	void mul_pitch(int8_t mul)
 	{
@@ -120,8 +117,7 @@ class OneSynth
 		this->state = OFF;
 	}
 
-	template <typename WaveformFunc>
-	void render(Buffer &db, WaveformFunc waveform_func)
+	void render(Buffer &db, int16_t(*synth_wf)(uint16_t))
 	{
 		if (state == OFF)
 			return;
@@ -130,7 +126,13 @@ class OneSynth
 
 		for ( int i = 0; i<globals::SAMPLES_PER_BUFFER; i++ )
 		{
-			v[i] = waveform_func(pos >> 8);
+			int16_t tmp = synth_wf(pos >> 8);
+			tmp >>= 1;
+			if (tmp < -128)
+				tmp = -128;
+			else if (tmp > 127)
+				tmp = 127;
+			v[i] = tmp;
 			pos += pitch;
 			if ( portamento_iterator == portamento_speed  )
 			{

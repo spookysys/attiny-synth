@@ -8,6 +8,9 @@
 extern "C"
 {
 	#include "overclock.h"
+	void exit(int tmp)
+	{
+	}
 };
 #include "common.hpp"
 #include "Player.hpp"
@@ -46,7 +49,7 @@ void init()
 
 	// Sample streaming interrupt
 	TCCR1 = (1<<CTC1) | (1<<CS12); // Set prescaler to F_CPU / 8
-	uint8_t timer1_oc = (F_CPU) / (globals::SAMPLE_RATE * 8ULL);
+	static const uint8_t timer1_oc = (F_CPU) / (globals::SAMPLE_RATE * 8ULL);
 	OCR1A = timer1_oc; // isr value
 	OCR1C = timer1_oc;
 	TCNT1 = 0;
@@ -78,7 +81,8 @@ int main(void)
 
 	// initialize
 	init();
-	
+	player.init();
+
 	// Start playback
 	sei();
 

@@ -4,16 +4,16 @@
 
 #ifdef AVR
 
-#define USE_JK_SNR_03
-#define USE_KICK_VINYL02
-#define USE_KICK_808
+//#define USE_JK_SNR_03
+//#define USE_KICK_VINYL02
+//#define USE_KICK_808
 
 #define USE_AMEN_BDHH_5
 #define USE_AMEN_BDHHSOFT
 #define USE_AMEN_BDSOFT_3
 #define USE_AMEN_CRASHBD
 #define USE_AMEN_HH_2
-#define USE_AMEN_HIT
+//#define USE_AMEN_HIT
 #define USE_AMEN_LOUDBDHH
 #define USE_AMEN_RIDE
 #define USE_AMEN_SNARE
@@ -82,7 +82,7 @@ class Drumpf
     Filter treble_filter;
 
   public:
-    Drumpf() { reset(); }
+    void init() { reset(); }
     void reset();
     void trigger(DrumEnums op);
     void render(Buffer &db);

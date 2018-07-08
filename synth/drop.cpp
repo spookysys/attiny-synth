@@ -87,6 +87,7 @@ int main(int argc, char* argv[])
     static Buffer buffs[length_in_buffers];
 
     static Player player;
+    player.init();
 
     myrand::srand();
 
