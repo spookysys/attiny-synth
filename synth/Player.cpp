@@ -8,7 +8,7 @@
 
 using namespace myrand;
 
-static int8_t synth_wf(uint32_t t)
+static int8_t synth_wf(uint16_t t)
 {
     int16_t tmp = 0;
     tmp += int8_t(t);
@@ -33,7 +33,7 @@ static int8_t synth_wf(uint32_t t)
 
 #define BASE_PITCH 256 * 214
 
-uint16_t pitch_tab[12] = {
+static constexpr uint16_t pitch_tab[12] = {
   BASE_PITCH/214, // c
   BASE_PITCH/202, // c#
   BASE_PITCH/190, // d 
@@ -76,11 +76,40 @@ typedef struct note {
 } note;
 
 
-static note song[] = { 
+static const note song[] = { 
 	{ MD| 0|O0,0,3 },
 	{ MS|_C|O1,1,2 }
 };
 
+
+struct Chord
+{
+    static constexpr uint16_t pitches[] = {
+        (pitch_tab[_DH]<<3) + 2,
+        (pitch_tab[_G]<<2) - 1,
+        (pitch_tab[A]<<2) + 1,
+        (pitch_tab[CH]<<3) - 3,
+        (pitch_tab[_E]<<3) - 2,
+    };
+    static const uint8_t n = sizeof(pitches)/sizeof(*pitches);
+    uint16_t poses[n] = {};
+    uint16_t vibpos1 = 0;
+    void render(Buffer& db)
+    {
+        for (uint8_t i=0; i<globals::SAMPLES_PER_BUFFER; i++)
+        {
+            int16_t v = 0;
+            int8_t vib1 = tables::sin[vibpos1>>8]; 
+            vibpos1 += 20; 
+            v += synth_wf(poses[0]>>8); poses[0] += pitches[0] - (vib1>>3) + (vib1>>4);
+            v += synth_wf(poses[1]>>8); poses[1] += pitches[1] + (vib1>>3);
+            v += synth_wf(poses[2]>>8); poses[2] += pitches[2] - (vib1>>3);
+            v += synth_wf(poses[3]>>8); poses[3] += pitches[3] + (vib1>>3) - (vib1>>4);
+            v += synth_wf(poses[4]>>8); poses[4] += pitches[4] - (vib1>>3) + (vib1>>4);
+            db[i] += v>>5;
+        }
+    }
+} chord;
 
 Player::Player()
 {
@@ -393,9 +422,12 @@ void Player::render(Buffer &db, Buffer &pb)
         drumpf.render(db);
     if ( pos > 0xFFFF && ((pos & 0xFFFF) > 0x07FFF))
         one_liner.render(mixin, one_liner_sel);
-    if ( pos <= 0xFFFF || ((pos & 0xFFFF) <= 0x0BFFF))
+    if ( pos <= 0xFFFF || ((pos & 0xFFFF) <= 0x07FFF))
         synth.render(mixin, synth_wf);
     //arpeggio.render(mixin, synth_wf);
+
+    if ( pos > 0xFFFF && ((pos & 0xFFFF) > 0x07FFF))
+        chord.render(db);
 
     compressor.render(db, sidechain, mixin);
 

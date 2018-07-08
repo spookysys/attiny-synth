@@ -134,14 +134,14 @@ class OneSynth
 		render_inner(db, v);
 	}
 
-	void trigger(uint32_t pitch, uint32_t pos = -1)
+	void trigger(uint16_t pitch, uint16_t pos = -1)
 	{
 		state = RAMP;
 		this->dest_pitch = pitch;
 		this->portamento_iterator = 0;
 		this->portamento_speed = 140;
 //		this->pitch = pitch;
-		if (pos != uint32_t(-1))
+		if (pos != uint16_t(-1))
 			this->pos = pos;
 	}
 
