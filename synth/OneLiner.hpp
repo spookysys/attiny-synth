@@ -2,12 +2,11 @@
 #include "Buffer.hpp"
 #include "myrand.hpp"
 
-template <typename T = uint32_t> // shorter types are faster but they loop
 class OneLiner
 {
-    T t;
+    uint16_t t;
 
-    static int8_t eval(T t, uint8_t sel)
+    static int8_t eval(uint16_t t, uint8_t sel)
     {
         switch (sel)
         {
@@ -29,8 +28,7 @@ class OneLiner
     }
 
   public:
-    void init() { set_time(0); }
-    void set_time(T t) { this->t = t; }
+    void init() { t = 0; }
     void render(Buffer &db, uint8_t sel)
     {
         // reduce resolution if you need cycles

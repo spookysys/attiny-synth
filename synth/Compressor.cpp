@@ -1,5 +1,7 @@
 #include <stdlib.h>
+#include "misc.hpp"
 #include "Compressor.hpp"
+#include "myrand.hpp"
 #include "mymath.hpp"
 
 // settings
@@ -12,7 +14,7 @@ static const uint8_t min_volume = 10;
 template <uint8_t length>
 static uint16_t filter(uint16_t state, uint16_t input)
 {
-    static const uint16_t bias = (1 << (length - 1)) - 1;
+    uint16_t bias = (1 << (length - 1)) - 1;
     return ((uint32_t(state) << length) - state + input + bias) >> length;
 }
 
@@ -54,9 +56,9 @@ void Compressor::render(Buffer& destination, Buffer& sidechain, const Buffer& mi
     // render sound
     for (uint8_t i=0; i<globals::SAMPLES_PER_BUFFER; i+=4)
     {
-        destination[i+0] += mymath::mulhi_s16u8(mixin[i+0], vol);
-        destination[i+1] += mymath::mulhi_s16u8(mixin[i+1], vol);
-        destination[i+2] += mymath::mulhi_s16u8(mixin[i+2], vol);
-        destination[i+3] += mymath::mulhi_s16u8(mixin[i+3], vol);
+        destination[i+0] += mymath::mulhi_s8u8(clamp8(mixin[i+0]), vol);
+        destination[i+1] += mymath::mulhi_s8u8(clamp8(mixin[i+1]), vol);
+        destination[i+2] += mymath::mulhi_s8u8(clamp8(mixin[i+2]), vol);
+        destination[i+3] += mymath::mulhi_s8u8(clamp8(mixin[i+3]), vol);
     }
 }

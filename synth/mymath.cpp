@@ -67,6 +67,7 @@ namespace mymath
 #endif
 	}
 
+#ifndef BROKEN_MUL16 /* this multiplier doesn't work */
 	uint32_t mul_u24_u16u8(uint16_t a, uint8_t b)
 	{
 #if !defined(AVR)
@@ -145,20 +146,21 @@ namespace mymath
 		return ret;
 #endif
 	}
-
+#endif
 
 	// mulhi wrappers
 
     uint8_t mulhi_u8u8(uint8_t a, uint8_t b)
     {
-        return mul_u16_u8u8(a, b) >> (sizeof(b) * 8);
+        return mul_u16_u8u8(a, b) >> 8;
     }
 
+#ifndef BROKEN_MUL16 /* this multiplier doesn't work */
     uint16_t mulhi_u16u8(uint16_t a, uint8_t b)
     {
-        return mul_u24_u16u8(a, b) >> (sizeof(b) * 8);
+        return mul_u24_u16u8(a, b) >> 8;
     }
-
+#endif
 
 
 	// signed wrappers
@@ -177,6 +179,7 @@ namespace mymath
             return r;
     }
 
+#ifndef BROKEN_MUL16 /* this multiplier doesn't work */
     int16_t mulhi_s16s8(int16_t a, int8_t b)
     {
         int8_t s = (a >> 8) ^ b;
@@ -190,6 +193,7 @@ namespace mymath
         else
             return r;
     }
+#endif
 
     int8_t mulhi_s8u8(int8_t a, uint8_t b)
     {
@@ -199,6 +203,7 @@ namespace mymath
             return mulhi_u8u8(a, b);
     }
 
+#ifndef BROKEN_MUL16 /* this multiplier doesn't work */
     int16_t mulhi_s16u8(int16_t a, uint8_t b)
     {
         if (a < 0)
@@ -206,6 +211,6 @@ namespace mymath
         else
             return mulhi_u16u8(a, b);
     }
-
+#endif
 }
 

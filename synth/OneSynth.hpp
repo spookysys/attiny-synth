@@ -87,7 +87,6 @@ class OneSynth
 	}
 
   public:
-    void init() { reset(1); }
 
 	void mul_pitch(int8_t mul)
 	{
@@ -108,9 +107,12 @@ class OneSynth
 	{
 		this->decay_speed = speed;
 	}
-	void reset(uint8_t decay_speed)
+	void init()
 	{
-		this->decay_speed = decay_speed;
+		this->portamento_iterator = 0;
+		this->pitch = 0;
+		this->dest_pitch = 0;
+		this->decay_speed = 1;
 		this->pos = 0;
 		this->vol = 0;
 		this->portamento_speed = 60;
@@ -127,7 +129,6 @@ class OneSynth
 		for ( int i = 0; i<globals::SAMPLES_PER_BUFFER; i++ )
 		{
 			int16_t tmp = synth_wf(pos >> 8);
-			tmp >>= 1;
 			if (tmp < -128)
 				tmp = -128;
 			else if (tmp > 127)
@@ -143,19 +144,15 @@ class OneSynth
 			portamento_iterator++;
 		}
 
-
 		render_inner(db, v);
 	}
 
-	void trigger(uint16_t pitch, uint16_t pos = -1)
+	void trigger(uint16_t pitch)
 	{
 		state = RAMP;
 		this->dest_pitch = pitch;
 		this->portamento_iterator = 0;
 		this->portamento_speed = 140;
-//		this->pitch = pitch;
-		if (pos != uint16_t(-1))
-			this->pos = pos;
 	}
 
 	void release()

@@ -85,6 +85,9 @@ int main(int argc, char* argv[])
     
 
     static Buffer buffs[length_in_buffers];
+    for (int i=0; i<length_in_buffers; i++)
+        for (int j=0; j<globals::SAMPLES_PER_BUFFER; j++)
+            buffs[i][j] = rand();
 
     static Player player;
     player.init();

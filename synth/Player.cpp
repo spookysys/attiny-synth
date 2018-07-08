@@ -1,3 +1,4 @@
+#include "misc.hpp"
 #include "Player.hpp"
 #include "myrand.hpp"
 #include "tables.hpp"
@@ -17,7 +18,7 @@ static int16_t synth_wf(uint16_t t)
 //    tmp += int8_t(t + (t >> 6));
 //   tmp += int8_t(t >> 2);
 //   tmp += int8_t((t >> 4) + (t >> 2));
-	return tmp;
+	return tmp>>1;
 }
 
 static int16_t sag_wf(uint16_t t)
@@ -28,22 +29,19 @@ static int16_t sag_wf(uint16_t t)
     return tmp;
 }
 
-#define BASE_PITCH (256 * 214)
-
-static constexpr uint16_t pitch_tab[12] = {
-  BASE_PITCH/214, // c
-  BASE_PITCH/202, // c#
-  BASE_PITCH/190, // d 
-  BASE_PITCH/180, // d#
-  BASE_PITCH/170, // e
-  BASE_PITCH/160, // f
-  BASE_PITCH/151, // f#
-  BASE_PITCH/143, // g
-  BASE_PITCH/135, // g#
-  BASE_PITCH/127, // a
-  BASE_PITCH/120, // a#
-  BASE_PITCH/113  // b
-};
+#define BASE_PITCH uint16_t(256 * 214)
+#define PITCH_C uint16_t(BASE_PITCH/214)
+#define PITCH_CH uint16_t(BASE_PITCH/202)
+#define PITCH_D  uint16_t(BASE_PITCH/190)
+#define PITCH_DH uint16_t(BASE_PITCH/180)
+#define PITCH_E uint16_t(BASE_PITCH/170)
+#define PITCH_F uint16_t(BASE_PITCH/160)
+#define PITCH_FH uint16_t(BASE_PITCH/151)
+#define PITCH_G uint16_t(BASE_PITCH/143)
+#define PITCH_GH uint16_t(BASE_PITCH/135)
+#define PITCH_A uint16_t(BASE_PITCH/127)
+#define PITCH_AH uint16_t(BASE_PITCH/120)
+#define PITCH_B uint16_t(BASE_PITCH/113)
 
 #define MD (1<<6) // drumpf
 #define MS (1<<6) // synth
@@ -64,8 +62,6 @@ static constexpr uint16_t pitch_tab[12] = {
 #define AH 10
 #define _B 11
 
-static int curr_note = 0;
-
 typedef struct note {
  uint8_t machine_oct_note;
  uint8_t pos;
@@ -73,70 +69,202 @@ typedef struct note {
 } note;
 
 
-static const note song[] = { 
+static const note song[] PROGMEM = { 
 	{ MD| 0|O0,0,3 },
 	{ MS|_C|O1,1,2 }
 };
 
 
+class Shuffler
+{
+    uint8_t breaktab[32];
+public:
+    static const uint8_t n = 32;
+    uint8_t operator[](uint8_t i)
+    {
+        return breaktab[i & (n-1)];
+    }
+    void init()
+    {
+        for (uint8_t i=0; i<n; i++)
+            breaktab[i] = i;
+    }
+    void shuffle()
+    {
+        uint8_t one = myrand::rand16() & (n-1);
+        uint8_t two = myrand::rand16() & (n-1);
+        uint8_t tmp = breaktab[one];
+        breaktab[one] = breaktab[two];
+        breaktab[two] = tmp;
+    }
+} shuffler;
 
-static const uint16_t chord_pitches[] = {
-    uint16_t((pitch_tab[_DH]<<3) + 2),
-    uint16_t((pitch_tab[_G]<<2) - 1),
-    uint16_t((pitch_tab[A]<<2) + 1),
-    uint16_t((pitch_tab[CH]<<3) - 3),
-    uint16_t((pitch_tab[_E]<<3) - 2)
-};
 
 struct Chord
 {
-    static const uint8_t n = sizeof(chord_pitches)/sizeof(*chord_pitches);
-    uint16_t poses[n] = {};
+    uint16_t poses[5];
     uint16_t vibpos1 = 0;
     void render(Buffer& db)
     {
         for (uint8_t i=0; i<globals::SAMPLES_PER_BUFFER; i++)
         {
             int16_t v = 0;
-            int8_t vib1 = tables::sin[vibpos1>>8]; 
+            int8_t vib1 = pgm_read_byte(&tables::sin[vibpos1>>8]); 
             vibpos1 += 20; 
             vib1 >>= 2;
-            v += sag_wf(poses[0]>>8); poses[0] += chord_pitches[0] - (vib1) + (vib1>>1);
-            v += sag_wf(poses[1]>>8); poses[1] += chord_pitches[1] + (vib1);
-            v += sag_wf(poses[2]>>8); poses[2] += chord_pitches[2] - (vib1);
-            v += sag_wf(poses[3]>>8); poses[3] += chord_pitches[3] + (vib1) - (vib1>>1);
-            v += sag_wf(poses[4]>>8); poses[4] += chord_pitches[4] - (vib1) + (vib1>>1);
+            v += sag_wf(poses[0]>>8); poses[0] += uint16_t((PITCH_DH<<3) + 2) - vib1 + (vib1>>1);
+            v += sag_wf(poses[1]>>8); poses[1] += uint16_t((PITCH_G<<2) - 1) + vib1;
+            v += sag_wf(poses[2]>>8); poses[2] += uint16_t((PITCH_A<<2) + 1) - vib1;
+            v += sag_wf(poses[3]>>8); poses[3] += uint16_t((PITCH_CH<<3) - 3) + vib1 - (vib1>>1);
+            v += sag_wf(poses[4]>>8); poses[4] += uint16_t((PITCH_E<<3) - 2) - vib1 + (vib1>>1);
             db[i] += v>>5;
         }
     }
 } chord;
 
-#define BREAK_FREQUENCY 10
-#define BREAK_OFFSET_MAGNITUDE (9+(myrand::rand16()&0x3))
-#define BREAK_SHUFFLE_AMOUNT 2
+struct Amen
+{
+    uint8_t mul_shl;
+    uint8_t prev_breakstep;
 
-// Initial sequence used for break generation
-static uint8_t breaktab[32];
-static const uint8_t breaktab_mask = 0x1F;
-static int mul_shl = 12;
+    #define BREAK_FREQUENCY 10
+    #define BREAK_OFFSET_MAGNITUDE (9+(myrand::rand16()&0x3))
+    #define BREAK_SHUFFLE_AMOUNT 2
+
+
+    void init()
+    {
+        prev_breakstep = 0;
+        mul_shl = 12; 
+    }
+
+    void render(Drumpf &drumpf, BassDrum &bd, uint16_t pos)
+    {
+        
+        uint8_t breakstep = (pos>>BREAK_FREQUENCY); 
+        if ( prev_breakstep != breakstep )
+        {
+            // Shuffle sequence
+            for ( uint8_t breaks = 0; breaks<BREAK_SHUFFLE_AMOUNT; breaks++)
+            {
+                shuffler.shuffle();
+            }
+            // Break offset multiplier
+            mul_shl = BREAK_OFFSET_MAGNITUDE;
+        }
+        prev_breakstep = breakstep;
+
+        // Only apply break during a specific timewindow part of the sequence
+        if ( (((pos<<1) & 0x1C908) >= 0x0800) ) 
+        {
+            pos += shuffler[breakstep] << mul_shl;
+        }
+
+
+        // Trigger amen samples
+        switch (pos & 0x1FFF)
+        {
+        case 0x0000:
+        case 0x100:
+        case 0x800:
+        case 0x900:
+        case 0x1000:
+        case 0x1100:
+            drumpf.trigger(AMEN_BDHH_5);
+            bd.trigger(false);
+            break;
+        case 0x500:
+        case 0xD00:
+        case 0x1900:
+            drumpf.trigger(AMEN_BDHHSOFT);
+            //bd.trigger(false);
+            break;
+        case 0x580:
+        case 0xD80:
+        case 0x1980:
+            drumpf.trigger(AMEN_BDSOFT_3);
+            bd.trigger(false);
+            break;
+        case 0x1D00:
+            drumpf.trigger(AMEN_CRASHBD);
+            bd.trigger(true);
+            break;
+        case 0x300:
+        case 0x400:
+        case 0x700:
+        case 0xB00:
+        case 0xC00:
+        case 0xF00:
+        case 0x1300:
+        case 0x1400:
+        case 0x1800:
+        case 0x1B00:
+        case 0x1C00:
+            drumpf.trigger(AMEN_HH_2);
+            break;
+        case 0x1500:
+            drumpf.trigger(AMEN_LOUDBDHH);
+            bd.trigger(true);
+            break;
+        case 0x1600:
+            drumpf.trigger(AMEN_RIDE);
+            break;
+        case 0x200:
+        case 0x600:
+        case 0xA00:
+        case 0xE00:
+        case 0x1200:
+        case 0x1700:
+            drumpf.trigger(AMEN_SNARE);
+            //bd.trigger(false);
+            break;
+        case 0x1A00:
+            drumpf.trigger(/*AMEN_SNAREHARD*/AMEN_SNARE);
+            bd.trigger(false);
+            break;
+        case 0x1F00:
+            drumpf.trigger(/*AMEN_SNAREHISS*/AMEN_SNARE);
+            //bd.trigger(false);
+            break;
+        case 0x380:
+        case 0x480:
+        case 0x780:
+        case 0xB80:
+        case 0xC80:
+        case 0xF80:
+        case 0x1380:
+        case 0x1480:
+        case 0x1880:
+        case 0x1B80:
+        case 0x1C80:
+            drumpf.trigger(AMEN_SOFTSNARE_7);
+            break;
+        default:;
+        }
+    }
+
+} amen;
+
 
 void Player::init()
 {
+    basenote = 0;
+    shuffler.init();
+    amen.init();
     bd.init();
     drumpf.init();
     synth.init();
     arpeggio.init();
     one_liner.init();
     hh.init();
-    for (uint8_t i=0; i<sizeof(breaktab)/sizeof(*breaktab); i++)
-        breaktab[i] = i;
+    compressor.init();
     pos = 0;
     one_liner_sel = 0;
 }
 
 bool drumblocker(uint16_t pos)
 {
-    static uint8_t bit = 0;
+    static uint8_t bit;
     if ((pos & 0xffff) <= 0xbfff)
     {
         bit = -1;
@@ -150,136 +278,21 @@ bool drumblocker(uint16_t pos)
     return (pos>>bit)&1;
 }
 
-static void amen(Drumpf &drumpf, BassDrum &bd, uint16_t pos)
-{
-    
-    static int prev_breakstep = 0;
-    int breakstep = (pos>>BREAK_FREQUENCY); 
-    if ( prev_breakstep != breakstep )
-    {
-        // Shuffle sequence
-        for ( int breaks = 0; breaks<BREAK_SHUFFLE_AMOUNT; breaks++)
-        {
-            int one = myrand::rand16() & breaktab_mask;
-            int two = myrand::rand16() & breaktab_mask;
-            int tmp = breaktab[one];
-            breaktab[one] = breaktab[two];
-            breaktab[two] = tmp;
-        }
-        // Break offset multiplier
-        mul_shl = BREAK_OFFSET_MAGNITUDE;
-    }
-    prev_breakstep = breakstep;
-
-    // Only apply break during a specific timewindow part of the sequence
-    if ( (((pos<<1) & 0x1C908) >= 0x0800) ) 
-    {
-        pos += breaktab[breakstep & breaktab_mask] << mul_shl;
-    }
-
-
-    // Trigger amen samples
-    switch (pos & 0x1FFF)
-    {
-    case 0x0000:
-//        drumpf.trigger(AMEN_HIT);
-//        bd.trigger(false);
-//        break;
-    case 0x100:
-    case 0x800:
-    case 0x900:
-    case 0x1000:
-    case 0x1100:
-        drumpf.trigger(AMEN_BDHH_5);
-        bd.trigger(false);
-        break;
-    case 0x500:
-    case 0xD00:
-    case 0x1900:
-        drumpf.trigger(AMEN_BDHHSOFT);
-        //bd.trigger(false);
-        break;
-    case 0x580:
-    case 0xD80:
-    case 0x1980:
-        drumpf.trigger(AMEN_BDSOFT_3);
-        bd.trigger(false);
-        break;
-    case 0x1D00:
-        drumpf.trigger(AMEN_CRASHBD);
-        bd.trigger(true);
-        break;
-    case 0x300:
-    case 0x400:
-    case 0x700:
-    case 0xB00:
-    case 0xC00:
-    case 0xF00:
-    case 0x1300:
-    case 0x1400:
-    case 0x1800:
-    case 0x1B00:
-    case 0x1C00:
-        drumpf.trigger(AMEN_HH_2);
-        break;
-    case 0x1500:
-        drumpf.trigger(AMEN_LOUDBDHH);
-        bd.trigger(true);
-        break;
-    case 0x1600:
-        drumpf.trigger(AMEN_RIDE);
-        break;
-    case 0x200:
-    case 0x600:
-    case 0xA00:
-    case 0xE00:
-    case 0x1200:
-    case 0x1700:
-        drumpf.trigger(AMEN_SNARE);
-        //bd.trigger(false);
-        break;
-    case 0x1A00:
-        drumpf.trigger(/*AMEN_SNAREHARD*/AMEN_SNARE);
-        bd.trigger(false);
-        break;
-    case 0x1F00:
-        drumpf.trigger(/*AMEN_SNAREHISS*/AMEN_SNARE);
-        //bd.trigger(false);
-        break;
-    case 0x380:
-    case 0x480:
-    case 0x780:
-    case 0xB80:
-    case 0xC80:
-    case 0xF80:
-    case 0x1380:
-    case 0x1480:
-    case 0x1880:
-    case 0x1B80:
-    case 0x1C80:
-        drumpf.trigger(AMEN_SOFTSNARE_7);
-        break;
-    default:;
-    }
-}
-
 
 void phaser_test(int pos, Buffer &db, Buffer &pb)
 {
-    static uint8_t phaser_entry_num = 0;
-    static bool prev_entered_phaser = false;
+    static bool prev_entered_phaser;
     if ((pos & 0x3ff) == 0x80)
         prev_entered_phaser = false;
 
-    static int8_t phaser_depth = 0;
-    static int8_t phaser_shift = 0;
-    static int8_t phaser_speed = 0;
-    static int8_t filter_speed = 0;
-    static bool phaser_neg = false;
-    static int8_t phaser_strength = 0;
+    static int8_t phaser_depth;
+    static int8_t phaser_shift;
+    static int8_t phaser_speed;
+    static int8_t filter_speed;
+    static bool phaser_neg;
+    static int8_t phaser_strength;
     if (!prev_entered_phaser)
     {
-        phaser_entry_num++;
         phaser_depth = (myrand::rand16() & 0x0F);
         phaser_shift = 16 - phaser_depth;
         phaser_speed = (myrand::rand16() & 0xff) + 1;
@@ -291,7 +304,7 @@ void phaser_test(int pos, Buffer &db, Buffer &pb)
 
     // phaser
     {
-        static uint16_t t = 0;
+        static uint16_t t;
 
         uint8_t so;
         so = pgm_read_byte(&tables::sin[t >> 8]) + 128;
@@ -337,7 +350,7 @@ void phaser_test(int pos, Buffer &db, Buffer &pb)
             if (r < -0x0800)
                 r = -0x0800;
             r <<= 4;
-            r = mymath::mulhi_s16u8(r - rprev, phaser_filter) + rprev;
+            r = mymath::mulhi_s8u8(clamp8(r - rprev), phaser_filter) + rprev;
             db[i] = r >> 4;
             rprev = r;
         }
@@ -351,7 +364,7 @@ void Player::render(Buffer &db, Buffer &pb)
     myrand::rand32();
 
     // Trigger amen
-    amen(drumpf, bd, pos);
+    amen.render(drumpf, bd, pos);
 
     // Trigger hihat
     if (1)
@@ -368,70 +381,44 @@ void Player::render(Buffer &db, Buffer &pb)
             hh.trigger(0x60, 0xC0);
         }
     }
-    
-    // Trigger snare
-    if ((pos & 0x7FF) == 0x400)
-    {
-		//drumpf.trigger(JK_SNR_03);
-    }
 
     // trigger synth
-    static int basenote = 0; 
     if (((pos & 0xFFF) == 0x00) || (pos & 0xFFF) == 0x700 )
     {
-        static int arp_pos = 0;
-        static uint32_t arp[] = { 
-                                  pitch_tab[_C], 
-                                  pitch_tab[_C],
-                                  pitch_tab[_C], 
-                                  pitch_tab[FH],
-                                  pitch_tab[_C], 
-                                  pitch_tab[FH],
-                                  uint32_t(pitch_tab[_C]*2),
-                                  uint32_t(pitch_tab[FH]*2),
-                                  };
-       static uint8_t base[] = { 
-                                  0, 
-                                  0,
-                                  0, 
-                                  4,
-                                  0, 
-                                  4,
-                                  0,
-                                  4
-                                  };
-         int one = myrand::rand16() & 7;
-        int two = myrand::rand16() & 7;
-        int tmp = arp[one];
-        arp[one] = arp[two];
-        arp[two] = tmp;
-        tmp = base[one];
-        base[one] = base[two];
-        base[two] = tmp;
-      //  arp_pos += myrand::rand8()&3;
-      //  arp_pos &= 3;
-        arp_pos++;
-        arp_pos  &= 7;
-        synth.trigger(arp[arp_pos]);
-        basenote = base[arp_pos];
+        static const uint16_t arp[] PROGMEM = {
+            PITCH_C,
+            PITCH_C,
+            PITCH_C,
+            PITCH_FH,
+            PITCH_C,
+            PITCH_FH,
+            PITCH_C*2,
+            PITCH_FH*2,
+        };
+        static const uint8_t base[] PROGMEM = {
+            0,0,0,4,0,4,0,4
+        };
+        uint8_t t = shuffler[(pos+0x100)>>11] & 7;
+        synth.trigger(pgm_read_word(&arp[t]));
+        basenote = pgm_read_word(&base[t]);
     }
 
     if ( (pos & 0x7F) == 0x00 )
     {
-        static const uint32_t arp[] = { (uint16_t)(pitch_tab[_C]*2),
-                                            (uint16_t)(pitch_tab[_C]*3),
-                                            (uint16_t)(pitch_tab[_C]*4), 
-                                            (uint16_t)(pitch_tab[_C]*6),
-                                            (uint16_t)(pitch_tab[FH]*2),
-                                            (uint16_t)(pitch_tab[FH]*3),
-                                            (uint16_t)(pitch_tab[FH]*4),
-                                            (uint16_t)(pitch_tab[FH]*6),
- //                                           (uint16_t)(pitch_tab[_C]*6)
-                                        }; 
-        arpeggio.trigger(arp[(myrand::rand8()&3)+basenote]);
+        static const uint16_t arp_arp[] PROGMEM = { 
+            (uint16_t)(PITCH_C*2),
+            (uint16_t)(PITCH_C*3),
+            (uint16_t)(PITCH_C*4), 
+            (uint16_t)(PITCH_C*6),
+            (uint16_t)(PITCH_FH*2),
+            (uint16_t)(PITCH_FH*3),
+            (uint16_t)(PITCH_FH*4),
+            (uint16_t)(PITCH_FH*6),
+        }; 
+        uint8_t t = shuffler[pos>>7] & 3;
+        arpeggio.trigger(pgm_read_word(&arp_arp[t+basenote]));
         arpeggio.set_portamento_speed(1);
         arpeggio.set_decay_speed(15);
-
     } else if ( (pos & 0x7F) == 0x8 ) 
     {
         arpeggio.release();
@@ -441,28 +428,24 @@ void Player::render(Buffer &db, Buffer &pb)
     // change oneliner settings
     if ((pos & 0x7FFF) == 0)
     {
-        one_liner.set_time(0);
 		do 
 	        one_liner_sel = myrand::rand16() & 0x7;
 		while (one_liner_sel > 5);
     }
     
 
-    // mix
-    Buffer sidechain;
     Buffer mixin;
 
-    sidechain.clear();
+    db.clear();
     mixin.clear();
+
+#if 1
 
     if ( pos < 0x8000 || !drumblocker(pos) )
     {
-        if ( pos > 0x7FFF )
-            hh.render(db);
         if ( pos > 0xFFFF )
         {
-            bd.render(sidechain);
-            drumpf.render(db);
+            bd.render(db);
         }
     }
 
@@ -470,21 +453,30 @@ void Player::render(Buffer &db, Buffer &pb)
         one_liner.render(mixin, one_liner_sel);
 
     if ( pos <= 0xFFFF || ((pos & 0xFFFF) <= 0x07FFF))
-        //synth.render(mixin, synth_wf);
+        synth.render(mixin, synth_wf);
 
     if ( pos > 0xFFFF && ((pos & 0xFFFF) <= 0x07FFF))
-        //arpeggio.render(mixin, sag_wf);
+        arpeggio.render(mixin, sag_wf);
 
+    /* anything rendered to db below here does not affect compressor */
+    compressor.render(db, db, mixin);
 
     if ( pos > 0xFFFF && ((pos & 0xFFFF) > 0x07FFF))
         chord.render(db);
 
-    compressor.render(db, sidechain, mixin);
+    if (pos > 0x7fff)
+        hh.render(db);
 
-    db.mixin(sidechain);
+    if ( pos < 0x8000 || !drumblocker(pos) )
+    {
+        if ( pos > 0xFFFF )
+        {
+            drumpf.render(db);
+        }
+    }
 
     phaser_test(pos, db, pb);
-
+#endif
 
     pos ++;
 }

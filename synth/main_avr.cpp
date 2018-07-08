@@ -18,6 +18,10 @@ extern "C"
 #include "myrand.hpp"
 
 
+// how much to shift down before clipping
+static const int downshift = 2;
+
+// how much to led
 static const uint8_t LED_BRIGHTNESS = 0x40;
 
 // current streaming position in mixbuffers
@@ -63,7 +67,7 @@ ISR(TIMER1_COMPA_vect)
 {
 	int16_t* mixbuff = mixbuffers[0].data(); // flatten the two buffers into one
 	int16_t val = uint16_t(mixbuff[stream_pos]);
-	val >>= 1;
+	val >>= downshift;
 	val += 0x80;
 	if (unlikely(val<0)) val = 0;
 	else if (unlikely(val>=0xFF)) val = 0xFF;

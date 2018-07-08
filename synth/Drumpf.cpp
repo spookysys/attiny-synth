@@ -140,13 +140,15 @@ int8_t Drumpf::Filter::get(int8_t xx)
     this->xn_2 = this->xn_1;
     this->xn_1 = xx;
 
+#if 0 
+    /* this multiplier is broken */
     int16_t a2_y1 = mymath::mulhi_s16s8(a2, yn_1);
     int16_t a3_y2 = mymath::mulhi_s16s8(a3, yn_2);
-    int16_t yy = b1_xx + b2_x1 + b3_x2 - a2_y1 - a3_y2;
-    if (yy > 127)
-        yy = 127;
-    if (yy < -128)
-        yy = -128;
+#else
+    int8_t a2_y1 = mymath::mulhi_s8s8(clamp8(a2), yn_1);
+    int8_t a3_y2 = mymath::mulhi_s8s8(clamp8(a3), yn_2);
+#endif
+    int8_t yy = clamp8(b1_xx + b2_x1 + b3_x2 - a2_y1 - a3_y2);
     this->yn_2 = this->yn_1;
     this->yn_1 = yy;
     return yy;

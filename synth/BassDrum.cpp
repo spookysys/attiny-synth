@@ -5,7 +5,7 @@
 
 // settings
 static const uint16_t start_pitch=1000;
-static const uint16_t end_pitch=50;
+static const uint16_t end_pitch=100;
 static const uint16_t slide_speed_1=5;
 static const uint16_t slide_speed_2=6;
 static const uint16_t decay_speed=3;

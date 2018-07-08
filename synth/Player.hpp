@@ -13,11 +13,12 @@ class Player
     uint8_t one_liner_sel;
     BassDrum bd;
     Hihats hh;
-    OneLiner<uint16_t> one_liner;
+    OneLiner one_liner;
     Compressor compressor;
     OneSynth synth;
     OneSynth arpeggio;
     Drumpf drumpf;
+    uint8_t basenote;
 public:
     void init();
     void render(Buffer& db, Buffer& pb);

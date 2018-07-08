@@ -7,6 +7,7 @@
 #define PROGMEM
 #include <memory.h>
 static uint8_t pgm_read_byte(const void* ptr) { return *(const uint8_t*)ptr; }
+static uint16_t pgm_read_word(const void* ptr) { return *(const uint16_t*)ptr; }
 #define memcpy_P memcpy
 #endif
 

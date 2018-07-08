@@ -20,3 +20,14 @@ static void lerp(int8_t start, int8_t end, Buffer &v)
         iter += step;
     }
 }
+
+
+static int8_t clamp8(int16_t op)
+{
+    if (op<-128)
+        return -128;
+    if (op> 127)
+        return 127;
+    return op;
+}
+
