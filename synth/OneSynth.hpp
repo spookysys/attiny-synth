@@ -70,9 +70,13 @@ class OneSynth
 				db[i + 1] += mymath::mulhi_s8u8(v[i + 1], vol >> 8);
 				db[i + 2] += mymath::mulhi_s8u8(v[i + 2], vol >> 8);
 				db[i + 3] += mymath::mulhi_s8u8(v[i + 3], vol >> 8);
-				vol -= uint16_t(vol >> decay_speed);
-				if ((vol >> 8) == 0)
+				uint16_t prev_vol = vol;
+				vol -= decay_speed<<4; // uint16_t(vol >> decay_speed);
+				// vol >>= 1; // (decay_speed<<8); // uint16_t(vol >> decay_speed);
+				printf( "%hu ", vol);
+				if (prev_vol < vol )
 				{
+					vol = 0;
 					this->state = OFF;
 					break;
 				}
@@ -90,7 +94,6 @@ class OneSynth
 
 	void mul_pitch(int8_t mul)
 	{
-		printf( "hei\n");
 		if ( mul == 0 ) return;
 		if ( mul > 0 ) {
 			this->pitch <<= mul;
@@ -100,6 +103,14 @@ class OneSynth
 		this->portamento_speed = 3;
 	}
 
+	void set_portamento_speed(int8_t speed)
+	{
+		this->portamento_speed = speed;
+	}	
+	void set_decay_speed(uint8_t speed)
+	{
+		this->decay_speed = speed;
+	}
 	void reset(uint8_t decay_speed)
 	{
 		this->decay_speed = decay_speed;

@@ -31,9 +31,23 @@ static int8_t synth_wf(uint16_t t)
     return tmp;
 }
 
+static int8_t sag_wf(uint16_t t)
+{
+    int16_t tmp = 0;
+    tmp += int8_t(t);
+    tmp += int8_t(t+t);
+    tmp >>= 1; 
+
+    if (tmp < -128)
+        return -128;
+    else if (tmp > 127)
+        return 127;
+    return tmp;
+}
+
 #define BASE_PITCH 256 * 214
 
-static const uint16_t pitch_tab[12] = {
+static constexpr uint16_t pitch_tab[12] = {
   BASE_PITCH/214, // c
   BASE_PITCH/202, // c#
   BASE_PITCH/190, // d 
@@ -365,6 +379,7 @@ void Player::render(Buffer &db, Buffer &pb)
     }
 
     // trigger synth
+    static int basenote = 0; 
     if (((pos & 0xFFF) == 0x00) || (pos & 0xFFF) == 0x700 )
     {
         static int arp_pos = 0;
@@ -378,24 +393,51 @@ void Player::render(Buffer &db, Buffer &pb)
                                   uint32_t(pitch_tab[_C]*2),
                                   uint32_t(pitch_tab[FH]*2),
                                   };
-        int one = myrand::rand16() & 7;
+       static uint8_t base[] = { 
+                                  0, 
+                                  0,
+                                  0, 
+                                  4,
+                                  0, 
+                                  4,
+                                  0,
+                                  4
+                                  };
+         int one = myrand::rand16() & 7;
         int two = myrand::rand16() & 7;
         int tmp = arp[one];
         arp[one] = arp[two];
         arp[two] = tmp;
+        tmp = base[one];
+        base[one] = base[two];
+        base[two] = tmp;
       //  arp_pos += myrand::rand8()&3;
       //  arp_pos &= 3;
         arp_pos++;
         arp_pos  &= 7;
         synth.trigger(arp[arp_pos]);
+        basenote = base[arp_pos];
     }
 
-    if ( (pos & 0x1FF) == 0x00 )
+    if ( (pos & 0x7F) == 0x00 )
     {
-        static uint16_t arp[] = { pitch_tab[_G], pitch_tab[_C] };
-       // arpeggio.trigger(arp[myrand::rand8()&1]);
-    } else {
-       // arpeggio.release();
+        static constexpr uint32_t arp[] = { (uint16_t)(pitch_tab[_C]*2),
+                                            (uint16_t)(pitch_tab[_C]*3),
+                                            (uint16_t)(pitch_tab[_C]*4), 
+                                            (uint16_t)(pitch_tab[_C]*6),
+                                            (uint16_t)(pitch_tab[FH]*2),
+                                            (uint16_t)(pitch_tab[FH]*3),
+                                            (uint16_t)(pitch_tab[FH]*4),
+                                            (uint16_t)(pitch_tab[FH]*6),
+ //                                           (uint16_t)(pitch_tab[_C]*6)
+                                        }; 
+        arpeggio.trigger(arp[(myrand::rand8()&3)+basenote]);
+        arpeggio.set_portamento_speed(1);
+        arpeggio.set_decay_speed(15);
+
+    } else if ( (pos & 0x7F) == 0x8 ) 
+    {
+        arpeggio.release();
     }
 
 
@@ -426,7 +468,8 @@ void Player::render(Buffer &db, Buffer &pb)
         one_liner.render(mixin, one_liner_sel);
     if ( pos <= 0xFFFF || ((pos & 0xFFFF) <= 0x07FFF))
         synth.render(mixin, synth_wf);
-    //arpeggio.render(mixin, synth_wf);
+
+    arpeggio.render(mixin, sag_wf);
 
     if ( pos > 0xFFFF && ((pos & 0xFFFF) > 0x07FFF))
         chord.render(db);
