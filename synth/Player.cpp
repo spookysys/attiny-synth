@@ -152,6 +152,21 @@ static const uint8_t breaktab_mask = 0x1F;
 
 static int mul_shl = 12;
 
+bool drumblocker(uint16_t pos)
+{
+    static uint8_t bit = 0;
+    if ((pos & 0xffff) <= 0xbfff)
+    {
+        bit = -1;
+        return false;
+    }
+    else if ((pos & 0x0fff)==0)
+    {
+        bit += (myrand::rand8()&3)+1;
+    }
+
+    return (pos>>bit)&1;
+}
 
 static void amen(Drumpf &drumpf, BassDrum &bd, uint16_t pos)
 {
@@ -458,18 +473,25 @@ void Player::render(Buffer &db, Buffer &pb)
     sidechain.clear();
     mixin.clear();
 
-    if ( pos > 0x07FFF )
-        hh.render(db);
-    if ( pos > 0x0DFFF )
-        bd.render(sidechain);
-    if ( pos > 0x0FFFF )
-        drumpf.render(db);
+    if ( !drumblocker(pos) )
+    {
+        if ( pos > 0x07FFF )
+            hh.render(db);
+        if ( pos > 0x0DFFF )
+            bd.render(sidechain);
+        if ( pos > 0x0FFFF )
+            drumpf.render(db);
+    }
+
     if ( pos > 0xFFFF && ((pos & 0xFFFF) > 0x07FFF))
         one_liner.render(mixin, one_liner_sel);
-    if ( pos <= 0xFFFF || ((pos & 0xFFFF) <= 0x07FFF))
-        synth.render(mixin, synth_wf);
 
-    arpeggio.render(mixin, sag_wf);
+    if ( pos <= 0xFFFF || ((pos & 0xFFFF) <= 0x07FFF))
+    {
+        synth.render(mixin, synth_wf);
+        arpeggio.render(mixin, sag_wf);
+    }
+
 
     if ( pos > 0xFFFF && ((pos & 0xFFFF) > 0x07FFF))
         chord.render(db);
