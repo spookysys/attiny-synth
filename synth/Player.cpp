@@ -33,7 +33,7 @@ static int8_t synth_wf(uint16_t t)
 
 #define BASE_PITCH 256 * 214
 
-static constexpr uint16_t pitch_tab[12] = {
+static const uint16_t pitch_tab[12] = {
   BASE_PITCH/214, // c
   BASE_PITCH/202, // c#
   BASE_PITCH/190, // d 
@@ -82,16 +82,18 @@ static const note song[] = {
 };
 
 
+
+static const uint16_t chord_pitches[] = {
+    uint16_t((pitch_tab[_DH]<<3) + 2),
+    uint16_t((pitch_tab[_G]<<2) - 1),
+    uint16_t((pitch_tab[A]<<2) + 1),
+    uint16_t((pitch_tab[CH]<<3) - 3),
+    uint16_t((pitch_tab[_E]<<3) - 2)
+};
+
 struct Chord
 {
-    static constexpr uint16_t pitches[] = {
-        (pitch_tab[_DH]<<3) + 2,
-        (pitch_tab[_G]<<2) - 1,
-        (pitch_tab[A]<<2) + 1,
-        (pitch_tab[CH]<<3) - 3,
-        (pitch_tab[_E]<<3) - 2,
-    };
-    static const uint8_t n = sizeof(pitches)/sizeof(*pitches);
+    static const uint8_t n = sizeof(chord_pitches)/sizeof(*chord_pitches);
     uint16_t poses[n] = {};
     uint16_t vibpos1 = 0;
     void render(Buffer& db)
@@ -101,11 +103,11 @@ struct Chord
             int16_t v = 0;
             int8_t vib1 = tables::sin[vibpos1>>8]; 
             vibpos1 += 20; 
-            v += synth_wf(poses[0]>>8); poses[0] += pitches[0] - (vib1>>3) + (vib1>>4);
-            v += synth_wf(poses[1]>>8); poses[1] += pitches[1] + (vib1>>3);
-            v += synth_wf(poses[2]>>8); poses[2] += pitches[2] - (vib1>>3);
-            v += synth_wf(poses[3]>>8); poses[3] += pitches[3] + (vib1>>3) - (vib1>>4);
-            v += synth_wf(poses[4]>>8); poses[4] += pitches[4] - (vib1>>3) + (vib1>>4);
+            v += synth_wf(poses[0]>>8); poses[0] += chord_pitches[0] - (vib1>>3) + (vib1>>4);
+            v += synth_wf(poses[1]>>8); poses[1] += chord_pitches[1] + (vib1>>3);
+            v += synth_wf(poses[2]>>8); poses[2] += chord_pitches[2] - (vib1>>3);
+            v += synth_wf(poses[3]>>8); poses[3] += chord_pitches[3] + (vib1>>3) - (vib1>>4);
+            v += synth_wf(poses[4]>>8); poses[4] += chord_pitches[4] - (vib1>>3) + (vib1>>4);
             db[i] += v>>5;
         }
     }
