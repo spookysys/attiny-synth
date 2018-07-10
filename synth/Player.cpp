@@ -11,13 +11,11 @@ static int16_t synth_wf(uint16_t t)
 	int16_t tmp = 0;
 	tmp += int8_t(t);
 	tmp += int8_t(t + (t >> 6));
-//  tmp += int8_t(t >> 1);
 	tmp += int8_t((t >> 1) + (t >> 7));
-//   tmp += int8_t(t+t);
-//   tmp += int8_t(t>>2);
-//    tmp += int8_t(t + (t >> 6));
-//   tmp += int8_t(t >> 2);
-//   tmp += int8_t((t >> 4) + (t >> 2));
+    tmp += tables::sin[(t)&0xff];
+    tmp += tables::sin[(t>>1)&0xff];
+    tmp += tables::sin[(t>>1)&0xff];
+ //   tmp += tables::sin[(t>>1)&0xff];
 	return tmp>>1;
 }
 
@@ -449,8 +447,8 @@ void Player::render(Buffer &db, Buffer &pb)
         }
     }
 
-    if ( pos > 0xFFFF && ((pos & 0xFFFF) > 0x07FFF))
-        one_liner.render(mixin, one_liner_sel);
+//    if ( pos > 0xFFFF && ((pos & 0xFFFF) > 0x07FFF))
+//        one_liner.render(mixin, one_liner_sel);
 
     if ( pos <= 0xFFFF || ((pos & 0xFFFF) <= 0x07FFF))
         synth.render(mixin, synth_wf);
