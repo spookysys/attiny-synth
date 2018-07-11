@@ -24,7 +24,28 @@ static int16_t sag_wf(uint16_t t)
     int16_t tmp = 0;
     tmp += int8_t(t);
     tmp += int8_t(t+t);
+//    tmp += tables::sin[(t<<1)&0xff];
     return tmp;
+}
+
+
+static int16_t sin_wf(uint16_t t)
+{
+    int16_t tmp = 0;
+//    tmp += int8_t(t);
+//    tmp += int8_t(t+t);
+    tmp += tables::sin[(t<<2)&0xff];
+    return tmp;
+}
+
+static int16_t sqr_wf(uint16_t t)
+{
+    int16_t tmp = 0;
+//    tmp += int8_t(t);
+//    tmp += int8_t(t+t);
+    tmp += (( t & 0xff ) < ((tables::sin[t>>10]>>1) + 0x7f)) ? -64 : 63;
+  //  tmp += (( t & 0xff ) < ((tables::sin[t>>8]>>1) + 0x7f)) ? -64 : 63;
+      return tmp;
 }
 
 #define BASE_PITCH uint16_t(256 * 214)
@@ -108,13 +129,13 @@ struct Chord
         {
             int16_t v = 0;
             int8_t vib1 = pgm_read_byte(&tables::sin[vibpos1>>8]); 
-            vibpos1 += 20; 
-            vib1 >>= 2;
-            v += sag_wf(poses[0]>>8); poses[0] += uint16_t((PITCH_DH<<3) + 2) - vib1 + (vib1>>1);
-            v += sag_wf(poses[1]>>8); poses[1] += uint16_t((PITCH_G<<2) - 1) + vib1;
-            v += sag_wf(poses[2]>>8); poses[2] += uint16_t((PITCH_A<<2) + 1) - vib1;
-            v += sag_wf(poses[3]>>8); poses[3] += uint16_t((PITCH_CH<<3) - 3) + vib1 - (vib1>>1);
-            v += sag_wf(poses[4]>>8); poses[4] += uint16_t((PITCH_E<<3) - 2) - vib1 + (vib1>>1);
+            vibpos1 += 10; 
+            vib1 >>= 1;
+            v += sag_wf(poses[0]>>8); poses[0] += (uint16_t((PITCH_DH<<3) + 2) - vib1 + (vib1>>1))>>0;
+            v += sag_wf(poses[1]>>8); poses[1] += (uint16_t((PITCH_G<<2) - 1) + vib1)>>1;
+            v += sag_wf(poses[2]>>8); poses[2] += (uint16_t((PITCH_A<<2) + 1) - vib1)>>1;
+            v += sag_wf(poses[3]>>8); poses[3] += (uint16_t((PITCH_CH<<3) - 3) + vib1 - (vib1>>1))>>0;
+            v += sag_wf(poses[4]>>8); poses[4] += (uint16_t((PITCH_E<<3) - 2) - vib1 + (vib1>>1))>>0;
             db[i] += v>>5;
         }
     }
@@ -416,7 +437,12 @@ void Player::render(Buffer &db, Buffer &pb)
         uint8_t t = shuffler[pos>>7] & 3;
         arpeggio.trigger(pgm_read_word(&arp_arp[t+basenote]));
         arpeggio.set_portamento_speed(1);
-        arpeggio.set_decay_speed(15);
+        if ( pos > 0x1ffff )
+        {
+            arpeggio.set_decay_speed(myrand::rand8()&0xf +1);
+        } else {
+           arpeggio.set_decay_speed(15);
+       }
     } else if ( (pos & 0x7F) == 0x8 ) 
     {
         arpeggio.release();
@@ -454,7 +480,23 @@ void Player::render(Buffer &db, Buffer &pb)
         synth.render(mixin, synth_wf);
 
     if ( pos > 0xFFFF && ((pos & 0xFFFF) <= 0x07FFF))
-        arpeggio.render(mixin, sag_wf);
+    {
+        switch ( (pos>>16) & 3 )
+        {
+            case 0: 
+                arpeggio.render(mixin, sqr_wf);
+                break;
+            case 1: 
+                arpeggio.render(mixin, sag_wf);
+                break;
+            case 2: 
+                arpeggio.render(mixin, sin_wf);
+                break;
+            case 3: 
+                arpeggio.render(mixin, sqr_wf);
+                break;
+          }
+    }
 
     /* anything rendered to db below here does not affect compressor */
     compressor.render(db, db, mixin);
