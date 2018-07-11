@@ -34,7 +34,7 @@ static int16_t sin_wf(uint16_t t)
     int16_t tmp = 0;
 //    tmp += int8_t(t);
 //    tmp += int8_t(t+t);
-    tmp += tables::sin[(t<<2)&0xff];
+    tmp += tables::sin[(t<<1)&0xff];
     return tmp;
 }
 
