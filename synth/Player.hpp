@@ -21,5 +21,5 @@ class Player
     uint8_t basenote;
 public:
     void init();
-    void render(Buffer& db, Buffer& pb);
+    bool render(Buffer& db, Buffer& pb);
 };

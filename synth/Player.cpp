@@ -12,10 +12,10 @@ static int16_t synth_wf(uint16_t t)
 	tmp += int8_t(t);
 	tmp += int8_t(t + (t >> 6));
 	tmp += int8_t((t >> 1) + (t >> 7));
-    tmp += tables::sin[(t)&0xff];
-    tmp += tables::sin[(t>>1)&0xff];
-    tmp += tables::sin[(t>>1)&0xff];
- //   tmp += tables::sin[(t>>1)&0xff];
+    tmp += int8_t(pgm_read_byte(&tables::sin[(t)&0xff]));
+    tmp += int8_t(pgm_read_byte(&tables::sin[(t>>1)&0xff]));
+    tmp += int8_t(pgm_read_byte(&tables::sin[(t>>1)&0xff]));
+ //   tmp += int8_t(pgm_read_byte(&tables::sin[(t>>1)&0xff]));
 	return tmp>>1;
 }
 
@@ -24,7 +24,7 @@ static int16_t sag_wf(uint16_t t)
     int16_t tmp = 0;
     tmp += int8_t(t);
     tmp += int8_t(t+t);
-//    tmp += tables::sin[(t<<1)&0xff];
+//    tmp += int8_t(pgm_read_byte(&tables::sin[(t<<1)&0xff]));
     return tmp;
 }
 
@@ -34,7 +34,7 @@ static int16_t sin_wf(uint16_t t)
     int16_t tmp = 0;
 //    tmp += int8_t(t);
 //    tmp += int8_t(t+t);
-    tmp += tables::sin[(t<<1)&0xff];
+    tmp += int8_t(pgm_read_byte(&tables::sin[(t<<1)&0xff]));
     return tmp;
 }
 
@@ -43,8 +43,8 @@ static int16_t sqr_wf(uint16_t t)
     int16_t tmp = 0;
 //    tmp += int8_t(t);
 //    tmp += int8_t(t+t);
-    tmp += (( t & 0xff ) < ((tables::sin[t>>10]>>1) + 0x7f)) ? -64 : 63;
-  //  tmp += (( t & 0xff ) < ((tables::sin[t>>8]>>1) + 0x7f)) ? -64 : 63;
+    tmp += (( t & 0xff ) < ((int8_t(pgm_read_byte(&tables::sin[t>>10]))>>1) + 0x7f)) ? -64 : 63;
+  //  tmp += (( t & 0xff ) < ((int8_t(pgm_read_byte(&tables::sin[t>>8]))>>1) + 0x7f)) ? -64 : 63;
       return tmp;
 }
 
@@ -131,11 +131,11 @@ struct Chord
             int8_t vib1 = pgm_read_byte(&tables::sin[vibpos1>>8]); 
             vibpos1 += 10; 
             vib1 >>= 1;
-            v += sag_wf(poses[0]>>8); poses[0] += (uint16_t((PITCH_DH<<3) + 2) - vib1 + (vib1>>1))>>0;
+            v += sag_wf(poses[0]>>8); poses[0] += (uint16_t((PITCH_DH<<3) + 2) - vib1 + (vib1>>1));
             v += sag_wf(poses[1]>>8); poses[1] += (uint16_t((PITCH_G<<2) - 1) + vib1)>>1;
             v += sag_wf(poses[2]>>8); poses[2] += (uint16_t((PITCH_A<<2) + 1) - vib1)>>1;
-            v += sag_wf(poses[3]>>8); poses[3] += (uint16_t((PITCH_CH<<3) - 3) + vib1 - (vib1>>1))>>0;
-            v += sag_wf(poses[4]>>8); poses[4] += (uint16_t((PITCH_E<<3) - 2) - vib1 + (vib1>>1))>>0;
+            v += sag_wf(poses[3]>>8); poses[3] += (uint16_t((PITCH_CH<<3) - 3) + vib1 - (vib1>>1));
+            v += sag_wf(poses[4]>>8); poses[4] += (uint16_t((PITCH_E<<3) - 2) - vib1 + (vib1>>1));
             db[i] += v>>5;
         }
     }
@@ -289,10 +289,10 @@ bool drumblocker(uint16_t pos)
         bit = -1;
         return false;
     }
+    else if ((pos & 0xffff) == 0xf000)
+        bit = 7 + (myrand::rand8()&1);
     else if ((pos & 0x0fff)==0)
-    {
-        bit += (myrand::rand8()&3)+1;
-    }
+        bit += (myrand::rand8()&1)+1;
 
     return (pos>>bit)&1;
 }
@@ -378,7 +378,7 @@ void phaser_test(int pos, Buffer &db, Buffer &pb)
 }
 
 
-void Player::render(Buffer &db, Buffer &pb)
+bool Player::render(Buffer &db, Buffer &pb)
 {
     myrand::rand32();
 
@@ -439,7 +439,7 @@ void Player::render(Buffer &db, Buffer &pb)
         arpeggio.set_portamento_speed(1);
         if ( pos > 0x1ffff )
         {
-            arpeggio.set_decay_speed(myrand::rand8()&0xf +1);
+            arpeggio.set_decay_speed((myrand::rand8()&0xf) +1);
         } else {
            arpeggio.set_decay_speed(15);
        }
@@ -519,4 +519,7 @@ void Player::render(Buffer &db, Buffer &pb)
 #endif
 
     pos ++;
+
+    // return false when finished
+    return pos < 0x39000; /* 0x38000 is approx 2:50 */
 }

@@ -1,6 +1,6 @@
 //set your clock speed
 #define F_CPU 32000000UL
-
+#include <avr/sleep.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
@@ -8,9 +8,6 @@
 extern "C"
 {
 	#include "overclock.h"
-	void exit(int tmp)
-	{
-	}
 };
 #include "common.hpp"
 #include "Player.hpp"
@@ -75,7 +72,23 @@ ISR(TIMER1_COMPA_vect)
 	stream_pos = (stream_pos+1) & ((globals::SAMPLES_PER_BUFFER<<1)-1);
 }
 
-
+extern "C"
+void exit(int op)
+{
+//	TCCR0A = 0;
+//	TCCR0B = 0;
+//	TCCR1 = 0;
+//	TIMSK = 0;
+	// blink led to make user turn off the device
+	DDRB = 0x02; // cut sound, keep led
+	overclockCpu(OVERCLOCK_STD);
+	while(1) {
+		OCR0B = LED_BRIGHTNESS + 0x20;
+		_delay_ms(250);
+		OCR0B = 0;		
+		_delay_ms(250);
+	};
+}
 
 // do it now
 int main(void)
@@ -95,12 +108,14 @@ int main(void)
 	while(1) {
 		// Buffer SWAP0
 		while(stream_pos < globals::SAMPLES_PER_BUFFER) {};
-		player.render(mixbuffers[0], mixbuffers[1]);
+		if (!player.render(mixbuffers[0], mixbuffers[1]))
+			exit(0);
 		if (stream_pos < globals::SAMPLES_PER_BUFFER) assert(0);
 		
 		// Buffer SWAP1
 		while(stream_pos >= globals::SAMPLES_PER_BUFFER) {};
-		player.render(mixbuffers[1], mixbuffers[0]);
+		if (!player.render(mixbuffers[1], mixbuffers[0]))
+			exit(0);
 		if (stream_pos >= globals::SAMPLES_PER_BUFFER) assert(0);
 	}
 }
