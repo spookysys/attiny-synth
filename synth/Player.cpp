@@ -290,9 +290,15 @@ bool drumblocker(uint16_t pos)
         return false;
     }
     else if ((pos & 0xffff) == 0xf000)
+    {
+        uint8_t tmp = bit;
         bit = 7 + (myrand::rand8()&1);
+        if (bit == tmp) bit++;
+    }
     else if ((pos & 0x0fff)==0)
+    {
         bit += (myrand::rand8()&1)+1;
+    }
 
     return (pos>>bit)&1;
 }
@@ -386,19 +392,15 @@ bool Player::render(Buffer &db, Buffer &pb)
     amen.render(drumpf, bd, pos);
 
     // Trigger hihat
-    if (1)
+    if (pos < 0x20000 || ((pos & 0xFFFF) > 0x07FFF) && ((pos & 0xFFFF) < 0xF800))
     {
         if ((pos & 0xFF) == 0)
-        {
             hh.trigger(0x1A, 0x05);
-        }
     }
     else
     {
         if ((pos & 0x7F) == 0)
-        {
             hh.trigger(0x60, 0xC0);
-        }
     }
 
     // trigger synth
@@ -504,7 +506,7 @@ bool Player::render(Buffer &db, Buffer &pb)
     if ( pos > 0xFFFF && ((pos & 0xFFFF) > 0x07FFF))
         chord.render(db);
 
-    if (pos > 0x7fff)
+    if (pos >= 0x8000)
         hh.render(db);
 
     if ( pos < 0x8000 || !drumblocker(pos) )
