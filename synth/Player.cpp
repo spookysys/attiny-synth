@@ -46,7 +46,7 @@ static int16_t sin_wf(uint16_t t)
 //    tmp += int8_t(t);
 //    tmp += int8_t(t+t);
     tmp += int8_t(pgm_read_byte(&tables::sin[(t<<1)&0xff]));
-      return tmp + (tmp>>2);
+      return tmp;
 }
 
 static int16_t sqr_wf(uint16_t t)
@@ -56,7 +56,7 @@ static int16_t sqr_wf(uint16_t t)
 //    tmp += int8_t(t+t);
     tmp += (( t & 0xff ) < ((int8_t(pgm_read_byte(&tables::sin[t>>10]))>>1) + 0x7f)) ? -64 : 63;
   //  tmp += (( t & 0xff ) < ((int8_t(pgm_read_byte(&tables::sin[t>>8]))>>1) + 0x7f)) ? -64 : 63;
-      return tmp + (tmp>>1);
+      return tmp;
 }
 
 #define BASE_PITCH uint16_t(256 * 214)
@@ -142,7 +142,7 @@ struct Chord
             int16_t v = 0;
             int32_t vib1 = pgm_read_byte(&tables::sin[vibpos1>>8]); 
             vibpos1 += 8; 
-            vib1 >>= 1;
+            //vib1 >>= 1;
             v += sag_wf(poses[0]>>8); poses[0] += (uint16_t((PITCH_DH<<3) + 2) - vib1 + (vib1>>1));
             v += sag_wf(poses[1]>>8); poses[1] += (uint16_t((PITCH_G<<2) - 1) + vib1)>>1;
             v += sag_wf(poses[2]>>8); poses[2] += (uint16_t((PITCH_A<<2) + 1) - vib1)>>1;
