@@ -465,7 +465,7 @@ bool Player::render(Buffer &db, Buffer &pb)
             {
                 if ((pat & 1) == 0)
                 {
-                    drumpf.trigger(AMEN_CRASHBD);
+                    drumpf.trigger(AMEN_RIDE);
                     bd.trigger(true);
                 }
             }
@@ -473,7 +473,7 @@ bool Player::render(Buffer &db, Buffer &pb)
         if (pat == 7 && nrow)
         {
             uint8_t t = row&63;
-            if (t==0 || t==32 || t == 48 || t==62 )
+            if (t==0 || t== 6 || t==32 || t == 38 || t == 48 || t == 54 || t==60 )
             {
                 drumpf.trigger(AMEN_LOUDBDHH);
                 bd.trigger(false);
@@ -544,7 +544,7 @@ bool Player::render(Buffer &db, Buffer &pb)
 
 
 
-        if ( pos < 0x8000 || !drumblocker(pos) )
+        if ( pos < 0x8000 || (pat < 8) || !drumblocker(pos) )
         {
             if ( pos > 0xFFFF )
             {
@@ -590,7 +590,7 @@ bool Player::render(Buffer &db, Buffer &pb)
         if (pos >= 0x8000)
             hh.render(db);
 
-        if ( pos < 0x8000 || !drumblocker(pos) )
+        if ( pos < 0x8000 || (pat < 8) || !drumblocker(pos) )
         {
             drumpf.render(db);
         }
