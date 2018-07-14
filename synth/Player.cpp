@@ -438,7 +438,8 @@ bool Player::render(Buffer &db, Buffer &pb)
         if (npat)
             new_one_liner();
         
-        synth.render(mixin, synth_wf);
+        if (pat < 0x1c)
+            synth.render(mixin, synth_wf);
 
         if (pat>=2  && pat < 0x1d)
             one_liner.render(mixin, one_liner_sel);
