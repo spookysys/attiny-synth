@@ -295,6 +295,7 @@ void Player::init()
     hh.init();
     compressor.init();
     pos = 0;
+    synth.trigger(PITCH_C);
 }
 
 bool drumblocker(uint16_t pos)
@@ -432,11 +433,6 @@ bool Player::render(Buffer &db, Buffer &pb)
         if (npat)
             new_one_liner();
 
-        synth.set_decay_speed(100);
-        if (nrow && (row&1) == 0)
-            synth.trigger(PITCH_C);
-        if (nrow && (row&1) == 1)
-            synth.release();
         
         synth.render(mixin, synth_wf);
 
@@ -465,7 +461,7 @@ bool Player::render(Buffer &db, Buffer &pb)
             {
                 if ((pat & 1) == 0)
                 {
-                    drumpf.trigger(AMEN_RIDE);
+                    drumpf.trigger(AMEN_CRASHBD);
                     bd.trigger(true);
                 }
             }
@@ -473,7 +469,7 @@ bool Player::render(Buffer &db, Buffer &pb)
         if (pat == 7 && nrow)
         {
             uint8_t t = row&63;
-            if (t==0 || t== 6 || t==32 || t == 38 || t == 48 || t == 54 || t==60 )
+            if ( t==0 || t== 6 || t==32 || t == 38 || t == 48 || t == 54 || t==60 )
             {
                 drumpf.trigger(AMEN_LOUDBDHH);
                 bd.trigger(false);
