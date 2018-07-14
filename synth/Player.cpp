@@ -5,6 +5,7 @@
 
 using namespace myrand;
 
+bool filter_on;
 
 static int16_t synth_wf(uint16_t t)
 {
@@ -25,7 +26,7 @@ static int16_t sag_wf(uint16_t t)
     tmp += int8_t(t);
     tmp += int8_t(t+t);
 //    tmp += int8_t(pgm_read_byte(&tables::sin[(t<<1)&0xff]));
-    return tmp;
+    return tmp << 1;
 }
 
 
@@ -35,7 +36,7 @@ static int16_t sin_wf(uint16_t t)
 //    tmp += int8_t(t);
 //    tmp += int8_t(t+t);
     tmp += int8_t(pgm_read_byte(&tables::sin[(t<<1)&0xff]));
-    return tmp;
+    return tmp << 2;
 }
 
 static int16_t sqr_wf(uint16_t t)
@@ -121,22 +122,35 @@ public:
 
 struct Chord
 {
+    int8_t vibrato;
+    uint16_t spread;
+    uint8_t shr;
     uint16_t poses[5];
-    uint16_t vibpos1 = 0;
+    uint16_t vibpos1;
+    void init()
+    {
+        spread = 0;
+        vibrato = -1;
+        shr = 6;
+    }
     void render(Buffer& db)
     {
         for (uint8_t i=0; i<globals::SAMPLES_PER_BUFFER; i++)
         {
             int16_t v = 0;
-            int8_t vib1 = pgm_read_byte(&tables::sin[vibpos1>>8]); 
+            int32_t vib1 = pgm_read_byte(&tables::sin[vibpos1>>8]); 
             vibpos1 += 10; 
-            vib1 >>= 1;
+            if (vibrato>0)
+                vib1 <<= vibrato;
+            else if (vibrato<0)
+                vib1 >>= -vibrato;
+            vib1 += spread;
             v += sag_wf(poses[0]>>8); poses[0] += (uint16_t((PITCH_DH<<3) + 2) - vib1 + (vib1>>1));
             v += sag_wf(poses[1]>>8); poses[1] += (uint16_t((PITCH_G<<2) - 1) + vib1)>>1;
             v += sag_wf(poses[2]>>8); poses[2] += (uint16_t((PITCH_A<<2) + 1) - vib1)>>1;
             v += sag_wf(poses[3]>>8); poses[3] += (uint16_t((PITCH_CH<<3) - 3) + vib1 - (vib1>>1));
             v += sag_wf(poses[4]>>8); poses[4] += (uint16_t((PITCH_E<<3) - 2) - vib1 + (vib1>>1));
-            db[i] += v>>5;
+            db[i] += v>>shr;
         }
     }
 } chord;
@@ -157,7 +171,7 @@ struct Amen
         mul_shl = 12; 
     }
 
-    void render(Drumpf &drumpf, BassDrum &bd, uint16_t pos)
+    void trigger(Drumpf &drumpf, BassDrum &bd, uint16_t pos)
     {
         
         uint8_t breakstep = (pos>>BREAK_FREQUENCY); 
@@ -184,6 +198,9 @@ struct Amen
         switch (pos & 0x1FFF)
         {
         case 0x0000:
+            drumpf.trigger(AMEN_LOUDBDHH);
+            bd.trigger(true);
+            break;
         case 0x100:
         case 0x800:
         case 0x900:
@@ -267,7 +284,12 @@ struct Amen
 
 void Player::init()
 {
+    filter_on = false;
     basenote = 0;
+    one_liner_sel = myrand::rand16() & 0x7;
+    if (one_liner_sel >= 6)
+        one_liner_sel -= 6;
+    chord.init();
     shuffler.init();
     amen.init();
     bd.init();
@@ -278,7 +300,6 @@ void Player::init()
     hh.init();
     compressor.init();
     pos = 0;
-    one_liner_sel = 0;
 }
 
 bool drumblocker(uint16_t pos)
@@ -302,7 +323,6 @@ bool drumblocker(uint16_t pos)
 
     return (pos>>bit)&1;
 }
-
 
 void phaser_test(int pos, Buffer &db, Buffer &pb)
 {
@@ -361,12 +381,17 @@ void phaser_test(int pos, Buffer &db, Buffer &pb)
     }
 
     // filter
-    if ( 0 )
+    static uint16_t filter_t;
+    static int16_t rprev;
+    if (!filter_on)
     {
-        static uint16_t filter_t = 0;
+        filter_t = 0;
+        rprev = 0;
+    }
+    else
+    {
         uint8_t phaser_filter = pgm_read_byte(&tables::sin[filter_t >> 8]) + 128;
 
-        static int16_t rprev = 0;
         for (uint8_t i = 0; i < globals::SAMPLES_PER_BUFFER; i++)
         {
             int16_t r = db[i];
@@ -388,140 +413,217 @@ bool Player::render(Buffer &db, Buffer &pb)
 {
     myrand::rand32();
 
-    // Trigger amen
-    amen.render(drumpf, bd, pos);
-
-    // Trigger hihat
-    if (pos < 0x20000 || ((pos & 0xFFFF) > 0x07FFF) && ((pos & 0xFFFF) < 0xF800))
-    {
-        if ((pos & 0xFF) == 0)
-            hh.trigger(0x1A, 0x05);
-    }
-    else
-    {
-        if ((pos & 0x7F) == 0)
-            hh.trigger(0x60, 0xC0);
-    }
-
-    // trigger synth
-    if (((pos & 0xFFF) == 0x00) || (pos & 0xFFF) == 0x700 )
-    {
-        static const uint16_t arp[] PROGMEM = {
-            PITCH_C,
-            PITCH_C,
-            PITCH_C,
-            PITCH_FH,
-            PITCH_C,
-            PITCH_FH,
-            PITCH_C*2,
-            PITCH_FH*2,
-        };
-        static const uint8_t base[] PROGMEM = {
-            0,0,0,4,0,4,0,4
-        };
-        uint8_t t = shuffler[(pos+0x100)>>11] & 7;
-        synth.trigger(pgm_read_word(&arp[t]));
-        basenote = pgm_read_word(&base[t]);
-    }
-
-    if ( (pos & 0x7F) == 0x00 )
-    {
-        static const uint16_t arp_arp[] PROGMEM = { 
-            (uint16_t)(PITCH_C*2),
-            (uint16_t)(PITCH_C*3),
-            (uint16_t)(PITCH_C*4), 
-            (uint16_t)(PITCH_C*6),
-            (uint16_t)(PITCH_FH*2),
-            (uint16_t)(PITCH_FH*3),
-            (uint16_t)(PITCH_FH*4),
-            (uint16_t)(PITCH_FH*6),
-        }; 
-        uint8_t t = shuffler[pos>>7] & 3;
-        arpeggio.trigger(pgm_read_word(&arp_arp[t+basenote]));
-        arpeggio.set_portamento_speed(1);
-        if ( pos > 0x1ffff )
-        {
-            arpeggio.set_decay_speed((myrand::rand8()&0xf) +1);
-        } else {
-           arpeggio.set_decay_speed(15);
-       }
-    } else if ( (pos & 0x7F) == 0x8 ) 
-    {
-        arpeggio.release();
-    }
-
-
-    // change oneliner settings
-    if ((pos & 0x7FFF) == 0)
-    {
-		do 
-	        one_liner_sel = myrand::rand16() & 0x7;
-		while (one_liner_sel > 5);
-    }
-    
+    uint32_t row = pos >> 7;
+    uint32_t pat = pos >> 13;
+    bool nrow = (pos & 0x7F) == 0x00;
+    bool npat = (pos & 0x1FFF) == 0x00;
 
     Buffer mixin;
-
     db.clear();
     mixin.clear();
 
-#if 1
 
-    if ( pos < 0x8000 || !drumblocker(pos) )
+    
+    if (pat >= 0x1E) // exit
+        return false;
+    else if (pat < 4) // intro
     {
-        if ( pos > 0xFFFF )
+        // change oneliner settings
+        if (npat)
         {
-            bd.render(db);
+            one_liner_sel++;
+            if (one_liner_sel >= 6)
+                one_liner_sel -= 6;
         }
-    }
 
-//    if ( pos > 0xFFFF && ((pos & 0xFFFF) > 0x07FFF))
-//        one_liner.render(mixin, one_liner_sel);
-
-    if ( pos <= 0xFFFF || ((pos & 0xFFFF) <= 0x07FFF))
+        chord.shr = 5;
+        synth.set_decay_speed(100);
+        if (nrow && (row&1) == 0)
+            synth.trigger(PITCH_C);
+        if (nrow && (row&1) == 1)
+            synth.release();
+        
         synth.render(mixin, synth_wf);
 
-    if ( pos > 0xFFFF && ((pos & 0xFFFF) <= 0x07FFF))
-    {
-        switch ( (pos>>16) & 3 )
-        {
-            case 0: 
-                arpeggio.render(mixin, sqr_wf);
-                break;
-            case 1: 
-                arpeggio.render(mixin, sag_wf);
-                break;
-            case 2: 
-                arpeggio.render(mixin, sin_wf);
-                break;
-            case 3: 
-                arpeggio.render(mixin, sqr_wf);
-                break;
-          }
+        if (pat>=2)
+            one_liner.render(mixin, one_liner_sel);
+
+        if (pat>=3)
+            chord.render(mixin);
+            
+        compressor.render(db, db, mixin);
     }
-
-    /* anything rendered to db below here does not affect compressor */
-    compressor.render(db, db, mixin);
-
-    if ( pos > 0xFFFF && ((pos & 0xFFFF) > 0x07FFF))
-        chord.render(db);
-
-    if (pos >= 0x8000)
-        hh.render(db);
-
-    if ( pos < 0x8000 || !drumblocker(pos) )
+    else if (pat >= 0x1C) // ending
     {
-        if ( pos > 0xFFFF )
+        filter_on = true;
+        chord.shr = 5;
+        synth.set_decay_speed(100);
+        if (nrow && (row&1) == 0)
+            synth.trigger(PITCH_C);
+        if (nrow && (row&1) == 1)
+            synth.release();
+        synth.render(mixin, synth_wf);
+        chord.render(mixin);
+        compressor.render(db, db, mixin);
+    }
+    else
+    {
+        chord.init(); // reset
+
+        // Trigger amen
+        if ( pos >= 0x10000 )
+        {
+            amen.trigger(drumpf, bd, pos);
+        }   
+
+        // trigger some extra drums
+        if (npat)
+        {
+            if (pat < 8)
+            {
+                if ((pat & 1) == 0)
+                {
+                    drumpf.trigger(AMEN_CRASHBD);
+                    bd.trigger(true);
+                }
+            }
+        }
+        if (pat == 7 && nrow)
+        {
+            uint8_t t = row&63;
+            if (t==0 || t==32 || t == 48 || t==60 | t==62 )
+            {
+                drumpf.trigger(AMEN_LOUDBDHH);
+                bd.trigger(false);
+            }
+        }
+        // change oneliner settings
+        if (npat && (pat&3)==0)
+        {
+            one_liner_sel++;
+            if (one_liner_sel >= 6)
+                one_liner_sel -= 6;
+        }
+
+        // Trigger hihat
+        if (pos < 0x20000-0x600 || ((pos & 0xFFFF) > 0x07FFF) && ((pos & 0xFFFF) < 0xFA00))
+        {
+            if ((pos & 0xFF) == 0)
+                hh.trigger(0x1A, 0x05);
+        }
+        else
+        {
+            if ((pos & 0x7F) == 0)
+                hh.trigger(0x60, 0xC0);
+        }
+
+        // trigger synth
+        if (((pos & 0xFFF) == 0x00) || (pos & 0xFFF) == 0x700 )
+        {
+            static const uint16_t arp[] PROGMEM = {
+                PITCH_C,
+                PITCH_C,
+                PITCH_C,
+                PITCH_FH,
+                PITCH_C,
+                PITCH_FH,
+                PITCH_C*2,
+                PITCH_FH*2,
+            };
+            static const uint8_t base[] PROGMEM = {
+                0,0,0,4,0,4,0,4
+            };
+            uint8_t t = shuffler[(pos+0x100)>>11] & 7;
+            synth.trigger(pgm_read_word(&arp[t]));
+            basenote = pgm_read_word(&base[t]);
+        }
+
+        if ( (pos & 0x7F) == 0x00 )
+        {
+            static const uint16_t arp_arp[] PROGMEM = { 
+                (uint16_t)(PITCH_C*2),
+                (uint16_t)(PITCH_C*3),
+                (uint16_t)(PITCH_C*4), 
+                (uint16_t)(PITCH_C*6),
+                (uint16_t)(PITCH_FH*2),
+                (uint16_t)(PITCH_FH*3),
+                (uint16_t)(PITCH_FH*4),
+                (uint16_t)(PITCH_FH*6),
+            }; 
+            uint8_t t = shuffler[pos>>7] & 3;
+            arpeggio.trigger(pgm_read_word(&arp_arp[t+basenote]));
+            arpeggio.set_portamento_speed(1);
+            if ( pos > 0x1ffff )
+            {
+                arpeggio.set_decay_speed((myrand::rand8()&0xf) +1);
+            } else {
+            arpeggio.set_decay_speed(15);
+        }
+        } else if ( (pos & 0x7F) == 0x8 ) 
+        {
+            arpeggio.release();
+        }
+
+
+
+        if ( pos < 0x8000 || !drumblocker(pos) )
+        {
+            if ( pos > 0xFFFF )
+            {
+                bd.render(db);
+            }
+        }
+
+    //    if ( pos > 0xFFFF && ((pos & 0xFFFF) > 0x07FFF))
+    //        one_liner.render(mixin, one_liner_sel);
+
+        if ( pos <= 0xFFFF || ((pos & 0xFFFF) <= 0x07FFF))
+            synth.render(mixin, synth_wf);
+
+        if ( pos > 0xFFFF && ((pos & 0xFFFF) <= 0x07FFF))
+        {
+            switch ( (pos>>16) & 3 )
+            {
+                case 0: 
+                    arpeggio.render(mixin, sqr_wf);
+                    break;
+                case 1: 
+                    arpeggio.render(mixin, sag_wf);
+                    break;
+                case 2: 
+                    arpeggio.render(mixin, sin_wf);
+                    break;
+                case 3: 
+                    arpeggio.render(mixin, sqr_wf);
+                    break;
+            }
+        }
+
+        if ( pos >= 0x20000 && ((pos & 0xFFFF) > 0x07FFF) && !drumblocker(pos))
+        {
+            one_liner.render(mixin, one_liner_sel);
+        }
+
+        /* anything rendered to db below here does not affect compressor */
+        compressor.render(db, db, mixin);
+
+        if ( pos >= 0x10000 && ((pos & 0xFFFF) > 0x07FFF))
+        {
+            chord.render(db);
+        }
+
+        if (pos >= 0x8000)
+            hh.render(db);
+
+        if ( pos < 0x8000 || !drumblocker(pos) )
         {
             drumpf.render(db);
         }
+
     }
 
     phaser_test(pos, db, pb);
-#endif
-
     pos ++;
 
-    // return false when finished
-    return pos < 0x39000; /* 0x38000 is approx 2:50 */
+    return true;
 }

@@ -8,7 +8,7 @@
 
 using namespace std;
 
-static const int length_in_buffers = 1<<18;
+static const int max_length_in_buffers = 1<<18;
 
 // how much to shift down before clipping
 static const int downshift = 2;
@@ -84,17 +84,21 @@ int main(int argc, char* argv[])
     cout << "Rendering" << endl;
     
 
-    static Buffer buffs[length_in_buffers];
-    for (int i=0; i<length_in_buffers; i++)
+    static Buffer buffs[max_length_in_buffers];
+    for (int i=0; i<max_length_in_buffers; i++)
         for (int j=0; j<globals::SAMPLES_PER_BUFFER; j++)
             buffs[i][j] = rand();
 
+    myrand::srand();
     static Player player;
     player.init();
 
-    myrand::srand();
-
-    for (int i=1; i<length_in_buffers; i++) player.render(buffs[i],buffs[i-1]);
+    int i=1;
+    for (; i<max_length_in_buffers; i++) {
+        if (!player.render(buffs[i],buffs[i-1]))
+            break;
+    }
+    const int length_in_buffers = i;
 
     wav::write_wav("drop.wav", buffs[0].data(), length_in_buffers*globals::SAMPLES_PER_BUFFER, true);
 
