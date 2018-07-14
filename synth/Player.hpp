@@ -10,7 +10,6 @@
 class Player
 {
     uint32_t pos;
-    uint8_t one_liner_sel;
     BassDrum bd;
     Hihats hh;
     OneLiner one_liner;

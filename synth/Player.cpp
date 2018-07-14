@@ -3,6 +3,16 @@
 #include "myrand.hpp"
 #include "tables.hpp"
 
+uint8_t one_liner_sel;
+void new_one_liner()
+{
+    uint8_t old = one_liner_sel;
+    do
+    {
+        one_liner_sel = myrand::rand16() & 0x7;
+    } while (one_liner_sel >=6 || one_liner_sel == old);
+}
+
 using namespace myrand;
 
 bool filter_on;
@@ -122,17 +132,9 @@ public:
 
 struct Chord
 {
-    int8_t vibrato;
-    uint16_t spread;
     uint8_t shr;
     uint16_t poses[5];
     uint16_t vibpos1;
-    void init()
-    {
-        spread = 0;
-        vibrato = -1;
-        shr = 6;
-    }
     void render(Buffer& db)
     {
         for (uint8_t i=0; i<globals::SAMPLES_PER_BUFFER; i++)
@@ -140,11 +142,7 @@ struct Chord
             int16_t v = 0;
             int32_t vib1 = pgm_read_byte(&tables::sin[vibpos1>>8]); 
             vibpos1 += 10; 
-            if (vibrato>0)
-                vib1 <<= vibrato;
-            else if (vibrato<0)
-                vib1 >>= -vibrato;
-            vib1 += spread;
+            vib1 >>= 1;
             v += sag_wf(poses[0]>>8); poses[0] += (uint16_t((PITCH_DH<<3) + 2) - vib1 + (vib1>>1));
             v += sag_wf(poses[1]>>8); poses[1] += (uint16_t((PITCH_G<<2) - 1) + vib1)>>1;
             v += sag_wf(poses[2]>>8); poses[2] += (uint16_t((PITCH_A<<2) + 1) - vib1)>>1;
@@ -286,10 +284,7 @@ void Player::init()
 {
     filter_on = false;
     basenote = 0;
-    one_liner_sel = myrand::rand16() & 0x7;
-    if (one_liner_sel >= 6)
-        one_liner_sel -= 6;
-    chord.init();
+    new_one_liner();
     shuffler.init();
     amen.init();
     bd.init();
@@ -381,6 +376,7 @@ void phaser_test(int pos, Buffer &db, Buffer &pb)
     }
 
     // filter
+    #if 0
     static uint16_t filter_t;
     static int16_t rprev;
     if (!filter_on)
@@ -406,15 +402,17 @@ void phaser_test(int pos, Buffer &db, Buffer &pb)
         }
         filter_t += filter_speed;
     }
+    #endif
 }
+
 
 
 bool Player::render(Buffer &db, Buffer &pb)
 {
     myrand::rand32();
 
-    uint32_t row = pos >> 7;
-    uint32_t pat = pos >> 13;
+    uint8_t row = pos >> 7;
+    uint8_t pat = pos >> 13;
     bool nrow = (pos & 0x7F) == 0x00;
     bool npat = (pos & 0x1FFF) == 0x00;
 
@@ -426,17 +424,14 @@ bool Player::render(Buffer &db, Buffer &pb)
     
     if (pat >= 0x1E) // exit
         return false;
-    else if (pat < 4) // intro
+    else if (pat < 4 || pat >= 0x1C) // intro and ending
     {
+        chord.shr = 5;
+  
         // change oneliner settings
         if (npat)
-        {
-            one_liner_sel++;
-            if (one_liner_sel >= 6)
-                one_liner_sel -= 6;
-        }
+            new_one_liner();
 
-        chord.shr = 5;
         synth.set_decay_speed(100);
         if (nrow && (row&1) == 0)
             synth.trigger(PITCH_C);
@@ -445,30 +440,17 @@ bool Player::render(Buffer &db, Buffer &pb)
         
         synth.render(mixin, synth_wf);
 
-        if (pat>=2)
+        if (pat>=2  && pat < 0x1d)
             one_liner.render(mixin, one_liner_sel);
 
-        if (pat>=3)
+        if (pat>=3 && pat < 0x1d)
             chord.render(mixin);
             
         compressor.render(db, db, mixin);
     }
-    else if (pat >= 0x1C) // ending
-    {
-        filter_on = true;
-        chord.shr = 5;
-        synth.set_decay_speed(100);
-        if (nrow && (row&1) == 0)
-            synth.trigger(PITCH_C);
-        if (nrow && (row&1) == 1)
-            synth.release();
-        synth.render(mixin, synth_wf);
-        chord.render(mixin);
-        compressor.render(db, db, mixin);
-    }
     else
     {
-        chord.init(); // reset
+        chord.shr = 6;
 
         // Trigger amen
         if ( pos >= 0x10000 )
@@ -491,7 +473,7 @@ bool Player::render(Buffer &db, Buffer &pb)
         if (pat == 7 && nrow)
         {
             uint8_t t = row&63;
-            if (t==0 || t==32 || t == 48 || t==60 | t==62 )
+            if (t==0 || t==32 || t == 48 || t==62 )
             {
                 drumpf.trigger(AMEN_LOUDBDHH);
                 bd.trigger(false);
@@ -499,11 +481,7 @@ bool Player::render(Buffer &db, Buffer &pb)
         }
         // change oneliner settings
         if (npat && (pat&3)==0)
-        {
-            one_liner_sel++;
-            if (one_liner_sel >= 6)
-                one_liner_sel -= 6;
-        }
+            new_one_liner();
 
         // Trigger hihat
         if (pos < 0x20000-0x600 || ((pos & 0xFFFF) > 0x07FFF) && ((pos & 0xFFFF) < 0xFA00))
@@ -573,9 +551,6 @@ bool Player::render(Buffer &db, Buffer &pb)
                 bd.render(db);
             }
         }
-
-    //    if ( pos > 0xFFFF && ((pos & 0xFFFF) > 0x07FFF))
-    //        one_liner.render(mixin, one_liner_sel);
 
         if ( pos <= 0xFFFF || ((pos & 0xFFFF) <= 0x07FFF))
             synth.render(mixin, synth_wf);
