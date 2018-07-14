@@ -8,7 +8,7 @@
 
 using namespace std;
 
-static const int max_length_in_buffers = 1<<18;
+static const int max_length_in_buffers = 1<<20;
 
 // how much to shift down before clipping
 static const int downshift = 2;

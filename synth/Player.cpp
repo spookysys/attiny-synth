@@ -27,12 +27,7 @@ static int16_t synth_wf(uint16_t t)
     tmp += int8_t(pgm_read_byte(&tables::sin[(t>>1)&0xff]));
     tmp += int8_t(pgm_read_byte(&tables::sin[(t>>1)&0xff]));
  //   tmp += int8_t(pgm_read_byte(&tables::sin[(t>>1)&0xff]));
-	return tmp>>1;
-}
-
-static int16_t synth_wf_intro(uint16_t t)
-{
-    return synth_wf(t)>>1;
+	return tmp>>2;
 }
 
 static int16_t sag_wf(uint16_t t)
@@ -41,7 +36,7 @@ static int16_t sag_wf(uint16_t t)
     tmp += int8_t(t);
     tmp += int8_t(t+t);
 //    tmp += int8_t(pgm_read_byte(&tables::sin[(t<<1)&0xff]));
-    return tmp << 1;
+    return tmp>>1;
 }
 
 
@@ -51,7 +46,7 @@ static int16_t sin_wf(uint16_t t)
 //    tmp += int8_t(t);
 //    tmp += int8_t(t+t);
     tmp += int8_t(pgm_read_byte(&tables::sin[(t<<1)&0xff]));
-    return tmp << 2;
+      return tmp + (tmp>>2);
 }
 
 static int16_t sqr_wf(uint16_t t)
@@ -61,7 +56,7 @@ static int16_t sqr_wf(uint16_t t)
 //    tmp += int8_t(t+t);
     tmp += (( t & 0xff ) < ((int8_t(pgm_read_byte(&tables::sin[t>>10]))>>1) + 0x7f)) ? -64 : 63;
   //  tmp += (( t & 0xff ) < ((int8_t(pgm_read_byte(&tables::sin[t>>8]))>>1) + 0x7f)) ? -64 : 63;
-      return tmp;
+      return tmp + (tmp>>1);
 }
 
 #define BASE_PITCH uint16_t(256 * 214)
@@ -146,7 +141,7 @@ struct Chord
         {
             int16_t v = 0;
             int32_t vib1 = pgm_read_byte(&tables::sin[vibpos1>>8]); 
-            vibpos1 += 10; 
+            vibpos1 += 8; 
             vib1 >>= 1;
             v += sag_wf(poses[0]>>8); poses[0] += (uint16_t((PITCH_DH<<3) + 2) - vib1 + (vib1>>1));
             v += sag_wf(poses[1]>>8); poses[1] += (uint16_t((PITCH_G<<2) - 1) + vib1)>>1;
@@ -300,7 +295,7 @@ void Player::init()
     hh.init();
     compressor.init();
     pos = 0;
-    synth.trigger(PITCH_C);
+//    synth.trigger(PITCH_C);
 }
 
 bool drumblocker(uint16_t pos)
@@ -428,20 +423,22 @@ bool Player::render(Buffer &db, Buffer &pb)
 
 
     
-    if (pat >= 0x1E) // exit
+    if (pat >= 0x1e) // exit
         return false;
     else if (pat < 4 || pat >= 0x1C) // intro and ending
     {
-        chord.shr = 6;
+        chord.shr = 4;
+
+        if (npat)
+            synth.trigger(PITCH_C);
   
         // change oneliner settings
         if (npat)
             new_one_liner();
         
-        if (pat < 0x1c)
-            synth.render(mixin, synth_wf);
+        synth.render(mixin, synth_wf);
 
-        if (pat>=2  && pat < 0x1d)
+        if (pat>=2  && pat < 0x1c)
             one_liner.render(mixin, one_liner_sel);
             
         compressor.render(db, db, mixin);
@@ -451,7 +448,7 @@ bool Player::render(Buffer &db, Buffer &pb)
     }
     else
     {
-        chord.shr = 6;
+        chord.shr = 4;
 
         // Trigger amen
         if ( pos >= 0x10000 )
