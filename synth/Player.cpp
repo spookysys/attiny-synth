@@ -30,6 +30,11 @@ static int16_t synth_wf(uint16_t t)
 	return tmp>>1;
 }
 
+static int16_t synth_wf_intro(uint16_t t)
+{
+    return synth_wf(t)>>1;
+}
+
 static int16_t sag_wf(uint16_t t)
 {
     int16_t tmp = 0;
@@ -427,22 +432,21 @@ bool Player::render(Buffer &db, Buffer &pb)
         return false;
     else if (pat < 4 || pat >= 0x1C) // intro and ending
     {
-        chord.shr = 5;
+        chord.shr = 6;
   
         // change oneliner settings
         if (npat)
             new_one_liner();
-
         
         synth.render(mixin, synth_wf);
 
         if (pat>=2  && pat < 0x1d)
             one_liner.render(mixin, one_liner_sel);
-
-        if (pat>=3 && pat < 0x1d)
-            chord.render(mixin);
             
         compressor.render(db, db, mixin);
+
+        if (pat>=3 && pat < 0x1d)
+            chord.render(db);
     }
     else
     {
@@ -466,10 +470,11 @@ bool Player::render(Buffer &db, Buffer &pb)
                 }
             }
         }
-        if (pat == 7 && nrow)
+        uint8_t t = row&63;
+        if (nrow)
         {
-            uint8_t t = row&63;
-            if ( t==0 || t== 6 || t==32 || t == 38 || t == 48 || t == 54 || t==60 )
+            if ( pat == 7 && (t==0 || t== 6 || t==32 || t == 38 || t == 48 || t == 54 )
+            || (pat > 4 && t == 62))
             {
                 drumpf.trigger(AMEN_LOUDBDHH);
                 bd.trigger(false);
