@@ -300,7 +300,7 @@ void Player::init()
 bool drumblocker(uint16_t pos)
 {
     static uint8_t bit;
-    if ((pos & 0xffff) <= 0xbfff)
+    if ((pos & 0xffff) < 0xC000)
     {
         bit = -1;
         return false;
@@ -482,7 +482,7 @@ bool Player::render(Buffer &db, Buffer &pb)
             new_one_liner();
 
         // Trigger hihat
-        if (pos < 0x20000-0x600 || ((pos & 0xFFFF) > 0x07FFF) && ((pos & 0xFFFF) < 0xFA00))
+        if (pos < 0x20000-0x600 || ((pos & 0xFFFF) >= 0x08000) && ((pos & 0xFFFF) < 0xFA00))
         {
             if ((pos & 0xFF) == 0)
                 hh.trigger(0x1A, 0x05);
@@ -529,7 +529,7 @@ bool Player::render(Buffer &db, Buffer &pb)
             uint8_t t = shuffler[pos>>7] & 3;
             arpeggio.trigger(pgm_read_word(&arp_arp[t+basenote]));
             arpeggio.set_portamento_speed(1);
-            if ( pos > 0x1ffff )
+            if ( pos >= 0x20000 )
             {
                 arpeggio.set_decay_speed((myrand::rand8()&0xf) +1);
             } else {
@@ -544,16 +544,16 @@ bool Player::render(Buffer &db, Buffer &pb)
 
         if ( pos < 0x8000 || (pat < 8) || !drumblocker(pos) )
         {
-            if ( pos > 0xFFFF )
+            if ( pos >= 0x10000 )
             {
                 bd.render(db);
             }
         }
 
-        if ( pos <= 0xFFFF || ((pos & 0xFFFF) <= 0x07FFF))
+        if ( pos < 0x10000 || ((pos & 0xFFFF) < 0x08000))
             synth.render(mixin, synth_wf);
 
-        if ( pos > 0xFFFF && ((pos & 0xFFFF) <= 0x07FFF))
+        if ( pos >= 0x10000 && ((pos & 0xFFFF) < 0x08000))
         {
             switch ( (pos>>16) & 3 )
             {
@@ -572,7 +572,7 @@ bool Player::render(Buffer &db, Buffer &pb)
             }
         }
 
-        if ( pos >= 0x20000 && ((pos & 0xFFFF) > 0x07FFF) && !drumblocker(pos))
+        if ( pos >= 0x20000 && ((pos & 0xFFFF) >= 0x08000) && !drumblocker(pos))
         {
             one_liner.render(mixin, one_liner_sel);
         }
@@ -580,7 +580,7 @@ bool Player::render(Buffer &db, Buffer &pb)
         /* anything rendered to db below here does not affect compressor */
         compressor.render(db, db, mixin);
 
-        if ( pos >= 0x10000 && ((pos & 0xFFFF) > 0x07FFF))
+        if ( pos >= 0x10000 && ((pos & 0xFFFF) >= 0x08000))
         {
             chord.render(db);
         }
