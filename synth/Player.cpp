@@ -59,19 +59,19 @@ static int16_t sqr_wf(uint16_t t)
       return tmp;
 }
 
-#define BASE_PITCH uint16_t(256 * 214)
-#define PITCH_C uint16_t(BASE_PITCH/214)
-#define PITCH_CH uint16_t(BASE_PITCH/202)
-#define PITCH_D  uint16_t(BASE_PITCH/190)
-#define PITCH_DH uint16_t(BASE_PITCH/180)
-#define PITCH_E uint16_t(BASE_PITCH/170)
-#define PITCH_F uint16_t(BASE_PITCH/160)
-#define PITCH_FH uint16_t(BASE_PITCH/151)
-#define PITCH_G uint16_t(BASE_PITCH/143)
-#define PITCH_GH uint16_t(BASE_PITCH/135)
-#define PITCH_A uint16_t(BASE_PITCH/127)
-#define PITCH_AH uint16_t(BASE_PITCH/120)
-#define PITCH_B uint16_t(BASE_PITCH/113)
+#define BASE_PITCH double(uint16_t(1)<<15)
+#define PITCH_C uint16_t(BASE_PITCH*1)
+#define PITCH_CH uint16_t(BASE_PITCH*1.0594630943593)
+#define PITCH_D uint16_t(BASE_PITCH*1.12246204830937)
+#define PITCH_DH  uint16_t(BASE_PITCH*1.18920711500272)
+#define PITCH_E uint16_t(BASE_PITCH*1.25992104989487)
+#define PITCH_F uint16_t(BASE_PITC*1.33483985417003)
+#define PITCH_FH uint16_t(BASE_PITCH*1.4142135623731)
+#define PITCH_G uint16_t(BASE_PITCH*1.49830707687668)
+#define PITCH_GH uint16_t(BASE_PITCH*1.5874010519682)
+#define PITCH_A uint16_t(BASE_PITCH*1.68179283050743)
+#define PITCH_AH uint16_t(BASE_PITCH*1.78179743628068)
+#define PITCH_B uint16_t(BASE_PITCH*1.88774862536339)
 
 #define MD (1<<6) // drumpf
 #define MS (1<<6) // synth
@@ -134,20 +134,19 @@ struct Chord
 {
     uint8_t shr;
     uint16_t poses[5];
-    uint16_t vibpos1;
+    uint16_t vibpos;
     void render(Buffer& db)
     {
         for (uint8_t i=0; i<globals::SAMPLES_PER_BUFFER; i++)
         {
             int16_t v = 0;
-            int32_t vib1 = pgm_read_byte(&tables::sin[vibpos1>>8]); 
-            vibpos1 += 8; 
-            //vib1 >>= 1;
-            v += sag_wf(poses[0]>>8); poses[0] += (uint16_t((PITCH_DH<<3) + 2) - vib1 + (vib1>>1));
-            v += sag_wf(poses[1]>>8); poses[1] += (uint16_t((PITCH_G<<2) - 1) + vib1)>>1;
-            v += sag_wf(poses[2]>>8); poses[2] += (uint16_t((PITCH_A<<2) + 1) - vib1)>>1;
-            v += sag_wf(poses[3]>>8); poses[3] += (uint16_t((PITCH_CH<<3) - 3) + vib1 - (vib1>>1));
-            v += sag_wf(poses[4]>>8); poses[4] += (uint16_t((PITCH_E<<3) - 2) - vib1 + (vib1>>1));
+            int8_t vib = pgm_read_byte(&tables::sin[(vibpos+0)>>8]); 
+            v += sag_wf(poses[0]>>8); poses[0] += ((PITCH_DH>>1) + 7 - vib)>>3;
+            v += sag_wf(poses[1]>>8); poses[1] += ((PITCH_G>>3) - 3 + vib)>>3;
+            v += sag_wf(poses[2]>>8); poses[2] += ((PITCH_A>>3) + 3 - vib)>>3;
+            v += sag_wf(poses[3]>>8); poses[3] += ((PITCH_CH>>1) - 1 + vib)>>3;
+            v += sag_wf(poses[4]>>8); poses[4] += ((PITCH_E>>1) - 3 - vib)>>3;
+            vibpos += 20; 
             db[i] += v>>shr;
         }
     }
@@ -430,7 +429,7 @@ bool Player::render(Buffer &db, Buffer &pb)
         chord.shr = 4;
 
         if (npat)
-            synth.trigger(PITCH_C);
+            synth.trigger(PITCH_C>>7);
   
         // change oneliner settings
         if (npat)
@@ -498,14 +497,14 @@ bool Player::render(Buffer &db, Buffer &pb)
         if (((pos & 0xFFF) == 0x00) || (pos & 0xFFF) == 0x700 )
         {
             static const uint16_t arp[] PROGMEM = {
-                PITCH_C,
-                PITCH_C,
-                PITCH_C,
-                PITCH_FH,
-                PITCH_C,
-                PITCH_FH,
-                PITCH_C*2,
-                PITCH_FH*2,
+                PITCH_C>>7,
+                PITCH_C>>7,
+                PITCH_C>>7,
+                PITCH_FH>>7,
+                PITCH_C>>7,
+                PITCH_FH>>7,
+                PITCH_C>>6,
+                PITCH_FH>>6,
             };
             static const uint8_t base[] PROGMEM = {
                 0,0,0,4,0,4,0,4
@@ -518,14 +517,14 @@ bool Player::render(Buffer &db, Buffer &pb)
         if ( (pos & 0x7F) == 0x00 )
         {
             static const uint16_t arp_arp[] PROGMEM = { 
-                (uint16_t)(PITCH_C*2),
-                (uint16_t)(PITCH_C*3),
-                (uint16_t)(PITCH_C*4), 
-                (uint16_t)(PITCH_C*6),
-                (uint16_t)(PITCH_FH*2),
-                (uint16_t)(PITCH_FH*3),
-                (uint16_t)(PITCH_FH*4),
-                (uint16_t)(PITCH_FH*6),
+                (uint32_t(PITCH_C)*2)>>7,
+                (uint32_t(PITCH_C)*3)>>7,
+                (uint32_t(PITCH_C)*4)>>7, 
+                (uint32_t(PITCH_C)*6)>>7,
+                (uint32_t(PITCH_FH)*2)>>7,
+                (uint32_t(PITCH_FH)*3)>>7,
+                (uint32_t(PITCH_FH)*4)>>7,
+                (uint32_t(PITCH_FH)*6)>>7,
             }; 
             uint8_t t = shuffler[pos>>7] & 3;
             arpeggio.trigger(pgm_read_word(&arp_arp[t+basenote]));
