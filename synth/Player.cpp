@@ -10,7 +10,7 @@ void new_one_liner()
     do
     {
         one_liner_sel = myrand::rand16() & 0x7;
-    } while (one_liner_sel >=6 || one_liner_sel == old);
+    } while (one_liner_sel >= OneLiner::n || one_liner_sel == old);
 }
 
 using namespace myrand;
@@ -322,25 +322,23 @@ bool drumblocker(uint16_t pos)
 void phaser_test(int pos, Buffer &db, Buffer &pb)
 {
     static bool prev_entered_phaser;
-    if ((pos & 0x3ff) == 0x80)
-        prev_entered_phaser = false;
 
     static int8_t phaser_depth;
     static int8_t phaser_shift;
     static int8_t phaser_speed;
-    static int8_t filter_speed;
+ //   static int8_t filter_speed;
     static bool phaser_neg;
     static int8_t phaser_strength;
-    if (!prev_entered_phaser)
+
+    if ((pos & 0x7ff) == 0x80)
     {
         phaser_depth = (myrand::rand16() & 0x0F);
         phaser_shift = 16 - phaser_depth;
         phaser_speed = (myrand::rand16() & 0xff) + 1;
-        filter_speed = (myrand::rand16() & 0x3f) + 1;
+ //       filter_speed = (myrand::rand16() & 0x3f) + 1;
         phaser_neg = int16_t(myrand::rand16()) >= 0;
         phaser_strength = (myrand::rand16() & 1) + 1;
     }
-    prev_entered_phaser = true;
 
     // phaser
     {
@@ -478,11 +476,13 @@ bool Player::render(Buffer &db, Buffer &pb)
             }
         }
         // change oneliner settings
-        if (npat && (pat&3)==0)
+        if (npat)
             new_one_liner();
 
         // Trigger hihat
-        if (pos < 0x20000-0x600 || ((pos & 0xFFFF) >= 0x08000) && ((pos & 0xFFFF) < 0xFA00))
+        const uint16_t hh_pre = 0x100;
+        const uint16_t hh_pre2 = 0x600;
+        if (pos < 0x08000 || ((pos & 0xFFFF) >= 0x08000 - hh_pre2) && ((pos & 0xFFFF) < 0x10000 - hh_pre))
         {
             if ((pos & 0xFF) == 0)
                 hh.trigger(0x1A, 0x05);
@@ -553,28 +553,17 @@ bool Player::render(Buffer &db, Buffer &pb)
         if ( pos < 0x10000 || ((pos & 0xFFFF) < 0x08000))
             synth.render(mixin, synth_wf);
 
-        if ( pos >= 0x10000 && ((pos & 0xFFFF) < 0x08000))
+        if ( pos >= 0x20000 && ((pos & 0xFFFF) < 0x08000))
         {
-            switch ( (pos>>16) & 3 )
+            switch ( (pos>>16) & 1 )
             {
                 case 0: 
-                    arpeggio.render(mixin, sqr_wf);
-                    break;
-                case 1: 
-                    arpeggio.render(mixin, sag_wf);
-                    break;
-                case 2: 
                     arpeggio.render(mixin, sin_wf);
                     break;
-                case 3: 
+                case 1: 
                     arpeggio.render(mixin, sqr_wf);
                     break;
             }
-        }
-
-        if ( pos >= 0x20000 && ((pos & 0xFFFF) >= 0x08000) && !drumblocker(pos))
-        {
-            one_liner.render(mixin, one_liner_sel);
         }
 
         /* anything rendered to db below here does not affect compressor */
@@ -596,6 +585,7 @@ bool Player::render(Buffer &db, Buffer &pb)
     }
 
     phaser_test(pos, db, pb);
+    
     pos ++;
 
     return true;

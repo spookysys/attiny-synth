@@ -9,7 +9,7 @@ static const uint16_t end_pitch=100;
 static const uint16_t slide_speed_1=5;
 static const uint16_t slide_speed_2=6;
 static const uint16_t decay_speed=3;
-static const bool make_it_loud = true;
+static const bool make_it_loud = false;
 
 void BassDrum::trigger(bool accent)
 {

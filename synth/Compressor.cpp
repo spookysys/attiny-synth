@@ -5,10 +5,8 @@
 #include "mymath.hpp"
 
 // settings
-static const uint8_t loudness_response_time = 2;
+static const uint8_t loudness_response_time = 1;
 static const uint8_t quietness_response_time = 3;
-static const uint8_t max_volume = 100;
-static const uint8_t min_volume = 10;
 
 // low-pass filter for compressor response
 template <uint8_t length>
@@ -19,9 +17,8 @@ static uint16_t filter(uint16_t state, uint16_t input)
 }
 
 // update compressor and return volume
-uint8_t Compressor::analyze(const Buffer &sb)
+static uint8_t analyze(uint16_t& sense, const Buffer &sb, uint8_t min_volume, uint8_t max_volume)
 {
-
     // grab volume from buffer
     uint16_t vol = 0;
     vol += abs(sb[globals::SAMPLES_PER_BUFFER*0/4]);
@@ -48,10 +45,10 @@ uint8_t Compressor::analyze(const Buffer &sb)
 }
 
 //template <uint8_t reduce, typename WaveformT>
-void Compressor::render(Buffer& destination, Buffer& sidechain, const Buffer& mixin)
+void Compressor::render(Buffer& destination, Buffer& sidechain, const Buffer& mixin, uint8_t min_volume, uint8_t max_volume)
 {
     // update compressor response
-    uint8_t vol = analyze(sidechain);
+    uint8_t vol = analyze(sense, sidechain, min_volume, max_volume);
 
     // render sound
     for (uint8_t i=0; i<globals::SAMPLES_PER_BUFFER; i+=4)
