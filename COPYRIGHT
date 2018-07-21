@@ -1,0 +1,8 @@
+This work is copyright Eivind Liland and Espen Åmodt in 2018 apart from the following borrowed parts:
+* Code for overclocking the microcontroller is adapted from Sprite_tm's 3-component FM transmitter, http://spritesmods.com/?art=avrfmtx
+* The single-transistor FM circuit is adapted from http://www.electronicecircuits.com/electronic-circuits/3v-fm-transmitter
+* Functions for creating minimum-phase filters are adapted from Smith, J.O. Introduction to Digital Filters with Audio Applications, http://ccrma.stanford.edu/~jos/filters/, online book, 2007 edition, accessed June 2018.
+
+Available under the GPLv3 license.
+
+Contact: spookysys at gmail

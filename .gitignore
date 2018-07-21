@@ -1,3 +1,4 @@
+.vscode
 Debug
 Release
 *.xml
@@ -9,3 +10,19 @@ synth/*.exe
 synth/*.wav
 synth/*.o
 _*
+*.wav
+*.WAV
+*.asv
+packs/
+out/*
+out_check/*
+export*/*
+*.exe
+*.dat
+*.obj
+*.zip
+*.auf
+*.au
+*.aup
+*.o
+a.out

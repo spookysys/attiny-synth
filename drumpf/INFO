@@ -1,0 +1,16 @@
+
+HOWTO
+
+Put 22k sample/sec WAV files in in/*
+Run main.m in matlab
+C++ header-files suitable for our attiny synth are produced in export/*
+Compile and run play_all.cpp to produce decompressed wav files to see how much porridge was produced.
+
+
+PRINCIPLE
+
+Signal is split into a bass and a treble portion at around 800 Hz
+
+Bass portion is downsampled to 1/16x resolution and compressed using a homemade ADPCM algorithm
+Treble portion has constant filter coefficients and an exponential falloff fitted to it, so decompression is just noise, filter, falloff
+
