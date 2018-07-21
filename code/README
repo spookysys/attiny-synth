@@ -1,3 +1,16 @@
 Open the project in Atmel Studio to debug on target or build binaries. The board has a 3-pin header for DebugWire access for in-system programming and debugging, but it's still wise to mount a socket so you can take the chip out and reprogram with SPI.
 
+You need to set the fuse to 16MHz internal clock rather than 8MHz.
+
 The Makefile builds for linux and generates a wav for preview.
+
+To configure using avrdude and usbtiny:
+
+# Set fuses to defaults (not required)
+avrdude -c usbtiny -p attiny85 -U lfuse:w:0x62:m -U hfuse:w:0xdf:m -U efuse:w:0xff:m
+
+# Set 16mhz clock and other required fuses
+avrdude -c usbtiny -p attiny85 -U lfuse:w:0xe1:m -U hfuse:w:0xdf:m -U efuse:w:0xff:m
+
+# Upload binary
+avrdude -c usbtiny -p attiny85 -U flash:w:synth.hex
